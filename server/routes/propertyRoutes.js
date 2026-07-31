@@ -8,7 +8,7 @@ const {
   deleteProperty,
   uploadPropertyImage
 } = require('../controllers/propertyController');
-const { protect } = require('../middleware/auth');
+const { protectAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 // Public routes — no auth needed
@@ -16,9 +16,9 @@ router.get('/', getProperties);
 router.get('/:id', getProperty);
 
 // Protected routes — admin only
-router.post('/', protect, upload.array('images', 10), createProperty);
-router.put('/:id', protect, upload.single('image'), updateProperty);
-router.delete('/:id', protect, deleteProperty);
-router.post('/:id/image', protect, upload.single('image'), uploadPropertyImage);
+router.post('/', protectAdmin, upload.array('images', 10), createProperty);
+router.put('/:id', protectAdmin, upload.single('image'), updateProperty);
+router.delete('/:id', protectAdmin, deleteProperty);
+router.post('/:id/image', protectAdmin, upload.single('image'), uploadPropertyImage);
 
 module.exports = router;
