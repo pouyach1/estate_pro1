@@ -1,9 +1,22 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-const MONGODB_URI = 'mongodb://localhost:27017/astoria_elite';
-const PORT = 5000;
+const MONGODB_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 5000;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI is not defined');
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+  console.error('❌ JWT_SECRET is not defined');
+  process.exit(1);
+}
 
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('✅ MongoDB connected'))
@@ -14,7 +27,7 @@ mongoose.connect(MONGODB_URI)
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));

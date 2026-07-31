@@ -53,6 +53,12 @@ function formatPrice(price) {
   return num.toLocaleString('fa-IR');
 }
 
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
 // ===== CONFIG =====
 const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown}, iconDefaults:{'stroke-width':1.5,width:20,height:20}, storageKey:'astoria_favorites', scrollThreshold:60, backToTopThreshold:500, revealOptions:{threshold:0.15,rootMargin:'0px 0px -40px 0px'} };
 
@@ -84,6 +90,7 @@ const Astoria = {
     this.searchBtn?.addEventListener('click',()=>this.search());
     this.contactForm?.addEventListener('submit',e=>this.submitForm(e));
     this.bookTourBtn?.addEventListener('click',()=>document.querySelector('#contact')?.scrollIntoView({behavior:'smooth'}));
+    this.propertiesContainer?.addEventListener('click',e=>this.handlePropertyCardClick(e));
     this.initRevealObserver();
   },
   async loadProperties(){
@@ -97,33 +104,45 @@ const Astoria = {
     }catch(e){this.propertiesContainer.innerHTML='<p style="color:#f44336;text-align:center;grid-column:1/-1;padding:40px;">خطا در بارگذاری</p>'}
   },
   renderCard(p){
+    const propertyId=escapeHTML(p._id||'');
+    const propertyType=escapeHTML(p.type||'');
+    const propertyTitle=escapeHTML(p.title||'');
+    const listingType=escapeHTML(p.listingType||'آگهی ویژه');
     const f=p.features||{};const all={...(f.common||{}),...(f.specific||{}),...(f.luxury||{})};
     const cfg=getFeaturesForType(p.type);const allCfg=[...(cfg.common||[]),...(cfg.specific||[]),...(cfg.luxury||[])];
-    const feats=[];allCfg.forEach(c=>{const v=all[c.key];if(v===true||(typeof v==='number'&&v>0)||(typeof v==='string'&&v.length>0)){feats.push(`<span class="feature-item"><i data-lucide="${c.icon||'car'}"></i> ${typeof v==='number'&&c.field_type==='number'?v+' ':''}${c.label_fa}</span>`)}});
-    const pf=formatPrice(p.price);const price=pf?pf+' تومان':'<span style="color:var(--gold);cursor:pointer;" onclick="document.getElementById(\'contact\').scrollIntoView({behavior:\'smooth\'})">تماس بگیرید</span>';
-    const img=p.image||(p.images&&p.images[0])||'';
-    return`<article class="property-card reveal" data-type="${p.type}" data-price="${p.price||0}" data-id="${p._id}">
-      <div class="card-image" onclick="window.location.href='/property/?id=${p._id}'">
-        ${img?`<img src="${img}" alt="${p.title}" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg,#0d1525,#111d33)'">`:''}
+    const feats=[];allCfg.forEach(c=>{const v=all[c.key];if(v===true||(typeof v==='number'&&v>0)||(typeof v==='string'&&v.length>0)){const valueText=typeof v==='number'&&c.field_type==='number'?`${escapeHTML(v)} `:'';feats.push(`<span class="feature-item"><i data-lucide="${escapeHTML(c.icon||'car')}"></i> ${valueText}${escapeHTML(c.label_fa)}</span>`)}});
+    const pf=formatPrice(p.price);const price=pf?`${escapeHTML(pf)} تومان`:'<button type="button" class="contact-price-link" data-scroll-target="contact">تماس بگیرید</button>';
+    const img=escapeHTML(p.image||(p.images&&p.images[0])||'');
+    return`<article class="property-card reveal" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
+      <div class="card-image" data-property-link="true">
+        ${img?`<img src="${img}" alt="${propertyTitle}" loading="lazy">`:''}
         <div class="card-image-badge">${p.isExclusive?'<span class="badge badge-exclusive">اختصاصی</span>':''}</div>
-        <div class="card-actions-top"><button class="card-action-icon favorite-btn"><i data-lucide="heart"></i></button><button class="card-action-icon share-btn"><i data-lucide="share-2"></i></button></div>
-        ${p.images&&p.images.length>1?`<span class="badge badge-image-count">${p.images.length} عکس</span>`:''}
+        <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
+        ${p.images&&p.images.length>1?`<span class="badge badge-image-count">${escapeHTML(p.images.length)} عکس</span>`:''}
       </div>
       <div class="card-details">
-        <h3 class="card-title" onclick="window.location.href='/property/?id=${p._id}'">${p.title}</h3>
+        <h3 class="card-title" data-property-link="true">${propertyTitle}</h3>
         <p class="card-price">${price}</p>
-        <p class="card-listing-type">${p.listingType||'آگهی ویژه'}</p>
+        <p class="card-listing-type">${listingType}</p>
         <div class="card-features">
-          ${p.beds>0?`<span class="feature-item"><i data-lucide="bed"></i> ${p.beds} خواب</span>`:''}
-          ${p.baths>0?`<span class="feature-item"><i data-lucide="bath"></i> ${p.baths} حمام</span>`:''}
-          ${p.area>0?`<span class="feature-item"><i data-lucide="maximize-2"></i> ${p.area} متر</span>`:''}
+          ${p.beds>0?`<span class="feature-item"><i data-lucide="bed"></i> ${escapeHTML(p.beds)} خواب</span>`:''}
+          ${p.baths>0?`<span class="feature-item"><i data-lucide="bath"></i> ${escapeHTML(p.baths)} حمام</span>`:''}
+          ${p.area>0?`<span class="feature-item"><i data-lucide="maximize-2"></i> ${escapeHTML(p.area)} متر</span>`:''}
           ${feats.slice(0,4).join('')}
         </div>
         <div class="card-buttons">
-          <a href="/property/?id=${p._id}" class="btn-card-primary"><i data-lucide="eye"></i> جزئیات</a>
-          <button class="btn-card-secondary" onclick="event.stopPropagation();Astoria.openRequestModal('${p._id}','${p.title}')"><i data-lucide="calendar"></i> بازدید</button>
+          <a href="/property/?id=${propertyId}" class="btn-card-primary"><i data-lucide="eye"></i> جزئیات</a>
+          <button type="button" class="btn-card-secondary" data-request-property="true"><i data-lucide="calendar"></i> بازدید</button>
         </div>
       </div></article>`;
+  },
+  handlePropertyCardClick(e){
+    const card=e.target.closest('.property-card');
+    if(!card)return;
+    if(e.target.closest('.favorite-btn,.share-btn,.btn-card-primary'))return;
+    if(e.target.closest('[data-scroll-target="contact"]')){document.getElementById('contact')?.scrollIntoView({behavior:'smooth'});return;}
+    if(e.target.closest('[data-request-property="true"]')){this.openRequestModal(card.getAttribute('data-id'),card.querySelector('.card-title')?.textContent||'');return;}
+    if(e.target.closest('[data-property-link="true"]')){window.location.href=`/property/?id=${encodeURIComponent(card.getAttribute('data-id')||'')}`;}
   },
   async loadSettings(){try{const r=await fetch(`${API_BASE}/settings`);const s=await r.json();if(s.heroBackground){const h=document.querySelector('.hero-bg');if(h){h.style.backgroundImage=`url(${s.heroBackground})`;h.style.backgroundSize='cover'}}}catch(e){}},
   initShareButtons(){document.querySelectorAll('.share-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const id=b.closest('.property-card')?.getAttribute('data-id');const title=b.closest('.property-card')?.querySelector('.card-title')?.textContent||'ملک';const url=`${location.origin}/property/?id=${id}`;navigator.share?navigator.share({title,url}):navigator.clipboard.writeText(url).then(()=>this.toast('لینک کپی شد'))}))},
@@ -139,8 +158,10 @@ const Astoria = {
   // ===== REQUEST MODAL =====
   createRequestModal(){
     const modal=document.createElement('div');modal.className='request-modal-overlay';modal.id='requestModal';
-    modal.innerHTML=`<div class="request-modal-card"><button class="request-modal-close" onclick="document.getElementById('requestModal').classList.remove('active')">✕</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form" onsubmit="Astoria.submitRequest(event)"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestMessage" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestMessage" class="admin-message" style="margin-top:12px"></div></div>`;
+    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true">✕</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestMessage" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestMessage" class="admin-message" style="margin-top:12px"></div></div>`;
     document.body.appendChild(modal);
+    modal.querySelector('[data-close-request-modal="true"]')?.addEventListener('click',()=>modal.classList.remove('active'));
+    modal.querySelector('#requestForm')?.addEventListener('submit',e=>this.submitRequest(e));
   },
   openRequestModal(id,title){
     document.getElementById('requestPropertyId').value=id;

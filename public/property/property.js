@@ -17,6 +17,13 @@ const sampleImages = [
 let currentImageIndex = 0;
 let propertyData = null;
 
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+
 // ========== LOAD PROPERTY ==========
 async function loadProperty() {
   try {
@@ -104,7 +111,7 @@ function updateHeroImage(index) {
 function renderDots() {
   const dotsContainer = document.getElementById('imageDots');
   dotsContainer.innerHTML = sampleImages.map((_, i) => `
-    <div class="hero-dot ${i === 0 ? 'active' : ''}" onclick="updateHeroImage(${i})"></div>
+    <button type="button" class="hero-dot ${i === 0 ? 'active' : ''}" data-image-index="${i}" aria-label="مشاهده تصویر ${i + 1}"></button>
   `).join('');
 }
 
@@ -124,11 +131,17 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') document.getElementById('prevImage').click();
 });
 
+document.addEventListener('click', (e) => {
+  const imageButton = e.target.closest('[data-image-index]');
+  if (!imageButton) return;
+  updateHeroImage(Number(imageButton.getAttribute('data-image-index')) || 0);
+});
+
 // ========== GALLERY ==========
 function renderGallery() {
   const gallery = document.getElementById('propertyGallery');
   gallery.innerHTML = sampleImages.map((img, i) => `
-    <div class="gallery-thumb" style="background-image:url(${img})" onclick="updateHeroImage(${i})" title="مشاهده تصویر ${i + 1}"></div>
+    <button type="button" class="gallery-thumb" style="background-image:url(${img})" data-image-index="${i}" title="مشاهده تصویر ${i + 1}"></button>
   `).join('');
 }
 
@@ -149,23 +162,33 @@ async function loadSimilarProperties() {
       return;
     }
 
-    container.innerHTML = filtered.map(p => `
-      <article class="property-card" onclick="window.location.href='?id=${p._id}'">
+    container.innerHTML = filtered.map(p => {
+      const propertyId = escapeHTML(p._id || '');
+      const image = escapeHTML(p.image || sampleImages[0]);
+      const title = escapeHTML(p.title || '');
+      const listingType = escapeHTML(p.listingType || 'ویژه');
+      const price = Number(p.price || 0).toLocaleString('fa-IR');
+      const beds = escapeHTML(p.beds || 0);
+      const baths = escapeHTML(p.baths || 0);
+      const area = escapeHTML(p.area || 0);
+
+      return `
+      <article class="property-card" data-similar-property-id="${propertyId}">
         <div class="card-image">
-          <img src="${p.image || sampleImages[0]}" alt="${p.title}" loading="lazy" width="300" height="200">
-          <span class="badge badge-exclusive">${p.listingType || 'ویژه'}</span>
+          <img src="${image}" alt="${title}" loading="lazy" width="300" height="200">
+          <span class="badge badge-exclusive">${listingType}</span>
         </div>
         <div class="card-details">
-          <h3 class="card-title">${p.title}</h3>
-          <p class="card-price">${Number(p.price).toLocaleString('fa-IR')} دلار</p>
+          <h3 class="card-title">${title}</h3>
+          <p class="card-price">${price} دلار</p>
           <div class="card-features">
-            <span class="feature-item"><i data-lucide="bed"></i> ${p.beds} خواب</span>
-            <span class="feature-item"><i data-lucide="bath"></i> ${p.baths} حمام</span>
-            <span class="feature-item"><i data-lucide="maximize-2"></i> ${p.area} متر</span>
+            <span class="feature-item"><i data-lucide="bed"></i> ${beds} خواب</span>
+            <span class="feature-item"><i data-lucide="bath"></i> ${baths} حمام</span>
+            <span class="feature-item"><i data-lucide="maximize-2"></i> ${area} متر</span>
           </div>
         </div>
-      </article>
-    `).join('');
+      </article>`;
+    }).join('');
   } catch (error) {
     console.error('Error loading similar:', error);
   }
@@ -274,6 +297,12 @@ window.addEventListener('scroll', () => {
   backToTop.classList.toggle('visible', window.scrollY > 500);
 });
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+document.getElementById('similarProperties')?.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-similar-property-id]');
+  if (!card) return;
+  window.location.href = `?id=${encodeURIComponent(card.getAttribute('data-similar-property-id') || '')}`;
+});
 
 // ========== NAVBAR SCROLL ==========
 const navbar = document.querySelector('.astoria-nav');
