@@ -1,0 +1,78 @@
+// ==============================================
+// RESPONSIVE BREAKPOINTS
+// ==============================================
+
+@media (max-width: 1024px) {
+  .nav-links {
+    gap: 20px;
+    a { font-size: 0.8rem; }
+  }
+  .btn-gold-outline {
+    font-size: 0.7rem;
+    padding: 10px 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .astoria-nav {
+    padding: 12px 20px;
+    top: 10px;
+    width: calc(100% - 20px);
+  }
+  .brand-main { font-size: 1.3rem; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100vh;
+    background: rgba(5, 5, 8, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    z-index: 999;
+    &.active { display: flex; }
+    a { font-size: 1.2rem; }
+  }
+  .mobile-menu-toggle { display: flex; }
+  .luxury-search-bar {
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    padding: 6px;
+  }
+  .search-field {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 20px;
+    width: 100%;
+    border-radius: 0;
+    &:last-of-type { border-bottom: none; }
+  }
+  .btn-search-gold {
+    width: calc(100% - 8px);
+    margin: 4px;
+  }
+  .hero-headline { font-size: clamp(1.8rem, 5vw, 2.5rem); }
+  .cta-banner { margin: 0 var(--space-md); padding: 40px 24px; }
+}
+
+@media (max-width: 480px) {
+  .card-image { height: 220px; }
+  .card-details { padding: 16px 18px 20px; }
+  .card-features { gap: 12px; font-size: 0.7rem; }
+  .btn-gold-outline { display: none; }
+  .section-title { font-size: 1.6rem; }
+}
+
+@media (min-width: 1440px) {
+  .container { max-width: 1320px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

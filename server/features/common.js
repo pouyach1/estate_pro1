@@ -1,0 +1,15 @@
+module.exports = [
+  { key: 'parking', label_fa: 'پارکینگ', field_type: 'number', category: 'common', icon: 'car', min: 0 },
+  { key: 'storage', label_fa: 'انباری', field_type: 'boolean', category: 'common', icon: 'warehouse' },
+  { key: 'elevator', label_fa: 'آسانسور', field_type: 'boolean', category: 'common', icon: 'arrow-up' },
+  { key: 'security', label_fa: 'نگهبانی', field_type: 'boolean', category: 'common', icon: 'shield-check' },
+  { key: 'cctv', label_fa: 'دوربین مداربسته', field_type: 'boolean', category: 'common', icon: 'camera' },
+  { key: 'video_intercom', label_fa: 'آیفون تصویری', field_type: 'boolean', category: 'common', icon: 'video' },
+  { key: 'heating', label_fa: 'سیستم گرمایش', field_type: 'select', category: 'common', options: ['پکیج', 'شوفاژ', 'گرمایش از کف', 'مرکزی', 'سایر'] },
+  { key: 'cooling', label_fa: 'سیستم سرمایش', field_type: 'select', category: 'common', options: ['اسپلیت', 'داکت اسپلیت', 'کولر آبی', 'کولر گازی', 'چیلر', 'سایر'] },
+  { key: 'flooring', label_fa: 'کف‌پوش', field_type: 'select', category: 'common', options: ['سرامیک', 'پارکت', 'لمینت', 'سنگ', 'موزاییک', 'سایر'] },
+  { key: 'cabinet', label_fa: 'کابینت', field_type: 'select', category: 'common', options: ['MDF', 'هایگلاس', 'ممبران', 'چوب طبیعی', 'سایر'] },
+  { key: 'double_glazed', label_fa: 'پنجره دوجداره', field_type: 'boolean', category: 'common' },
+  { key: 'security_door', label_fa: 'درب ضد سرقت', field_type: 'boolean', category: 'common' },
+  { key: 'smart_home', label_fa: 'خانه هوشمند', field_type: 'boolean', category: 'common' },
+];

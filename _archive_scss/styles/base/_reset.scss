@@ -1,0 +1,65 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  background: var(--bg-void);
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--white);
+  background-color: var(--bg-deep);
+  background-image:
+    radial-gradient(ellipse at 15% 15%, #0f1a24 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 80%, #0e151b 0%, var(--bg-deep) 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(201, 162, 39, 0.02) 0%, transparent 65%);
+  overflow-x: hidden;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+::selection {
+  background: rgba(201, 162, 39, 0.3);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}

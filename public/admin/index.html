@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به پنل مدیریت | آستوریا</title>
+    <link rel="stylesheet" href="/theme_css/pro.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+    
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="admin-login-header">
+                <span class="brand-main">ASTORIA</span>
+                <span class="brand-sub">ELITE ESTATES</span>
+                <p class="admin-login-subtitle">پنل مدیریت</p>
+            </div>
+            
+            <form id="loginForm" class="admin-login-form">
+                <div class="form-group">
+                    <label for="username">نام کاربری</label>
+                    <input type="text" id="username" placeholder="نام کاربری" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">رمز عبور</label>
+                    <input type="password" id="password" placeholder="رمز عبور" required>
+                </div>
+                <button type="submit" class="btn-gold-solid btn-full">ورود به پنل</button>
+            </form>
+            
+            <div id="loginMessage" class="admin-message"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:5000/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageEl = document.getElementById('loginMessage');
+            const btn = e.target.querySelector('button');
+            
+            btn.textContent = 'در حال ورود...';
+            btn.disabled = true;
+            messageEl.textContent = '';
+            
+            try {
+                const res = await fetch(`${API}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('astoria_token', data.token);
+                    localStorage.setItem('astoria_admin', JSON.stringify(data.admin));
+                    messageEl.className = 'admin-message success';
+                    messageEl.textContent = '✅ ورود موفق! در حال انتقال...';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    messageEl.className = 'admin-message error';
+                    messageEl.textContent = '❌ ' + data.message;
+                }
+            } catch (error) {
+                messageEl.className = 'admin-message error';
+                messageEl.textContent = '❌ خطا در اتصال به سرور';
+            }
+            
+            btn.textContent = 'ورود به پنل';
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>

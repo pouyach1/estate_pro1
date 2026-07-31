@@ -1,0 +1,14 @@
+// ==============================================
+// CONTAINER
+// ==============================================
+
+.container {
+  width: 100%;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 $space-xl;
+
+  @media (max-width: 480px) {
+    padding: 0 $space-md;
+  }
+}

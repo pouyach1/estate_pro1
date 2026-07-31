@@ -1,0 +1,155 @@
+// ==============================================
+// PROPERTY CARD — Glassmorphism premium card
+// ==============================================
+
+.property-card {
+  position: relative;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-slow);
+  cursor: pointer;
+  transform: translateY(0);
+
+  &:hover {
+    transform: translateY(-8px);
+    border-color: rgba(201, 162, 39, 0.5);
+    box-shadow:
+      0 32px 64px rgba(0, 0, 0, 0.75),
+      0 0 40px rgba(201, 162, 39, 0.2);
+
+    .card-image img {
+      transform: scale(1.08);
+    }
+
+    .card-image::after {
+      opacity: 0;
+    }
+
+    .card-title {
+      color: var(--gold-light);
+    }
+
+    .card-features .feature-item {
+      color: var(--gray-200);
+
+      svg {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.card-image {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0d1525 0%, #111d33 50%, #0a1020 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(201, 162, 39, 0.12) 0%, transparent 45%),
+      radial-gradient(circle at 70% 60%, rgba(100, 150, 200, 0.08) 0%, transparent 45%),
+      linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    animation: cardShimmer 8s ease-in-out infinite alternate;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    z-index: 3;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.7), transparent);
+    transition: opacity var(--transition-slow);
+    pointer-events: none;
+  }
+
+  img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+}
+
+.card-details {
+  position: relative;
+  z-index: 2;
+  padding: 24px 26px 28px;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 14, 0.5),
+    rgba(10, 10, 14, 0.8)
+  );
+}
+
+.card-title {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+  transition: color var(--transition-fast);
+}
+
+.card-price {
+  font-family: var(--font-body);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+}
+
+.card-listing-type {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--gray-300);
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.card-features {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: #b0b0b0;
+  font-weight: 400;
+  transition: color var(--transition-fast);
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: var(--gold);
+    opacity: 0.7;
+    flex-shrink: 0;
+    transition: opacity var(--transition-fast);
+  }
+}

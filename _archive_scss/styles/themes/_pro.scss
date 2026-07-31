@@ -1,0 +1,51 @@
+// ==============================================
+// PRO THEME — Gold Luxury
+// Applies all design tokens to :root
+// ==============================================
+
+:root {
+  --bg-void: #{$bg-void};
+  --bg-deep: #{$bg-deep};
+  --bg-navy: #{$bg-navy};
+  --bg-card: #{$bg-card};
+  --gold: #{$gold};
+  --gold-light: #{$gold-light};
+  --gold-dark: #{$gold-dark};
+  --gold-glow: #{$gold-glow};
+  --gold-border: #{$gold-border};
+  --white: #{$white};
+  --gray-100: #{$gray-100};
+  --gray-200: #{$gray-200};
+  --gray-300: #{$gray-300};
+  --gray-400: #{$gray-400};
+  --text-dark: #{$text-dark};
+  --glass-bg: #{$glass-bg};
+  --glass-bg-dark: #{$glass-bg-dark};
+  --glass-blur: #{$glass-blur};
+  --glass-blur-heavy: #{$glass-blur-heavy};
+  --font-heading: #{$font-heading};
+  --font-body: #{$font-body};
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+  --radius-pill: #{$radius-pill};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  --shadow-gold: #{$shadow-gold};
+  --shadow-gold-strong: #{$shadow-gold-strong};
+  --transition-fast: #{$transition-fast};
+  --transition-base: #{$transition-base};
+  --transition-slow: #{$transition-slow};
+  --max-width: #{$max-width};
+  --space-xs: #{$space-xs};
+  --space-sm: #{$space-sm};
+  --space-md: #{$space-md};
+  --space-lg: #{$space-lg};
+  --space-xl: #{$space-xl};
+  --space-2xl: #{$space-2xl};
+  --space-3xl: #{$space-3xl};
+  --space-4xl: #{$space-4xl};
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="جزئیات ملک - آستوریا الیت استیتس">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>جزئیات ملک | آستوریا الیت استیتس</title>
+    
+    <link rel="stylesheet" href="/theme_css/pro.css">
+    <link rel="stylesheet" href="/property/property.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body class="property-page">
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="astoria-nav" role="navigation">
+        <div class="nav-brand">
+            <a href="/" aria-label="بازگشت به صفحه اصلی">
+                <span class="brand-main">ASTORIA</span>
+                <span class="brand-sub">ELITE ESTATES</span>
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">خانه</a></li>
+            <li><a href="/#residences">املاک</a></li>
+            <li><a href="/#contact">تماس</a></li>
+        </ul>
+        <a href="/" class="btn-gold-outline">بازگشت</a>
+    </nav>
+
+    <!-- ========== HERO IMAGE ========== -->
+    <section class="property-hero" id="propertyHero">
+        <div class="property-hero-overlay"></div>
+        <div class="property-hero-content">
+            <span class="property-status-badge" id="listingType">آگهی ویژه</span>
+            <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
+            <p class="property-hero-location" id="propertyLocation"></p>
+            <div class="property-hero-price" id="propertyPrice"></div>
+        </div>
+        <div class="property-hero-nav">
+            <button class="hero-nav-btn" id="prevImage" aria-label="تصویر قبلی">
+                <i data-lucide="chevron-right"></i>
+            </button>
+            <button class="hero-nav-btn" id="nextImage" aria-label="تصویر بعدی">
+                <i data-lucide="chevron-left"></i>
+            </button>
+        </div>
+        <div class="property-hero-dots" id="imageDots"></div>
+    </section>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="property-main">
+        <div class="container">
+            <div class="property-layout">
+                
+                <!-- ========== LEFT COLUMN ========== -->
+                <div class="property-content">
+                    
+                    <!-- Quick Stats -->
+                    <div class="property-quick-stats" id="quickStats">
+                        <div class="quick-stat">
+                            <i data-lucide="bed" class="stat-icon"></i>
+                            <span class="stat-value" id="statBeds">-</span>
+                            <span class="stat-label">خواب</span>
+                        </div>
+                        <div class="quick-stat">
+                            <i data-lucide="bath" class="stat-icon"></i>
+                            <span class="stat-value" id="statBaths">-</span>
+                            <span class="stat-label">حمام</span>
+                        </div>
+                        <div class="quick-stat">
+                            <i data-lucide="maximize-2" class="stat-icon"></i>
+                            <span class="stat-value" id="statArea">-</span>
+                            <span class="stat-label">متر مربع</span>
+                        </div>
+                        <div class="quick-stat">
+                            <i data-lucide="home" class="stat-icon"></i>
+                            <span class="stat-value" id="statType">-</span>
+                            <span class="stat-label">نوع ملک</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="property-section">
+                        <h2 class="property-section-title">توضیحات</h2>
+                        <p class="property-description" id="propertyDescription">
+                            در حال بارگذاری...
+                        </p>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="property-section">
+                        <h2 class="property-section-title">امکانات</h2>
+                        <div class="property-features-grid" id="propertyFeatures">
+                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> استخر</div>
+                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> پارکینگ</div>
+                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> آسانسور</div>
+                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> لابی</div>
+                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> نگهبانی</div>
+                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> دوربین مداربسته</div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Thumbnails -->
+                    <div class="property-section">
+                        <h2 class="property-section-title">گالری تصاویر</h2>
+                        <div class="property-gallery" id="propertyGallery">
+                            <p style="color:var(--gray-300);">تصاویر بیشتر در حال بارگذاری...</p>
+                        </div>
+                    </div>
+
+                    <!-- Similar Properties -->
+                    <div class="property-section">
+                        <h2 class="property-section-title">املاک مشابه</h2>
+                        <div class="similar-properties-grid" id="similarProperties">
+                            <p style="color:var(--gray-300);">در حال بارگذاری...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== RIGHT COLUMN (SIDEBAR) ========== -->
+                <aside class="property-sidebar">
+                    
+                    <!-- Price Card -->
+                    <div class="sidebar-card price-card">
+                        <div class="price-card-main">
+                            <span class="price-card-label">قیمت</span>
+                            <span class="price-card-value" id="sidebarPrice">-</span>
+                        </div>
+                        <button class="btn-gold-solid btn-full" id="btnRequestTour">
+                            <i data-lucide="calendar"></i> درخواست بازدید
+                        </button>
+                        <button class="btn-favorite-outline btn-full" id="btnFavorite">
+                            <i data-lucide="heart"></i> افزودن به علاقه‌مندی‌ها
+                        </button>
+                    </div>
+
+                    <!-- Agent Card -->
+                    <div class="sidebar-card agent-card">
+                        <div class="agent-avatar">
+                            <i data-lucide="user" style="width:40px;height:40px;color:var(--gold);"></i>
+                        </div>
+                        <h3 class="agent-name">امیررضا محمدی</h3>
+                        <p class="agent-role">مشاور ارشد املاک</p>
+                        <div class="agent-contact">
+                            <a href="tel:02112345678" class="agent-contact-btn">
+                                <i data-lucide="phone"></i> ۰۲۱-۱۲۳۴۵۶۷۸
+                            </a>
+                            <a href="mailto:info@astoriaelite.com" class="agent-contact-btn">
+                                <i data-lucide="mail"></i> info@astoriaelite.com
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Contact Form -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-card-title">درخواست اطلاعات بیشتر</h3>
+                        <form id="quickContactForm" class="quick-contact-form">
+                            <input type="text" id="quickName" placeholder="نام شما" required>
+                            <input type="tel" id="quickPhone" placeholder="شماره تماس" required>
+                            <textarea id="quickMessage" rows="3" placeholder="پیام شما...">در مورد این ملک اطلاعات بیشتری می‌خواهم.</textarea>
+                            <button type="submit" class="btn-gold-solid btn-full">ارسال درخواست</button>
+                        </form>
+                        <div id="quickFormMessage" class="admin-message"></div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== TOUR MODAL ========== -->
+    <div class="modal-overlay" id="tourModal">
+        <div class="modal-card">
+            <button class="modal-close" id="closeTourModal">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="modal-title">درخواست بازدید</h2>
+            <form id="tourForm" class="quick-contact-form">
+                <input type="text" id="tourName" placeholder="نام کامل" required>
+                <input type="tel" id="tourPhone" placeholder="شماره تماس" required>
+                <input type="date" id="tourDate" required>
+                <textarea id="tourNote" rows="2" placeholder="یادداشت (اختیاری)"></textarea>
+                <button type="submit" class="btn-gold-solid btn-full">ثبت درخواست</button>
+            </form>
+            <div id="tourFormMessage" class="admin-message"></div>
+        </div>
+    </div>
+
+    <!-- ========== NOTIFICATION ========== -->
+    <div id="notification" class="notification" aria-live="polite" aria-hidden="true"></div>
+
+    <!-- ========== BACK TO TOP ========== -->
+    <button id="back-to-top" class="back-to-top" aria-label="بازگشت به بالا">
+        <i data-lucide="arrow-up"></i>
+    </button>
+
+    <script type="module">
+        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X } from 'lucide';
+        
+        createIcons({
+            icons: { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X },
+            attrs: { 'stroke-width': 1.5, width: 20, height: 20 }
+        });
+    </script>
+    <script src="/property/property.js"></script>
+</body>
+</html>

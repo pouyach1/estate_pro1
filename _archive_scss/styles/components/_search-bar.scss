@@ -1,0 +1,94 @@
+// ==============================================
+// LUXURY SEARCH BAR — Frosted glass dropdowns
+// ==============================================
+
+.luxury-search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: var(--radius-pill);
+  padding: 8px;
+  max-width: 780px;
+  margin: 0 auto;
+  box-shadow: var(--shadow-xl), 0 0 30px rgba(201, 162, 39, 0.08);
+  transition: all var(--transition-base);
+
+  &:hover {
+    border-color: rgba(201, 162, 39, 0.5);
+    box-shadow: var(--shadow-xl), var(--shadow-gold);
+  }
+}
+
+.search-field {
+  flex: 1;
+  padding: 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: background var(--transition-fast);
+
+  &:last-of-type {
+    border-right: none;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+.search-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.search-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: #d0d0d0;
+  font-weight: 400;
+}
+
+.dropdown-arrow {
+  width: 12px;
+  height: 12px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.btn-search-gold {
+  background: var(--gold);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border-radius: var(--radius-pill);
+  margin: 4px;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--gold-light);
+    box-shadow: 0 0 35px rgba(201, 162, 39, 0.65);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
