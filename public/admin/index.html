@@ -61,18 +61,18 @@
                     localStorage.setItem('astoria_token', data.token);
                     localStorage.setItem('astoria_admin', JSON.stringify(data.admin));
                     messageEl.className = 'admin-message success';
-                    messageEl.textContent = '✅ ورود موفق! در حال انتقال...';
+                    messageEl.textContent = 'ورود موفق؛ در حال انتقال...';
                     
                     setTimeout(() => {
-                        window.location.href = 'dashboard.html';
+                        window.location.href = data.redirectTo || 'dashboard.html';
                     }, 1000);
                 } else {
                     messageEl.className = 'admin-message error';
-                    messageEl.textContent = '❌ ' + data.message;
+                    messageEl.textContent = data.message;
                 }
             } catch (error) {
                 messageEl.className = 'admin-message error';
-                messageEl.textContent = '❌ خطا در اتصال به سرور';
+                messageEl.textContent = 'خطا در اتصال به سرور';
             }
             
             btn.textContent = 'ورود به پنل';

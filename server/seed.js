@@ -6,11 +6,11 @@ const MONGODB_URI = 'mongodb://localhost:27017/astoria_elite';
 const seedAdmin = async () => {
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log('✅ MongoDB connected');
+    console.log('MongoDB connected');
 
     // Delete old admin
     await Admin.deleteMany({});
-    console.log('🗑️ Old admins deleted');
+    console.log('Old admins deleted');
 
     // Create admin manually with hash
     const bcrypt = require('bcryptjs');
@@ -23,14 +23,14 @@ const seedAdmin = async () => {
       name: 'مدیر سایت'
     });
 
-    console.log('✅ Admin created:');
+    console.log('Admin created:');
     console.log('   Username: admin');
     console.log('   Password: admin123');
 
     await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('Error:', error.message);
     process.exit(1);
   }
 };

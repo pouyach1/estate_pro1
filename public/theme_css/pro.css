@@ -4,7 +4,7 @@
    20+ Years of Design Excellence
    ============================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700&display=swap');
 
 :root {
   --bg-void: #050508;
@@ -26,7 +26,7 @@
   --glass-blur: blur(22px);
   --glass-blur-heavy: blur(28px);
   --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-body: 'Kamran', 'Vazirmatn', 'Inter', sans-serif;
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 22px;

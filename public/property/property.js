@@ -243,7 +243,7 @@ document.getElementById('tourForm').addEventListener('submit', async (e) => {
     });
     
     document.getElementById('tourFormMessage').className = 'admin-message success';
-    document.getElementById('tourFormMessage').textContent = '✅ درخواست شما با موفقیت ثبت شد.';
+    document.getElementById('tourFormMessage').textContent = 'درخواست شما با موفقیت ثبت شد.';
     document.getElementById('tourForm').reset();
     
     setTimeout(() => {
@@ -251,7 +251,7 @@ document.getElementById('tourForm').addEventListener('submit', async (e) => {
     }, 2000);
   } catch (error) {
     document.getElementById('tourFormMessage').className = 'admin-message error';
-    document.getElementById('tourFormMessage').textContent = '❌ خطا در ثبت درخواست';
+    document.getElementById('tourFormMessage').textContent = 'خطا در ثبت درخواست';
   }
 });
 
@@ -275,11 +275,11 @@ document.getElementById('quickContactForm').addEventListener('submit', async (e)
     });
     
     document.getElementById('quickFormMessage').className = 'admin-message success';
-    document.getElementById('quickFormMessage').textContent = '✅ پیام شما ارسال شد.';
+    document.getElementById('quickFormMessage').textContent = 'پیام شما ارسال شد.';
     document.getElementById('quickContactForm').reset();
   } catch (error) {
     document.getElementById('quickFormMessage').className = 'admin-message error';
-    document.getElementById('quickFormMessage').textContent = '❌ خطا در ارسال پیام';
+    document.getElementById('quickFormMessage').textContent = 'خطا در ارسال پیام';
   }
 });
 

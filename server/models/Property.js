@@ -22,6 +22,7 @@ const propertySchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   images: [{ type: String }],  // آرایه‌ای از آدرس عکس‌ها
   video: { type: String, default: '' },  // آدرس ویدیو
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', default: null },
 });
 
 propertySchema.pre('save', function (next) { this.updatedAt = new Date(); next(); });

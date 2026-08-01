@@ -4,11 +4,13 @@
 
 const API = 'http://localhost:5000/api';
 const token = localStorage.getItem('astoria_token');
+const currentAdmin = JSON.parse(localStorage.getItem('astoria_admin') || 'null');
+const currentAdminRole = currentAdmin?.role || 'owner';
 
 // Only redirect if we're NOT on the login page
 const currentPage = window.location.pathname.split('/').pop();
 if (!token && currentPage !== 'index.html' && currentPage !== '') {
-  window.location.href = 'index.html';
+  window.location.href = '/';
 }
 
 function headers(custom = {}) {
@@ -17,7 +19,7 @@ function headers(custom = {}) {
 
 function logout() {
   localStorage.clear();
-  window.location.href = 'index.html';
+  window.location.href = '/';
 }
 
 function toggleSidebar() {
@@ -27,6 +29,11 @@ function toggleSidebar() {
 function navigateTo(page) {
   document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+
+  if (page === 'settings' && currentAdminRole !== 'owner') {
+    toast('این بخش فقط برای مالک سامانه فعال است', 'error');
+    return;
+  }
 
   const navBtn = document.querySelector(`[data-page="${page}"]`);
   const pageEl = document.getElementById(`page-${page}`);
@@ -107,17 +114,21 @@ async function uploadBackground() {
   try {
     const res = await fetch(`${API}/settings/background`, { method: 'POST', headers: headers({}), body: fd });
     if (res.ok) {
-      toast('✅ آپلود شد', 'success');
+      toast('آپلود با موفقیت انجام شد', 'success');
     } else {
-      toast('❌ خطا', 'error');
+      toast('خطا رخ داد', 'error');
     }
   } catch (e) {
-    toast('❌ خطا', 'error');
+    toast('خطا رخ داد', 'error');
   }
 }
 
 // Drag & Drop
 document.addEventListener('DOMContentLoaded', () => {
+  if (currentAdminRole !== 'owner') {
+    document.querySelector('[data-page="settings"]')?.remove();
+  }
+
   const dropZone = document.getElementById('imageUploadZone');
   if (dropZone) {
     ['dragover', 'dragenter'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag-over'); }));

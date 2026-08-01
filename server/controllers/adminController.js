@@ -3,8 +3,12 @@ const Admin = require('../models/Admin');
 const Property = require('../models/Property');
 const Customer = require('../models/Customer');
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+const normalizeRole = (role) => ['owner', 'admin', 'agent'].includes(role) ? role : 'admin';
+
+const getEffectiveRole = (admin) => admin.role || 'owner';
+
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 const login = async (req, res) => {
@@ -27,13 +31,22 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'نام کاربری یا رمز عبور اشتباه است' });
     }
 
+    const role = getEffectiveRole(admin);
+
     res.json({
       message: 'ورود موفق',
-      token: generateToken(admin._id),
+      token: generateToken(admin._id, role),
+      redirectTo: '/admin/dashboard.html',
       admin: {
         id: admin._id,
         username: admin.username,
-        name: admin.name
+        name: admin.name,
+        role,
+        permissions: {
+          canManageAdmins: role === 'owner',
+          canManageSettings: role === 'owner',
+          canViewGlobalAnalytics: role === 'owner'
+        }
       }
     });
   } catch (error) {
@@ -44,7 +57,7 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
   try {
-    const { username, password, name } = req.body;
+    const { username, password, name, role: requestedRole } = req.body;
 
     if (!username || !password) {
       return res.status(400).json({ message: 'نام کاربری و رمز عبور الزامی است' });
@@ -56,11 +69,12 @@ const register = async (req, res) => {
       return res.status(400).json({ message: 'این نام کاربری قبلاً ثبت شده است' });
     }
 
-    const admin = await Admin.create({ username, password, name });
+    const role = normalizeRole(requestedRole);
+    const admin = await Admin.create({ username, password, name, role });
 
     res.status(201).json({
       message: 'ادمین جدید با موفقیت ایجاد شد',
-      admin: { id: admin._id, username: admin.username, name: admin.name }
+      admin: { id: admin._id, username: admin.username, name: admin.name, role: admin.role }
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -95,7 +109,7 @@ const updateProfile = async (req, res) => {
 
     res.json({
       message: 'پروفایل با موفقیت بروزرسانی شد',
-      admin: { id: admin._id, username: admin.username, name: admin.name }
+      admin: { id: admin._id, username: admin.username, name: admin.name, role: getEffectiveRole(admin) }
     });
   } catch (error) {
     res.status(400).json({ message: 'خطا در بروزرسانی', error: error.message });

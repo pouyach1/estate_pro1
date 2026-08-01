@@ -13,7 +13,7 @@ const fixAdminPasswords = async () => {
     }
 
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ MongoDB connected');
+    console.log('MongoDB connected');
 
     const admins = await Admin.find().select('+password');
     let fixedCount = 0;
@@ -24,15 +24,15 @@ const fixAdminPasswords = async () => {
         const hashedPassword = await bcrypt.hash(admin.password, salt);
         await Admin.updateOne({ _id: admin._id }, { $set: { password: hashedPassword } });
         fixedCount += 1;
-        console.log(`🔐 Re-hashed plaintext password for admin: ${admin.username}`);
+        console.log(`Re-hashed plaintext password for admin: ${admin.username}`);
       }
     }
 
-    console.log(`✅ Completed. Re-hashed ${fixedCount} admin password(s).`);
+    console.log(`Completed. Re-hashed ${fixedCount} admin password(s).`);
     await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
-    console.error('❌ seed-fix error:', error.message);
+    console.error('seed-fix error:', error.message);
     await mongoose.disconnect().catch(() => {});
     process.exit(1);
   }

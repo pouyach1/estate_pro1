@@ -48,71 +48,175 @@
 
     <!-- ==================== MAIN ==================== -->
     <main class="admin-main">
+        <section class="admin-shell-topbar" aria-label="خلاصه فضای کاری">
+            <div>
+                <div class="topbar-eyebrow">Enterprise Workspace</div>
+                <div class="topbar-title">مرکز فرماندهی املاک آستوریا</div>
+            </div>
+            <div class="topbar-meta">
+                <span class="topbar-chip">سیستم فعال</span>
+                <span class="topbar-chip">نمای مدیریت VIP</span>
+                <button class="topbar-action" type="button" onclick="navigateTo('add-property')">افزودن ملک</button>
+                <button class="topbar-action secondary" type="button" onclick="navigateTo('customers')">پیام‌های جدید</button>
+            </div>
+        </section>
         <button class="mobile-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         </button>
 
         <!-- ========== DASHBOARD ========== -->
         <div class="page-content active" id="page-dashboard">
-            <div class="page-header">
-                <h1 class="page-title">داشبورد</h1>
-                <p class="page-subtitle">خلاصه عملکرد</p>
-            </div>
+            <section class="dashboard-hero-panel" aria-labelledby="dashboard-heading">
+                <div class="hero-copy">
+                    <span class="hero-kicker">ASTORIA PRO COMMAND CENTER</span>
+                    <h1 class="page-title hero-title" id="dashboard-heading">داشبورد هوشمند مدیریت املاک</h1>
+                    <p class="hero-description">نمای یکپارچه عملکرد دارایی‌ها، پیام‌های مشتریان و شاخص‌های بازار برای تصمیم‌گیری سریع و دقیق.</p>
+                    <div class="hero-actions" aria-label="اقدام‌های سریع داشبورد">
+                        <button class="gradient-action" type="button" onclick="navigateTo('add-property')">ثبت ملک جدید</button>
+                        <button class="ghost-action" type="button" onclick="navigateTo('customers')">بررسی پیام‌ها</button>
+                    </div>
+                </div>
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="visual-orbit orbit-one"></div>
+                    <div class="visual-orbit orbit-two"></div>
+                    <div class="isometric-tower tower-a"><span></span><span></span><span></span></div>
+                    <div class="isometric-tower tower-b"><span></span><span></span><span></span></div>
+                    <div class="floating-cube cube-a"></div>
+                    <div class="floating-cube cube-b"></div>
+                </div>
+            </section>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-                    <div class="stat-number" id="totalProperties">۰</div>
-                    <div class="stat-label">کل املاک</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13 12H3"/></svg></div>
-                    <div class="stat-number" id="totalViews">۰</div>
-                    <div class="stat-label">کل بازدیدها</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-                    <div class="stat-number" id="totalCustomers">۰</div>
-                    <div class="stat-label">کل پیام‌ها</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap warn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-                    <div class="stat-number" id="unreadMessages">۰</div>
-                    <div class="stat-label">پیام‌های جدید</div>
-                </div>
-            </div>
+            <section class="metrics-grid" aria-label="شاخص‌های کلیدی">
+                <article class="metric-card metric-primary">
+                    <div class="metric-card-top">
+                        <span class="metric-label">کل املاک</span>
+                        <span class="metric-icon">PR</span>
+                    </div>
+                    <div class="metric-number" id="totalProperties">۰</div>
+                    <p class="metric-context">موجودی فعال و قابل مدیریت</p>
+                    <span class="metric-pulse"></span>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-card-top">
+                        <span class="metric-label">کل بازدیدها</span>
+                        <span class="metric-icon">VW</span>
+                    </div>
+                    <div class="metric-number" id="totalViews">۰</div>
+                    <p class="metric-context">تعاملات ثبت‌شده با آگهی‌ها</p>
+                    <span class="metric-pulse cyan"></span>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-card-top">
+                        <span class="metric-label">کل پیام‌ها</span>
+                        <span class="metric-icon">CX</span>
+                    </div>
+                    <div class="metric-number" id="totalCustomers">۰</div>
+                    <p class="metric-context">سرنخ‌ها و فرصت‌های فروش</p>
+                    <span class="metric-pulse blue"></span>
+                </article>
+                <article class="metric-card urgent">
+                    <div class="metric-card-top">
+                        <span class="metric-label">پیام‌های جدید</span>
+                        <span class="metric-icon">NW</span>
+                    </div>
+                    <div class="metric-number" id="unreadMessages">۰</div>
+                    <p class="metric-context">نیازمند پیگیری سریع</p>
+                    <span class="metric-pulse violet"></span>
+                </article>
+            </section>
 
-            <div class="charts-row">
-                <div class="chart-card">
-                    <h3 class="chart-title">املاک بر اساس نوع</h3>
-                    <div id="propertyTypeChart"><div class="skeleton" style="height:200px;"></div></div>
-                </div>
-                <div class="chart-card">
-                    <h3 class="chart-title">وضعیت پیام‌ها</h3>
-                    <div id="messageStats"><div class="skeleton" style="height:200px;"></div></div>
-                </div>
-            </div>
+            <section class="command-grid">
+                <article class="glass-card chart-card analytics-card wide-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Portfolio Mix</span>
+                            <h3 class="chart-title">ترکیب پرتفوی املاک</h3>
+                        </div>
+                        <span class="live-badge">زنده</span>
+                    </div>
+                    <div id="propertyTypeChart" class="animated-chart"><div class="skeleton dashboard-skeleton"></div></div>
+                </article>
 
-            <div class="charts-row">
-                <div class="chart-card">
-                    <h3 class="chart-title">🔥 پربازدیدترین املاک</h3>
-                    <div id="topPropertiesList"><div class="skeleton" style="height:200px;"></div></div>
-                </div>
-                <div class="chart-card">
-                    <h3 class="chart-title">📉 کم‌بازدیدترین املاک</h3>
-                    <div id="lowPropertiesList"><div class="skeleton" style="height:200px;"></div></div>
-                </div>
-            </div>
+                <article class="glass-card chart-card analytics-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Message Flow</span>
+                            <h3 class="chart-title">وضعیت پیام‌ها</h3>
+                        </div>
+                    </div>
+                    <div id="messageStats"><div class="skeleton dashboard-skeleton"></div></div>
+                </article>
 
-            <div class="chart-card" style="margin-top:24px;">
-                <h3 class="chart-title">آخرین پیام‌ها</h3>
-                <div id="recentMessages"><div class="skeleton" style="height:120px;"></div></div>
-            </div>
+                <article class="glass-card quick-command-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Quick Actions</span>
+                            <h3 class="chart-title">مرکز اقدام سریع</h3>
+                        </div>
+                    </div>
+                    <div class="quick-action-list">
+                        <button type="button" onclick="navigateTo('add-property')"><span>01</span><strong>ثبت ملک لوکس</strong><small>شروع فرآیند سه‌مرحله‌ای</small></button>
+                        <button type="button" onclick="navigateTo('properties')"><span>02</span><strong>مدیریت موجودی</strong><small>جستجو، ویرایش و تحلیل</small></button>
+                        <button type="button" onclick="navigateTo('customers')"><span>03</span><strong>پیگیری مشتریان</strong><small>بررسی پیام‌ها و فرصت‌ها</small></button>
+                    </div>
+                </article>
+
+                <article class="glass-card market-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Top Performance</span>
+                            <h3 class="chart-title"><span class="chart-title-icon" aria-hidden="true">↗</span> پربازدیدترین املاک</h3>
+                        </div>
+                    </div>
+                    <div id="topPropertiesList"><div class="skeleton dashboard-skeleton"></div></div>
+                </article>
+
+                <article class="glass-card market-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Needs Attention</span>
+                            <h3 class="chart-title"><span class="chart-title-icon" aria-hidden="true">↘</span> کم‌بازدیدترین املاک</h3>
+                        </div>
+                    </div>
+                    <div id="lowPropertiesList"><div class="skeleton dashboard-skeleton"></div></div>
+                </article>
+
+                <article class="glass-card timeline-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Activity Timeline</span>
+                            <h3 class="chart-title">جریان فعالیت‌ها</h3>
+                        </div>
+                    </div>
+                    <ol class="activity-timeline" aria-label="فعالیت‌های پیشنهادی">
+                        <li><span></span><div><strong>به‌روزرسانی پرتفوی</strong><p>املاک کم‌بازدید را بازبینی و تصاویر شاخص را تقویت کنید.</p></div></li>
+                        <li><span></span><div><strong>پاسخ‌گویی سریع</strong><p>پیام‌های جدید بیشترین اثر را روی نرخ تبدیل دارند.</p></div></li>
+                        <li><span></span><div><strong>تحلیل تقاضا</strong><p>ترکیب نوع ملک‌ها را با تقاضای مشتریان مقایسه کنید.</p></div></li>
+                    </ol>
+                </article>
+            </section>
+
+            <section class="glass-card message-stream-card" aria-labelledby="latest-messages-heading">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">Client Signals</span>
+                        <h3 class="chart-title" id="latest-messages-heading">آخرین پیام‌ها</h3>
+                    </div>
+                    <button class="ghost-action compact" type="button" onclick="navigateTo('customers')">مشاهده همه</button>
+                </div>
+                <div id="recentMessages" class="message-stream"><div class="skeleton dashboard-skeleton"></div></div>
+            </section>
         </div>
 
         <!-- ========== PROPERTIES ========== -->
         <div class="page-content" id="page-properties">
-            <div class="page-header"><h1 class="page-title">املاک</h1></div>
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">املاک</h1>
+                    <p class="page-subtitle">مدیریت موجودی، قیمت‌گذاری و عملکرد آگهی‌ها</p>
+                </div>
+                <button class="btn-gold-solid" type="button" onclick="navigateTo('add-property')">افزودن ملک جدید</button>
+            </div>
             <div class="admin-table-wrapper">
                 <div class="admin-table-search"><input type="text" id="propertySearch" placeholder="جستجوی ملک..." oninput="filterPropertiesTable()"></div>
                 <div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>تصویر</th><th>عنوان</th><th>نوع</th><th>قیمت</th><th>بازدید</th><th>عملیات</th></tr></thead><tbody id="propertiesTableBody"><tr><td colspan="6"><div class="skeleton" style="height:40px;"></div></td></tr></tbody></table></div>
@@ -129,7 +233,7 @@
                 <div class="progress-step-line"></div>
                 <div class="progress-step" data-step="3"><div class="progress-step-number">۳</div><span>ویژگی‌ها</span></div>
             </div>
-            <div class="edit-mode-indicator" id="editModeIndicator">✏️ در حال ویرایش: <span id="editPropertyTitle"></span> <button class="btn-cancel-inline" onclick="cancelEdit()">لغو</button></div>
+            <div class="edit-mode-indicator" id="editModeIndicator">در حال ویرایش: <span id="editPropertyTitle"></span> <button class="btn-cancel-inline" onclick="cancelEdit()">لغو</button></div>
             <form id="propertyForm" class="contact-form" style="max-width:800px;" enctype="multipart/form-data">
                 <input type="hidden" id="editPropertyId" value=""><input type="hidden" id="selectedType" value="">
                 <div class="form-step active" id="step-1">
@@ -165,8 +269,11 @@
         <!-- ========== CUSTOMERS PAGE ========== -->
         <div class="page-content" id="page-customers">
             <div class="page-header">
-                <h1 class="page-title">مشتریان</h1>
-                <button class="btn-gold-solid" onclick="showAddCustomerForm()" style="margin-right:auto;">➕ افزودن مشتری</button>
+                <div>
+                    <h1 class="page-title">مشتریان</h1>
+                    <p class="page-subtitle">پیگیری سرنخ‌ها، پیام‌ها و فرصت‌های فروش</p>
+                </div>
+                <button class="btn-gold-solid" onclick="showAddCustomerForm()" style="margin-right:auto;">افزودن مشتری</button>
             </div>
             <div class="admin-table-wrapper">
                 <div class="admin-table-search"><input type="text" id="customerSearch" placeholder="جستجوی مشتری..." oninput="filterCustomersTable()"></div>
@@ -211,7 +318,12 @@
         
         <!-- ========== SETTINGS ========== -->
         <div class="page-content" id="page-settings">
-            <div class="page-header"><h1 class="page-title">تنظیمات</h1></div>
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">تنظیمات</h1>
+                    <p class="page-subtitle">کنترل ظاهر برند و تجربه عمومی وب‌سایت</p>
+                </div>
+            </div>
             <div class="contact-form" style="max-width:500px;"><h3 class="form-section-title">تصویر پس‌زمینه</h3><div class="image-upload-zone" onclick="document.getElementById('bgImage').click()"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><p>آپلود تصویر</p></div><input type="file" id="bgImage" accept="image/*" style="display:none;" onchange="previewBg(event)"><img id="bgPreview" class="image-preview"><button class="btn-gold-solid" onclick="uploadBackground()" style="width:100%;margin-top:16px;">آپلود</button><div id="settingsMessage" class="admin-message"></div></div>
         </div>
     </main>

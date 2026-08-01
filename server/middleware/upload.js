@@ -19,9 +19,11 @@ const fileFilter = (req, file, cb) => {
   const imageExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
   // ویدیوهای مجاز
   const videoExts = ['.mp4', '.mov', '.avi', '.webm'];
+  const imageMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  const videoMimes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm'];
   
-  const isImage = imageExts.includes(ext);
-  const isVideo = videoExts.includes(ext);
+  const isImage = imageExts.includes(ext) && imageMimes.includes(file.mimetype);
+  const isVideo = videoExts.includes(ext) && videoMimes.includes(file.mimetype);
 
   if (isImage || isVideo) {
     cb(null, true);

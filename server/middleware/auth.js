@@ -14,6 +14,7 @@ const protectAdmin = async (req, res, next) => {
         return res.status(401).json({ message: 'ادمین یافت نشد' });
       }
 
+      req.adminRole = req.admin.role || 'owner';
       next();
     } catch (error) {
       console.error('Admin auth error:', error.message);
@@ -24,4 +25,13 @@ const protectAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { protectAdmin };
+
+const requireOwner = (req, res, next) => {
+  const role = req.adminRole || req.admin?.role || 'owner';
+  if (role !== 'owner') {
+    return res.status(403).json({ message: 'این بخش فقط برای مالک سامانه قابل دسترسی است' });
+  }
+  next();
+};
+
+module.exports = { protectAdmin, requireOwner };

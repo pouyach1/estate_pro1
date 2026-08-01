@@ -1,4 +1,11 @@
 const Property = require('../models/Property');
+
+const canManageProperty = (req, property) => {
+  const role = req.adminRole || req.admin?.role || 'owner';
+  if (role === 'owner') return true;
+  if (!property.createdBy) return true;
+  return String(property.createdBy) === String(req.admin?._id);
+};
 const fs = require('fs');
 const path = require('path');
 
@@ -39,7 +46,7 @@ const getProperty = async (req, res) => {
 
 const createProperty = async (req, res) => {
   try {
-    const propertyData = { ...req.body };
+    const propertyData = { ...req.body, createdBy: req.admin?._id || null };
     
     // Handle single image
     if (req.file) {
@@ -67,6 +74,10 @@ const updateProperty = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (!property) return res.status(404).json({ message: 'ملک یافت نشد' });
+    if (!canManageProperty(req, property)) {
+      return res.status(403).json({ message: 'شما فقط مجاز به ویرایش املاک خود هستید' });
+    }
+
     const updateData = { ...req.body, updatedAt: Date.now() };
     if (req.file) {
       if (property.image) { const oldPath = path.join(__dirname, '..', property.image); if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath); }
@@ -86,6 +97,10 @@ const deleteProperty = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (!property) return res.status(404).json({ message: 'ملک یافت نشد' });
+    if (!canManageProperty(req, property)) {
+      return res.status(403).json({ message: 'شما فقط مجاز به حذف املاک خود هستید' });
+    }
+
     if (property.image) { const imgPath = path.join(__dirname, '..', property.image); if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath); }
     await Property.findByIdAndDelete(req.params.id);
     res.json({ message: 'حذف شد' });
@@ -99,6 +114,10 @@ const uploadPropertyImage = async (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'تصویر انتخاب کنید' });
     const property = await Property.findById(req.params.id);
     if (!property) return res.status(404).json({ message: 'ملک یافت نشد' });
+    if (!canManageProperty(req, property)) {
+      return res.status(403).json({ message: 'شما فقط مجاز به مدیریت رسانه املاک خود هستید' });
+    }
+
     property.image = `/uploads/${req.file.filename}`;
     property.updatedAt = Date.now();
     await property.save();
