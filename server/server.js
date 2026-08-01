@@ -9,19 +9,19 @@ const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
 if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI is not defined');
+  console.error('MONGODB_URI is not defined');
   process.exit(1);
 }
 
 if (!process.env.JWT_SECRET) {
-  console.error('❌ JWT_SECRET is not defined');
+  console.error('JWT_SECRET is not defined');
   process.exit(1);
 }
 
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
+  .then(() => console.log('MongoDB connected'))
   .catch(err => {
-    console.error('❌ MongoDB error:', err.message);
+    console.error('MongoDB error:', err.message);
     process.exit(1);
   });
 
@@ -41,9 +41,9 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/agents', require('./routes/agentRoutes'));
 
 app.get('/', (req, res) => {
-  res.json({ message: '🏛️ ASTORIA ELITE ESTATES API', version: '1.0.0' });
+  res.json({ message: 'ASTORIA ELITE ESTATES API', version: '1.0.0' });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

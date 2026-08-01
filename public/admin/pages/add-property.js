@@ -305,14 +305,14 @@ async function handleFormSubmit(e) {
     const data = await res.json();
     
     if (res.ok) {
-      toast(isEdit ? '✅ بروزرسانی شد' : '✅ افزوده شد', 'success');
+      toast(isEdit ? 'بروزرسانی شد' : 'افزوده شد', 'success');
       cancelEdit();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } else {
-      toast('❌ ' + (data.message || 'خطا'), 'error');
+      toast((data.message || 'خطا'), 'error');
     }
   } catch (err) {
-    toast('❌ خطا در اتصال به سرور', 'error');
+    toast('خطا در اتصال به سرور', 'error');
   }
   
   if (submitBtn) {

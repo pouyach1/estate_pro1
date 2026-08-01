@@ -17,7 +17,7 @@ async function loadCustomers() {
         <td>${c.phone || '-'}</td>
         <td>${c.source || '-'}</td>
         <td>${c.message?.substring(0, 40) || '-'}</td>
-        <td>${c.isRead ? '✅' : '<span class="unread-badge">جدید</span>'}</td>
+        <td>${c.isRead ? '<span class="status-badge status-read">خوانده شده</span>' : '<span class="unread-badge">جدید</span>'}</td>
         <td>
           <button class="btn-edit" onclick="editCustomer('${c._id}')">ویرایش</button>
           <button class="btn-delete" onclick="confirmDeleteCustomer('${c._id}')">حذف</button>

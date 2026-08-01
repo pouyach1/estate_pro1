@@ -68,7 +68,7 @@ const Astoria = {
     this.cacheDOM();this.initIcons();this.bindEvents();this.setActiveLink();
     this.loadProperties();this.loadSettings();this.initShareButtons();this.initFavoriteButtons();
     this.createRequestModal();
-    console.log('%c🏛️ ASTORIA %cPro فارسی','color:#c9a227;font-weight:bold;','color:#888;');
+    console.log('%cASTORIA %cPro فارسی','color:#c9a227;font-weight:bold;','color:#888;');
   },
   cacheDOM(){
     this.navbar=document.querySelector('.astoria-nav');this.mobileToggle=document.querySelector('.mobile-menu-toggle');
@@ -158,7 +158,7 @@ const Astoria = {
   // ===== REQUEST MODAL =====
   createRequestModal(){
     const modal=document.createElement('div');modal.className='request-modal-overlay';modal.id='requestModal';
-    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true">✕</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestMessage" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestMessage" class="admin-message" style="margin-top:12px"></div></div>`;
+    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true">×</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestMessage" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestMessage" class="admin-message" style="margin-top:12px"></div></div>`;
     document.body.appendChild(modal);
     modal.querySelector('[data-close-request-modal="true"]')?.addEventListener('click',()=>modal.classList.remove('active'));
     modal.querySelector('#requestForm')?.addEventListener('submit',e=>this.submitRequest(e));
@@ -170,7 +170,7 @@ const Astoria = {
   },
   submitRequest(e){
     e.preventDefault();const btn=e.target.querySelector('button');const orig=btn.textContent;btn.textContent='در حال ارسال...';btn.disabled=true;
-    fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('requestName').value,email:document.getElementById('requestPhone').value+'@request.astoria',phone:document.getElementById('requestPhone').value,message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestMessage').value}`})}).then(r=>r.json()).then(()=>{document.getElementById('requestMessage').className='admin-message success';document.getElementById('requestMessage').textContent='✅ درخواست ارسال شد';document.getElementById('requestForm').reset();setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');document.getElementById('requestMessage').textContent=''},2000)}).catch(()=>{document.getElementById('requestMessage').className='admin-message error';document.getElementById('requestMessage').textContent='❌ خطا'}).finally(()=>{btn.textContent=orig;btn.disabled=false});
+    fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('requestName').value,email:document.getElementById('requestPhone').value+'@request.astoria',phone:document.getElementById('requestPhone').value,message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestMessage').value}`})}).then(r=>r.json()).then(()=>{document.getElementById('requestMessage').className='admin-message success';document.getElementById('requestMessage').textContent='درخواست با موفقیت ارسال شد';document.getElementById('requestForm').reset();setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');document.getElementById('requestMessage').textContent=''},2000)}).catch(()=>{document.getElementById('requestMessage').className='admin-message error';document.getElementById('requestMessage').textContent='خطا رخ داد'}).finally(()=>{btn.textContent=orig;btn.disabled=false});
   }
 };
 

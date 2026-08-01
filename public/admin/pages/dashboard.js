@@ -2,9 +2,17 @@ async function loadDashboardStats() {
   try {
     const res = await fetch(`${API}/admin/dashboard`, { headers: headers() });
     
+    if (res.status === 403) {
+      ['propertyTypeChart','messageStats','topPropertiesList','lowPropertiesList','recentMessages'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<div class="empty-state"><h3>داشبورد تحلیلی فقط برای مالک فعال است</h3><p>برای مدیریت املاک از بخش املاک استفاده کنید.</p></div>';
+      });
+      return;
+    }
+
     if (res.status === 401) {
       localStorage.clear();
-      window.location.href = 'index.html';
+      window.location.href = '/';
       return;
     }
     
@@ -48,6 +56,21 @@ function renderRecentMessages(customers) {
   const c = document.getElementById('recentMessages');
   if (!c) return;
   c.innerHTML = customers.slice(0,5).map(cu => `<div class="recent-msg-item"><div class="recent-msg-avatar">${cu.name?.charAt(0)||'؟'}</div><div class="recent-msg-content"><div class="recent-msg-header"><strong>${cu.name}</strong><span class="recent-msg-date">${new Date(cu.createdAt).toLocaleDateString('fa-IR')}</span></div><p class="recent-msg-text">${cu.message?.substring(0,80)}...</p></div>${!cu.isRead?'<span class="unread-badge">جدید</span>':''}</div>`).join('');
+  initMessageStreamAutoScroll(c);
+}
+
+function initMessageStreamAutoScroll(container) {
+  if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window._astoriaMessageScrollTimer) window.clearInterval(window._astoriaMessageScrollTimer);
+  let direction = 1;
+  window._astoriaMessageScrollTimer = window.setInterval(() => {
+    if (container.matches(':hover, :focus-within')) return;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    if (maxScroll <= 0) return;
+    if (container.scrollLeft >= maxScroll - 4) direction = -1;
+    if (container.scrollLeft <= 4) direction = 1;
+    container.scrollBy({ left: 1.2 * direction, behavior: 'smooth' });
+  }, 90);
 }
 
 function renderTopProperties(props) {
