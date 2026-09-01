@@ -2,15 +2,15 @@
 // ASTORIA ADMIN — Shared Module
 // ==============================================
 
-const API = 'http://localhost:5000/api';
+const API = '/api';
 const token = localStorage.getItem('astoria_token');
 const currentAdmin = JSON.parse(localStorage.getItem('astoria_admin') || 'null');
 const currentAdminRole = currentAdmin?.role || 'owner';
 
-// Only redirect if we're NOT on the login page
-const currentPage = window.location.pathname.split('/').pop();
-if (!token && currentPage !== 'index.html' && currentPage !== '') {
-  window.location.href = '/';
+const adminPath = window.location.pathname;
+const isAdminLoginPage = /\/admin\/?$/.test(adminPath) || adminPath.endsWith('/admin/index.html');
+if (!token && !isAdminLoginPage) {
+  window.location.href = '/admin/';
 }
 
 function headers(custom = {}) {
@@ -19,7 +19,7 @@ function headers(custom = {}) {
 
 function logout() {
   localStorage.clear();
-  window.location.href = '/';
+  window.location.href = '/admin/';
 }
 
 function toggleSidebar() {

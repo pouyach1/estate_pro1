@@ -2,7 +2,7 @@
    PROPERTY DETAIL PAGE — Logic
    ============================================== */
 
-const API = 'http://localhost:5000/api';
+const API = '/api';
 const urlParams = new URLSearchParams(window.location.search);
 const propertyId = urlParams.get('id');
 

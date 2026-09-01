@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "npm run start --prefix server",
+    "server:dev": "npm run dev --prefix server",
+    "seed": "npm run seed --prefix server"
   },
   "devDependencies": {
     "sass": "^1.102.0",
