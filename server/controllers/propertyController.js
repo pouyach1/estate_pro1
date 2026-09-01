@@ -49,19 +49,49 @@ const getProperty = async (req, res) => {
   }
 };
 
+const getAdminProperties = async (req, res) => {
+  try {
+    const role = req.adminRole || req.admin?.role || 'owner';
+    const query = role === 'owner' ? {} : { createdBy: req.admin?._id };
+    const properties = await Property.find(query).sort({ createdAt: -1 });
+    res.json({ count: properties.length, properties });
+  } catch (error) {
+    res.status(500).json({ message: 'خطای سرور', error: error.message });
+  }
+};
+
+const getAdminProperty = async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) return res.status(404).json({ message: 'ملک یافت نشد' });
+    const role = req.adminRole || req.admin?.role || 'owner';
+    if (role !== 'owner' && property.createdBy && String(property.createdBy) !== String(req.admin?._id)) {
+      return res.status(403).json({ message: 'شما مجاز به مشاهده این ملک نیستید' });
+    }
+    res.json(property);
+  } catch (error) {
+    res.status(500).json({ message: 'خطای سرور', error: error.message });
+  }
+};
+
 const createProperty = async (req, res) => {
   try {
     const propertyData = { ...req.body, createdBy: req.admin?._id || null };
-    
-    // Handle single image
+
     if (req.file) {
       propertyData.image = `/uploads/${req.file.filename}`;
     }
-    
-    // Handle multiple images
-    if (req.files && req.files.length > 0) {
-      propertyData.images = req.files.map(f => `/uploads/${f.filename}`);
-      if (!propertyData.image) propertyData.image = propertyData.images[0];
+
+    if (req.files) {
+      const singleImage = req.files.image?.[0];
+      const multiImages = req.files.images || [];
+      if (singleImage) {
+        propertyData.image = `/uploads/${singleImage.filename}`;
+      }
+      if (multiImages.length) {
+        propertyData.images = multiImages.map((f) => `/uploads/${f.filename}`);
+        if (!propertyData.image) propertyData.image = propertyData.images[0];
+      }
     }
     
     if (req.body.features && typeof req.body.features === 'string') {
@@ -132,4 +162,4 @@ const uploadPropertyImage = async (req, res) => {
   }
 };
 
-module.exports = { getProperties, getProperty, createProperty, updateProperty, deleteProperty, uploadPropertyImage };
+module.exports = { getProperties, getProperty, getAdminProperties, getAdminProperty, createProperty, updateProperty, deleteProperty, uploadPropertyImage };

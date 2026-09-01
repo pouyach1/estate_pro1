@@ -218,23 +218,21 @@ function collectFeatures() {
 // ===== EDIT PROPERTY =====
 async function editProperty(id) {
   try {
-    const res = await fetch(`${API}/properties/${id}`);
+    const res = await fetch(`${API}/admin/properties/${id}`, { headers: headers() });
+    if (!res.ok) throw new Error('failed');
     const p = await res.json();
-    
+
     navigateTo('add-property');
-    
-    // Set type
+
     document.getElementById('selectedType').value = p.type;
-    document.querySelectorAll('.property-type-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.property-type-card').forEach((c) => c.classList.remove('selected'));
     const card = document.querySelector(`.property-type-card[data-type="${p.type}"]`);
     if (card) card.classList.add('selected');
-    
-    // Set edit mode
+
     document.getElementById('editPropertyId').value = p._id;
     document.getElementById('editPropertyTitle').textContent = p.title;
     document.getElementById('editModeIndicator').classList.add('active');
-    
-    // Fill general fields
+
     document.getElementById('propTitle').value = p.title || '';
     document.getElementById('propPrice').value = p.price || '';
     document.getElementById('propArea').value = p.area || 0;
@@ -244,20 +242,23 @@ async function editProperty(id) {
     document.getElementById('propLocation').value = p.location || '';
     document.getElementById('propDesc').value = p.description || '';
     document.getElementById('propListingType').value = p.listingType || 'آگهی ویژه';
-    
-    // Jump to step 3 for features
-    showStep(3);
-    
-    // Fill features after render
-    const f = p.features || {};
+
+    const preview = document.getElementById('propImagePreview');
+    if (preview && p.image) {
+      preview.src = p.image;
+      preview.style.display = 'block';
+    }
+
+    showStep(2);
+
     setTimeout(() => {
+      const f = p.features || {};
       if (f.common) Object.entries(f.common).forEach(([k, v]) => setFeat('common', k, v));
       if (f.specific) Object.entries(f.specific).forEach(([k, v]) => setFeat('specific', k, v));
       if (f.luxury) Object.entries(f.luxury).forEach(([k, v]) => setFeat('luxury', k, v));
-    }, 200);
-    
+    }, 250);
   } catch (e) {
-    toast('خطا در بارگذاری ملک', 'error');
+    toast('بارگذاری ملک انجام نشد', 'error');
   }
 }
 
@@ -305,14 +306,16 @@ async function handleFormSubmit(e) {
     const data = await res.json();
     
     if (res.ok) {
-      toast(isEdit ? 'بروزرسانی شد' : 'افزوده شد', 'success');
-      cancelEdit();
+      toast(isEdit ? 'اطلاعات ملک به‌روزرسانی شد' : 'ملک با موفقیت ثبت شد', 'success');
+      resetForm();
+      navigateTo('properties');
+      if (typeof loadProperties === 'function') loadProperties();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } else {
-      toast((data.message || 'خطا'), 'error');
+      toast(data.message || 'ذخیره اطلاعات انجام نشد', 'error');
     }
   } catch (err) {
-    toast('خطا در اتصال به سرور', 'error');
+    toast('اتصال به سرور برقرار نشد', 'error');
   }
   
   if (submitBtn) {

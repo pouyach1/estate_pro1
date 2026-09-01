@@ -3,6 +3,8 @@ const router = express.Router();
 const {
   getProperties,
   getProperty,
+  getAdminProperties,
+  getAdminProperty,
   createProperty,
   updateProperty,
   deleteProperty,
@@ -16,7 +18,10 @@ router.get('/', getProperties);
 router.get('/:id', getProperty);
 
 // Protected routes — admin only
-router.post('/', protectAdmin, upload.array('images', 10), createProperty);
+router.post('/', protectAdmin, upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'images', maxCount: 10 }
+]), createProperty);
 router.put('/:id', protectAdmin, upload.single('image'), updateProperty);
 router.delete('/:id', protectAdmin, deleteProperty);
 router.post('/:id/image', protectAdmin, upload.single('image'), uploadPropertyImage);

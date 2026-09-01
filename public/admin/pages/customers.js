@@ -1,42 +1,65 @@
 let currentCustomerId = null;
 
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
 async function loadCustomers() {
   const tbody = document.getElementById('customersTableBody');
   if (!tbody) return;
+
+  tbody.innerHTML = '<tr><td colspan="7"><div class="skeleton" style="height:48px;"></div></td></tr>';
+
   try {
     const res = await fetch(`${API}/customers`, { headers: headers() });
-    const data = await res.json();
-    if (!data.customers?.length) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><h3>هیچ مشتری یافت نشد</h3></div></td></tr>';
+
+    if (res.status === 401) {
+      localStorage.clear();
+      window.location.href = '/admin/';
       return;
     }
-    tbody.innerHTML = data.customers.map(c => `
-      <tr>
-        <td>${c.name}</td>
-        <td>${c.email}</td>
-        <td>${c.phone || '-'}</td>
-        <td>${c.source || '-'}</td>
-        <td>${c.message?.substring(0, 40) || '-'}</td>
+
+    if (!res.ok) throw new Error('load failed');
+
+    const data = await res.json();
+    const customers = (data.customers || []).sort((a, b) => {
+      if (a.isRead === b.isRead) return new Date(b.createdAt) - new Date(a.createdAt);
+      return a.isRead ? 1 : -1;
+    });
+
+    if (!customers.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><h3>هنوز پیامی دریافت نشده است</h3><p>پیام‌های فرم تماس و درخواست بازدید اینجا نمایش داده می‌شوند.</p></div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = customers.map((c) => `
+      <tr class="${c.isRead ? '' : 'lead-row-unread'}" onclick="editCustomer('${c._id}')" style="cursor:pointer;">
+        <td><strong>${escapeHtml(c.name)}</strong></td>
+        <td>${escapeHtml(c.email || '-')}</td>
+        <td>${c.phone ? `<a href="tel:${escapeHtml(c.phone)}" onclick="event.stopPropagation()">${escapeHtml(c.phone)}</a>` : '-'}</td>
+        <td>${escapeHtml(c.source || '-')}</td>
+        <td>${escapeHtml((c.message || '-').substring(0, 50))}${(c.message || '').length > 50 ? '…' : ''}</td>
         <td>${c.isRead ? '<span class="status-badge status-read">خوانده شده</span>' : '<span class="unread-badge">جدید</span>'}</td>
-        <td>
-          <button class="btn-edit" onclick="editCustomer('${c._id}')">ویرایش</button>
+        <td class="table-actions" onclick="event.stopPropagation()">
+          <button class="btn-edit" onclick="editCustomer('${c._id}')">مشاهده</button>
           <button class="btn-delete" onclick="confirmDeleteCustomer('${c._id}')">حذف</button>
         </td>
       </tr>
     `).join('');
   } catch (e) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><h3>خطا</h3></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><h3>بارگذاری پیام‌ها انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-gold-outline" onclick="loadCustomers()">تلاش مجدد</button></div></td></tr>';
   }
 }
 
 function filterCustomersTable() {
   const q = document.getElementById('customerSearch')?.value.toLowerCase() || '';
-  document.querySelectorAll('#customersTableBody tr').forEach(tr => {
+  document.querySelectorAll('#customersTableBody tr').forEach((tr) => {
     tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
 }
 
-// ===== ADD / EDIT CUSTOMER =====
 function showAddCustomerForm() {
   currentCustomerId = null;
   document.getElementById('customerFormTitle').textContent = 'افزودن مشتری جدید';
@@ -48,9 +71,19 @@ function showAddCustomerForm() {
 async function editCustomer(id) {
   try {
     const res = await fetch(`${API}/customers/${id}`, { headers: headers() });
+    if (!res.ok) throw new Error('failed');
     const c = await res.json();
+
+    if (!c.isRead) {
+      await fetch(`${API}/customers/${id}`, {
+        method: 'PUT',
+        headers: headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ ...c, isRead: true }),
+      });
+    }
+
     currentCustomerId = c._id;
-    document.getElementById('customerFormTitle').textContent = 'ویرایش مشتری';
+    document.getElementById('customerFormTitle').textContent = c.isRead ? 'جزئیات پیام' : 'پیام جدید';
     document.getElementById('customerFormId').value = c._id;
     document.getElementById('custName').value = c.name || '';
     document.getElementById('custEmail').value = c.email || '';
@@ -58,9 +91,14 @@ async function editCustomer(id) {
     document.getElementById('custSource').value = c.source || '';
     document.getElementById('custMessage').value = c.message || '';
     document.getElementById('custNotes').value = c.notes || '';
-    document.getElementById('custIsRead').checked = c.isRead || false;
+    document.getElementById('custIsRead').checked = true;
     document.getElementById('customerModal').classList.add('active');
-  } catch (e) { toast('خطا', 'error'); }
+
+    loadCustomers();
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+  } catch (e) {
+    toast('بارگذاری پیام انجام نشد', 'error');
+  }
 }
 
 function closeCustomerModal() {
@@ -82,6 +120,7 @@ document.getElementById('customerForm')?.addEventListener('submit', async functi
   };
 
   const btn = this.querySelector('button[type="submit"]');
+  const original = btn.textContent;
   btn.textContent = 'در حال ذخیره...';
   btn.disabled = true;
 
@@ -91,19 +130,21 @@ document.getElementById('customerForm')?.addEventListener('submit', async functi
     const res = await fetch(url, { method, headers: headers({ 'Content-Type': 'application/json' }), body: JSON.stringify(body) });
     const data = await res.json();
     if (res.ok) {
-      toast(isEdit ? 'بروزرسانی شد' : 'افزوده شد', 'success');
+      toast(isEdit ? 'پیام ذخیره شد' : 'مشتری افزوده شد', 'success');
       closeCustomerModal();
       loadCustomers();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } else {
-      toast(data.message || 'خطا', 'error');
+      toast(data.message || 'ذخیره اطلاعات انجام نشد', 'error');
     }
-  } catch (er) { toast('خطا', 'error'); }
-  btn.textContent = 'ذخیره';
+  } catch (er) {
+    toast('اتصال به سرور برقرار نشد', 'error');
+  }
+
+  btn.textContent = original;
   btn.disabled = false;
 });
 
-// ===== DELETE =====
 function confirmDeleteCustomer(id) {
   window._deleteCustomerId = id;
   document.getElementById('deleteCustomerModal').classList.add('active');
@@ -117,9 +158,14 @@ function closeDeleteCustomerModal() {
 document.getElementById('confirmDeleteCustomerBtn')?.addEventListener('click', async () => {
   const id = window._deleteCustomerId;
   if (!id) return;
-  await fetch(`${API}/customers/${id}`, { method: 'DELETE', headers: headers() });
-  closeDeleteCustomerModal();
-  loadCustomers();
-  if (typeof loadDashboardStats === 'function') loadDashboardStats();
-  toast('حذف شد', 'info');
+  try {
+    const res = await fetch(`${API}/customers/${id}`, { method: 'DELETE', headers: headers() });
+    if (!res.ok) throw new Error('delete failed');
+    closeDeleteCustomerModal();
+    loadCustomers();
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+    toast('پیام حذف شد', 'success');
+  } catch (e) {
+    toast('حذف انجام نشد', 'error');
+  }
 });
