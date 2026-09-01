@@ -12,7 +12,7 @@ async function loadDashboardStats() {
 
     if (res.status === 401) {
       localStorage.clear();
-      window.location.href = '/';
+      window.location.href = '/admin/';
       return;
     }
     

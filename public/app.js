@@ -5,7 +5,7 @@
 
 import { createIcons, Menu, Search, Bed, Bath, Maximize2, Crown, UserCheck, TrendingUp, ShieldCheck, MapPin, Phone, Mail, ArrowUp, Heart, X, ChevronDown, Eye, Calendar, Share2, Car, Warehouse, Thermometer, Wind, Waves, Camera, Dumbbell, Building, Palette, Users, Gamepad, Film, Video, ArrowUpDown } from 'lucide';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = '/api';
 
 // ===== FEATURES =====
 const FEATURE_CATEGORIES = { common: 'ویژگی‌های عمومی', specific: 'ویژگی‌های اختصاصی', luxury: 'ویژگی‌های لوکس' };
