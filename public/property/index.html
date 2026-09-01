@@ -38,8 +38,10 @@
             <span class="property-status-badge" id="listingType">آگهی ویژه</span>
             <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
             <p class="property-hero-location" id="propertyLocation"></p>
+            <p class="property-location-meta" id="propertyLocationMeta"></p>
             <div class="property-hero-price" id="propertyPrice"></div>
         </div>
+        <div class="property-hero-counter" id="imageCounter" aria-live="polite"></div>
         <div class="property-hero-nav">
             <button class="hero-nav-btn" id="prevImage" aria-label="تصویر قبلی">
                 <i data-lucide="chevron-right"></i>
@@ -51,8 +53,17 @@
         <div class="property-hero-dots" id="imageDots"></div>
     </section>
 
+    <!-- ========== ERROR STATE ========== -->
+    <section class="property-error-state" id="propertyErrorState" hidden>
+        <div class="property-error-card">
+            <h1 class="property-error-title" id="propertyErrorTitle">ملک موردنظر یافت نشد</h1>
+            <p class="property-error-message" id="propertyErrorMessage">ممکن است این ملک حذف شده یا آدرس آن اشتباه باشد.</p>
+            <a href="/#residences" class="btn-gold-solid">بازگشت به املاک</a>
+        </div>
+    </section>
+
     <!-- ========== MAIN CONTENT ========== -->
-    <main class="property-main">
+    <main class="property-main" id="propertyMain" hidden>
         <div class="container">
             <div class="property-layout">
                 
@@ -93,14 +104,9 @@
 
                     <!-- Features -->
                     <div class="property-section">
-                        <h2 class="property-section-title">امکانات</h2>
-                        <div class="property-features-grid" id="propertyFeatures">
-                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> استخر</div>
-                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> پارکینگ</div>
-                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> آسانسور</div>
-                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> لابی</div>
-                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> نگهبانی</div>
-                            <div class="feature-tag"><i data-lucide="check" class="feature-check"></i> دوربین مداربسته</div>
+                        <h2 class="property-section-title">امکانات ملک</h2>
+                        <div class="property-features-wrap" id="propertyFeatures">
+                            <p class="property-features-loading">در حال بارگذاری امکانات...</p>
                         </div>
                     </div>
 
@@ -199,13 +205,20 @@
     </button>
 
     <script type="module">
-        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X } from 'lucide';
-        
-        createIcons({
-            icons: { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X },
-            attrs: { 'stroke-width': 1.5, width: 20, height: 20 }
-        });
+        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown } from 'lucide';
+
+        const iconSet = { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown };
+
+        window.refreshLucideIcons = () => {
+            createIcons({
+                icons: iconSet,
+                attrs: { 'stroke-width': 1.5, width: 20, height: 20 }
+            });
+        };
+
+        window.refreshLucideIcons();
     </script>
+    <script src="/features/index.js"></script>
     <script src="/property/property.js"></script>
 </body>
 </html>
