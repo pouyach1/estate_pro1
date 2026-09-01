@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { login, register, getProfile, updateProfile, getDashboardStats } = require('../controllers/adminController');
+const { getAdminProperties, getAdminProperty } = require('../controllers/propertyController');
 const { protectAdmin, requireOwner } = require('../middleware/auth');
 
 // Public
@@ -11,5 +12,7 @@ router.post('/register', protectAdmin, requireOwner, register);
 router.get('/profile', protectAdmin, getProfile);
 router.put('/profile', protectAdmin, updateProfile);
 router.get('/dashboard', protectAdmin, requireOwner, getDashboardStats);
+router.get('/properties', protectAdmin, getAdminProperties);
+router.get('/properties/:id', protectAdmin, getAdminProperty);
 
 module.exports = router;

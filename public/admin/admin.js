@@ -46,7 +46,10 @@ function navigateTo(page) {
   if (page === 'dashboard' && typeof loadDashboardStats === 'function') loadDashboardStats();
   if (page === 'properties' && typeof loadProperties === 'function') loadProperties();
   if (page === 'customers' && typeof loadCustomers === 'function') loadCustomers();
-  if (page === 'add-property' && typeof resetForm === 'function') resetForm();
+  if (page === 'settings') {
+    if (typeof loadSettingsPreview === 'function') loadSettingsPreview();
+  }
+  if (page === 'add-property' && typeof resetForm === 'function' && !document.getElementById('editPropertyId')?.value) resetForm();
 }
 
 function toast(msg, type = 'info') {
@@ -108,19 +111,30 @@ function closeModal() {
 
 async function uploadBackground() {
   const file = document.getElementById('bgImage').files[0];
-  if (!file) return toast('تصویر انتخاب کنید', 'error');
+  if (!file) return toast('لطفاً یک تصویر انتخاب کنید', 'error');
   const fd = new FormData();
   fd.append('image', file);
+  const btn = document.querySelector('#page-settings .btn-gold-solid');
+  const original = btn?.textContent;
+  if (btn) { btn.textContent = 'در حال آپلود...'; btn.disabled = true; }
   try {
     const res = await fetch(`${API}/settings/background`, { method: 'POST', headers: headers({}), body: fd });
+    const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      toast('آپلود با موفقیت انجام شد', 'success');
+      toast('تنظیمات با موفقیت ذخیره شد', 'success');
+      if (data.heroBackground || data.image || data.value) {
+        const img = document.getElementById('bgPreview');
+        if (img) { img.src = data.heroBackground || data.image || data.value; img.style.display = 'block'; }
+      } else if (typeof loadSettingsPreview === 'function') {
+        loadSettingsPreview();
+      }
     } else {
-      toast('خطا رخ داد', 'error');
+      toast(data.message || 'آپلود انجام نشد', 'error');
     }
   } catch (e) {
-    toast('خطا رخ داد', 'error');
+    toast('اتصال به سرور برقرار نشد', 'error');
   }
+  if (btn) { btn.textContent = original || 'آپلود'; btn.disabled = false; }
 }
 
 // Drag & Drop
@@ -145,12 +159,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
     const id = window._deleteTargetId;
     if (!id) return;
-    const res = await fetch(`${API}/properties/${id}`, { method: 'DELETE', headers: headers() });
-    if (res.ok) {
-      closeModal();
-      if (typeof loadProperties === 'function') loadProperties();
-      if (typeof loadDashboardStats === 'function') loadDashboardStats();
-      toast('حذف شد', 'info');
+    try {
+      const res = await fetch(`${API}/properties/${id}`, { method: 'DELETE', headers: headers() });
+      if (res.ok) {
+        closeModal();
+        if (typeof loadProperties === 'function') loadProperties();
+        if (typeof loadDashboardStats === 'function') loadDashboardStats();
+        toast('ملک حذف شد', 'success');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast(data.message || 'حذف انجام نشد', 'error');
+      }
+    } catch (e) {
+      toast('اتصال به سرور برقرار نشد', 'error');
     }
   });
 });
