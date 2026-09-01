@@ -114,6 +114,7 @@ async function loadProperty() {
     setPageMode('content');
     renderProperty();
     loadSimilarProperties();
+    initHeroSwipe();
   } catch (error) {
     console.error('Error loading property:', error);
     showErrorState('بارگذاری اطلاعات ملک با مشکل مواجه شد.');
@@ -157,7 +158,73 @@ function renderProperty() {
   renderGallery();
   renderDots();
   renderFeatures(p);
+  updateMobileCta();
   refreshIcons();
+}
+
+function updateMobileCta() {
+  const bar = document.getElementById('propertyMobileCta');
+  const priceEl = document.getElementById('mobileCtaPrice');
+  if (!bar || !priceEl || !propertyData) return;
+  priceEl.textContent = formatPriceDisplay(propertyData.price);
+  bar.classList.add('visible');
+  bar.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('has-mobile-cta');
+}
+
+function initHeroSwipe() {
+  const hero = document.getElementById('propertyHero');
+  if (!hero || propertyImages.length <= 1) return;
+
+  let startX = 0;
+  let startY = 0;
+
+  hero.addEventListener('touchstart', (e) => {
+    startX = e.changedTouches[0].screenX;
+    startY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  hero.addEventListener('touchend', (e) => {
+    const diffX = e.changedTouches[0].screenX - startX;
+    const diffY = e.changedTouches[0].screenY - startY;
+    if (Math.abs(diffX) < 50 || Math.abs(diffX) < Math.abs(diffY)) return;
+    if (diffX > 0) updateHeroImage(currentImageIndex - 1);
+    else updateHeroImage(currentImageIndex + 1);
+  }, { passive: true });
+}
+
+function setModalOpen(modal, open) {
+  if (!modal) return;
+  modal.classList.toggle('active', open);
+  document.body.classList.toggle('no-scroll', open);
+}
+
+function initMobileNav() {
+  const toggle = document.querySelector('.mobile-menu-toggle');
+  const closeBtn = document.querySelector('.mobile-menu-close');
+  const navLinks = document.querySelector('.nav-links');
+  if (!toggle || !navLinks) return;
+
+  const setOpen = (open) => {
+    navLinks.classList.toggle('active', open);
+    toggle.setAttribute('aria-expanded', open);
+    closeBtn?.toggleAttribute('hidden', !open);
+    document.body.classList.toggle('no-scroll', open);
+    const icon = toggle.querySelector('[data-lucide]');
+    if (icon) {
+      icon.setAttribute('data-lucide', open ? 'x' : 'menu');
+      refreshIcons();
+    }
+  };
+
+  toggle.addEventListener('click', () => setOpen(!navLinks.classList.contains('active')));
+  closeBtn?.addEventListener('click', () => setOpen(false));
+  navLinks.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
 }
 
 function updateHeroImage(index) {
@@ -327,16 +394,20 @@ document.getElementById('btnFavorite')?.addEventListener('click', function () {
 });
 
 document.getElementById('btnRequestTour')?.addEventListener('click', () => {
-  document.getElementById('tourModal')?.classList.add('active');
+  setModalOpen(document.getElementById('tourModal'), true);
+});
+
+document.getElementById('mobileCtaTour')?.addEventListener('click', () => {
+  setModalOpen(document.getElementById('tourModal'), true);
 });
 
 document.getElementById('closeTourModal')?.addEventListener('click', () => {
-  document.getElementById('tourModal')?.classList.remove('active');
+  setModalOpen(document.getElementById('tourModal'), false);
 });
 
 document.getElementById('tourModal')?.addEventListener('click', (e) => {
   if (e.target === e.currentTarget) {
-    document.getElementById('tourModal').classList.remove('active');
+    setModalOpen(document.getElementById('tourModal'), false);
   }
 });
 
@@ -377,7 +448,7 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
     document.getElementById('tourForm').reset();
 
     setTimeout(() => {
-      document.getElementById('tourModal').classList.remove('active');
+      setModalOpen(document.getElementById('tourModal'), false);
       messageEl.textContent = '';
     }, 2000);
   } catch (error) {
@@ -458,3 +529,4 @@ window.addEventListener('scroll', () => {
 });
 
 loadProperty();
+initMobileNav();
