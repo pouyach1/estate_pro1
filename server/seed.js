@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Admin = require('./models/Admin');
 const Property = require('./models/Property');
 const Customer = require('./models/Customer');
+const Agent = require('./models/Agent');
 const Settings = require('./models/Settings');
 const { getDefaultFeatures } = require('./features');
 
@@ -319,6 +320,36 @@ const DEMO_CUSTOMERS = [
   },
 ];
 
+const DEMO_AGENTS = [
+  {
+    name: 'امیررضا محمدی',
+    title: 'مشاور ارشد املاک لوکس',
+    bio: 'بیش از ۱۲ سال تجربه در معاملات املاک لوکس شمال تهران و لواسان. تخصص در ویلا و پنت‌هاوس.',
+    phone: '09121234567',
+    email: 'amir.mohammadi@astoriaelite.com',
+    photo: '/uploads/1785418626782-243569580.jpg',
+    isActive: true,
+  },
+  {
+    name: 'سارا کریمی',
+    title: 'مشاور املاک تجاری و مسکونی',
+    bio: 'متخصص آپارتمان‌های لوکس و دفاتر اداری در مناطق الهیه، فرمانیه و آجودانیه.',
+    phone: '09129876543',
+    email: 'sara.karimi@astoriaelite.com',
+    photo: '/uploads/1785426345823-409447736.jpg',
+    isActive: true,
+  },
+  {
+    name: 'کاوه نوری',
+    title: 'مشاور سرمایه‌گذاری املاک',
+    bio: 'مشاوره تخصصی برای خریداران سرمایه‌گذار در زمین، باغ‌ویلا و پروژه‌های لوکس ساحلی.',
+    phone: '02144556677',
+    email: 'kaveh.nouri@astoriaelite.com',
+    photo: '/uploads/1785417608318-745866872.jpg',
+    isActive: true,
+  },
+];
+
 async function seedDemo() {
   try {
     await mongoose.connect(MONGODB_URI);
@@ -328,6 +359,7 @@ async function seedDemo() {
       Admin.deleteMany({}),
       Property.deleteMany({}),
       Customer.deleteMany({}),
+      Agent.deleteMany({}),
       Settings.deleteMany({}),
     ]);
     console.log('🧹 Demo collections cleared');
@@ -360,6 +392,8 @@ async function seedDemo() {
       }))
     );
 
+    const agents = await Agent.insertMany(DEMO_AGENTS);
+
     await Settings.create({
       key: 'heroBackground',
       value: UPLOAD_IMAGES[4],
@@ -368,6 +402,7 @@ async function seedDemo() {
     console.log('\n🎉 Demo seed completed successfully\n');
     console.log(`   Properties: ${properties.length}`);
     console.log(`   Customers:  ${customers.length}`);
+    console.log(`   Agents:     ${agents.length}`);
     console.log(`   Admin:      ${DEMO_ADMIN.username}`);
     console.log(`   Password:   ${DEMO_ADMIN.password}`);
     console.log(`   Hero image: ${UPLOAD_IMAGES[4]}\n`);

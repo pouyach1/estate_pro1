@@ -6,6 +6,8 @@
 import { createIcons, Menu, Search, Bed, Bath, Maximize2, Crown, UserCheck, TrendingUp, ShieldCheck, MapPin, Phone, Mail, ArrowUp, Heart, X, ChevronDown, Eye, Calendar, Share2, Car, Warehouse, Thermometer, Wind, Waves, Camera, Dumbbell, Building, Palette, Users, Gamepad, Film, Video, ArrowUpDown } from 'lucide';
 
 const API_BASE = '/api';
+const PROPERTY_FILTER_ALL = 'همه';
+const AGENT_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121822'/%3E%3Ccircle cx='50' cy='36' r='18' fill='%23c9a227'/%3E%3Cpath d='M20 88c4-18 18-28 30-28s26 10 30 28' fill='%23c9a227'/%3E%3C/svg%3E";
 
 // ===== FEATURES =====
 const FEATURE_CATEGORIES = { common: 'ویژگی‌های عمومی', specific: 'ویژگی‌های اختصاصی', luxury: 'ویژگی‌های لوکس' };
@@ -60,13 +62,16 @@ function escapeHTML(str) {
 }
 
 // ===== CONFIG =====
-const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown}, iconDefaults:{'stroke-width':1.5,width:20,height:20}, storageKey:'astoria_favorites', scrollThreshold:60, backToTopThreshold:500, revealOptions:{threshold:0.15,rootMargin:'0px 0px -40px 0px'} };
+const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown}, iconDefaults:{'stroke-width':1.5,width:20,height:20}, storageKey:'astoria_favorites', scrollThreshold:60, backToTopThreshold:500, revealOptions:{threshold:0.15,rootMargin:'0px 0px -40px 0px'}, navScrollOffset:110 };
 
 // ===== ASTORIA APP =====
 const Astoria = {
   init(){
+    this.allProperties=[];
+    this.currentFilter=PROPERTY_FILTER_ALL;
     this.cacheDOM();this.initIcons();this.bindEvents();this.setActiveLink();
-    this.loadProperties();this.loadSettings();this.initShareButtons();this.initFavoriteButtons();
+    this.initSearchDropdown();
+    this.loadProperties();this.loadAgents();this.loadSettings();
     this.createRequestModal();
     console.log('%cASTORIA %cPro فارسی','color:#c9a227;font-weight:bold;','color:#888;');
   },
@@ -76,32 +81,113 @@ const Astoria = {
     this.backToTop=document.getElementById('back-to-top');this.notification=document.getElementById('notification');
     this.sections=document.querySelectorAll('section[id]');this.filterBtns=document.querySelectorAll('.filter-btn');
     this.propertiesContainer=document.getElementById('propertiesContainer');this.searchBtn=document.querySelector('.btn-search-gold');
+    this.searchTypeField=document.getElementById('searchTypeField');this.searchTypeValue=document.getElementById('searchTypeValue');
+    this.searchTypeDropdown=document.getElementById('searchTypeDropdown');this.propertiesResultsMeta=document.getElementById('propertiesResultsMeta');
+    this.agentsContainer=document.getElementById('agentsContainer');
     this.contactForm=document.querySelector('.contact-form');this.bookTourBtn=document.querySelector('.btn-gold-outline');
+    this.ctaBookBtn=document.querySelector('.cta-banner .btn-gold-solid');
     this.revealElements=document.querySelectorAll('.reveal');this.favorites=JSON.parse(localStorage.getItem(CONFIG.storageKey)||'[]');
   },
   initIcons(){createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults})},
   bindEvents(){
     window.addEventListener('scroll',()=>{this.navbar.classList.toggle('scrolled',scrollY>CONFIG.scrollThreshold);this.backToTop?.classList.toggle('visible',scrollY>CONFIG.backToTopThreshold);this.setActiveLink()},{passive:true});
     this.mobileToggle?.addEventListener('click',()=>this.toggleMobileMenu());
-    this.navLinks.forEach(l=>l.addEventListener('click',e=>{if(e.target.getAttribute('href')?.startsWith('#')){e.preventDefault();document.querySelector(e.target.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})}this.toggleMobileMenu(true)}));
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')this.toggleMobileMenu(true)});
+    this.navLinks.forEach(l=>l.addEventListener('click',e=>{const href=e.target.getAttribute('href');if(href?.startsWith('#')){e.preventDefault();this.scrollToSection(href)}this.toggleMobileMenu(true)}));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){this.toggleMobileMenu(true);this.closeSearchDropdown()}});
+    document.addEventListener('click',e=>{if(!e.target.closest('#searchTypeField'))this.closeSearchDropdown()});
     this.backToTop?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
-    this.filterBtns.forEach(b=>b.addEventListener('click',()=>this.filter(b)));
+    this.filterBtns.forEach(b=>b.addEventListener('click',()=>this.applyFilter(b.dataset.type||b.textContent.trim(),{scroll:false})));
     this.searchBtn?.addEventListener('click',()=>this.search());
     this.contactForm?.addEventListener('submit',e=>this.submitForm(e));
-    this.bookTourBtn?.addEventListener('click',()=>document.querySelector('#contact')?.scrollIntoView({behavior:'smooth'}));
+    this.bookTourBtn?.addEventListener('click',()=>this.scrollToSection('#contact'));
+    this.ctaBookBtn?.addEventListener('click',()=>this.scrollToSection('#contact'));
     this.propertiesContainer?.addEventListener('click',e=>this.handlePropertyCardClick(e));
     this.initRevealObserver();
   },
+  scrollToSection(selector){
+    const el=document.querySelector(selector);
+    if(!el)return;
+    const top=el.getBoundingClientRect().top+window.scrollY-CONFIG.navScrollOffset;
+    window.scrollTo({top,behavior:'smooth'});
+  },
+  initSearchDropdown(){
+    this.searchTypeField?.addEventListener('click',e=>{e.stopPropagation();this.toggleSearchDropdown()});
+    this.searchTypeField?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.toggleSearchDropdown()}});
+    this.searchTypeDropdown?.querySelectorAll('.search-dropdown-item').forEach(item=>{
+      item.addEventListener('click',e=>{
+        e.stopPropagation();
+        const type=item.dataset.type||PROPERTY_FILTER_ALL;
+        this.setSearchType(type);
+        this.closeSearchDropdown();
+      });
+    });
+  },
+  toggleSearchDropdown(){
+    const open=this.searchTypeDropdown?.hasAttribute('hidden');
+    if(open){this.searchTypeDropdown.removeAttribute('hidden');this.searchTypeField?.setAttribute('aria-expanded','true')}
+    else this.closeSearchDropdown();
+  },
+  closeSearchDropdown(){
+    this.searchTypeDropdown?.setAttribute('hidden','');
+    this.searchTypeField?.setAttribute('aria-expanded','false');
+  },
+  setSearchType(type){
+    this.searchTypeDropdown?.querySelectorAll('.search-dropdown-item').forEach(item=>{
+      item.classList.toggle('active',item.dataset.type===type);
+    });
+    const label=type===PROPERTY_FILTER_ALL?'همه انواع':type;
+    if(this.searchTypeValue)this.searchTypeValue.innerHTML=`${escapeHTML(label)} <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
+    createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
+  },
   async loadProperties(){
     if(!this.propertiesContainer)return;
+    this.propertiesContainer.innerHTML='<p class="properties-loading">در حال بارگذاری املاک...</p>';
     try{
-      const r=await fetch(`${API_BASE}/properties`);const d=await r.json();
-      if(!d.properties?.length){this.propertiesContainer.innerHTML='<p style="color:var(--gray-300);text-align:center;grid-column:1/-1;padding:40px;">هیچ ملکی یافت نشد.</p>';return}
-      this.propertiesContainer.innerHTML=d.properties.map(p=>this.renderCard(p)).join('');
-      this.propertyCards=document.querySelectorAll('.property-card');createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
-      this.initShareButtons();this.initFavoriteButtons();this.revealElements=document.querySelectorAll('.reveal');this.initRevealObserver();
-    }catch(e){this.propertiesContainer.innerHTML='<p style="color:#f44336;text-align:center;grid-column:1/-1;padding:40px;">خطا در بارگذاری</p>'}
+      const r=await fetch(`${API_BASE}/properties`);
+      if(!r.ok)throw new Error('failed');
+      const d=await r.json();
+      this.allProperties=d.properties||[];
+      if(!this.allProperties.length){
+        this.propertiesContainer.innerHTML='<p class="properties-error">هیچ ملکی یافت نشد.</p>';
+        this.updateResultsMeta(0,PROPERTY_FILTER_ALL);
+        return;
+      }
+      this.applyFilter(this.currentFilter,{scroll:false});
+    }catch(e){
+      this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>دریافت اطلاعات با مشکل مواجه شد</h3><p>لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-gold-outline" id="retryPropertiesLoad">تلاش مجدد</button></div>`;
+      document.getElementById('retryPropertiesLoad')?.addEventListener('click',()=>this.loadProperties());
+    }
+  },
+  applyFilter(type,{scroll=false}={}){
+    this.currentFilter=type||PROPERTY_FILTER_ALL;
+    this.filterBtns.forEach(b=>b.classList.toggle('active',(b.dataset.type||b.textContent.trim())===this.currentFilter));
+    this.setSearchType(this.currentFilter);
+    const filtered=this.currentFilter===PROPERTY_FILTER_ALL
+      ? this.allProperties
+      : this.allProperties.filter(p=>p.type===this.currentFilter);
+    this.renderPropertyResults(filtered);
+    if(scroll)this.scrollToSection('#residences');
+  },
+  renderPropertyResults(properties){
+    if(!this.propertiesContainer)return;
+    if(!properties.length){
+      const label=this.currentFilter===PROPERTY_FILTER_ALL?'این دسته‌بندی':this.currentFilter;
+      this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>ملکی با این مشخصات پیدا نشد</h3><p>در حال حاضر گزینه‌ای در ${escapeHTML(label)} موجود نیست.</p><button type="button" class="btn-gold-outline" id="resetPropertiesFilter">مشاهده همه املاک</button></div>`;
+      document.getElementById('resetPropertiesFilter')?.addEventListener('click',()=>this.applyFilter(PROPERTY_FILTER_ALL,{scroll:true}));
+      this.updateResultsMeta(0,this.currentFilter);
+      return;
+    }
+    this.propertiesContainer.innerHTML=properties.map(p=>this.renderCard(p)).join('');
+    this.propertyCards=document.querySelectorAll('.property-card');
+    createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
+    this.initShareButtons();this.initFavoriteButtons();
+    this.revealElements=document.querySelectorAll('.reveal');this.initRevealObserver();
+    this.updateResultsMeta(properties.length,this.currentFilter);
+  },
+  updateResultsMeta(count,type){
+    if(!this.propertiesResultsMeta)return;
+    if(type===PROPERTY_FILTER_ALL)this.propertiesResultsMeta.textContent=`${count.toLocaleString('fa-IR')} ملک`;
+    else this.propertiesResultsMeta.textContent=`${count.toLocaleString('fa-IR')} ${type} منتخب`;
   },
   renderCard(p){
     const propertyId=escapeHTML(p._id||'');
@@ -136,6 +222,33 @@ const Astoria = {
         </div>
       </div></article>`;
   },
+  async loadAgents(){
+    if(!this.agentsContainer)return;
+    try{
+      const r=await fetch(`${API_BASE}/agents`);
+      if(!r.ok)throw new Error('failed');
+      const d=await r.json();
+      if(!d.agents?.length){
+        this.agentsContainer.innerHTML='<p class="section-empty-note">اطلاعات مشاوران به زودی در دسترس خواهد بود.</p>';
+        return;
+      }
+      this.agentsContainer.innerHTML=d.agents.map(a=>this.renderAgentCard(a)).join('');
+      createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
+    }catch(e){
+      this.agentsContainer.innerHTML='<p class="section-empty-note">دریافت اطلاعات مشاوران با مشکل مواجه شد. لطفاً دوباره تلاش کنید.</p>';
+    }
+  },
+  renderAgentCard(agent){
+    const name=escapeHTML(agent.name||'');
+    const title=escapeHTML(agent.title||'');
+    const bio=escapeHTML(agent.bio||'');
+    const phone=escapeHTML(agent.phone||'');
+    const email=escapeHTML(agent.email||'');
+    const photo=escapeHTML(agent.photo||AGENT_PLACEHOLDER);
+    const phoneLink=agent.phone?`<a href="tel:${phone}" class="agent-contact-link"><i data-lucide="phone"></i> ${phone}</a>`:'';
+    const emailLink=agent.email?`<a href="mailto:${email}" class="agent-contact-link"><i data-lucide="mail"></i> ${email}</a>`:'';
+    return`<article class="agent-card reveal"><div class="agent-card-photo" style="background-image:url('${photo}')" role="img" aria-label="${name}"></div><div class="agent-card-body"><h3 class="agent-card-name">${name}</h3>${title?`<p class="agent-card-title">${title}</p>`:''}${bio?`<p class="agent-card-bio">${bio}</p>`:''}<div class="agent-card-contacts">${phoneLink}${emailLink}</div></div></article>`;
+  },
   handlePropertyCardClick(e){
     const card=e.target.closest('.property-card');
     if(!card)return;
@@ -150,8 +263,11 @@ const Astoria = {
   toggleMobileMenu(force=false){const o=force?false:!this.navLinksContainer.classList.contains('active');this.navLinksContainer.classList.toggle('active',o);this.mobileToggle.setAttribute('aria-expanded',o);document.body.classList.toggle('no-scroll',o)},
   setActiveLink(){const pos=scrollY+120;this.sections.forEach(s=>{if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight)this.navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===`#${s.id}`))})},
   initRevealObserver(){if(this._obs)this._obs.disconnect();this._obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('revealed');this._obs.unobserve(en.target)}}),CONFIG.revealOptions);this.revealElements.forEach(el=>this._obs.observe(el))},
-  filter(btn){this.filterBtns.forEach(b=>b.classList.remove('active'));btn.classList.add('active');const f=btn.textContent.trim();this.propertyCards.forEach(c=>{const m=f==='همه'||c.getAttribute('data-type')===f;c.style.opacity=m?'1':'0';c.style.transform=m?'translateY(0)':'translateY(20px)';setTimeout(()=>{if(!m)c.style.display='none'},300);if(m)c.style.display=''})},
-  search(){const t=document.querySelectorAll('.search-value')[1]?.textContent.trim()||'';this.propertyCards.forEach(c=>{const m=t==='همه انواع'||!t||c.getAttribute('data-type')===t;c.style.opacity=m?'1':'0';c.style.transform=m?'translateY(0)':'translateY(20px)';setTimeout(()=>{if(!m)c.style.display='none'},300);if(m)c.style.display=''})},
+  search(){
+    const active=this.searchTypeDropdown?.querySelector('.search-dropdown-item.active');
+    const type=active?.dataset.type||PROPERTY_FILTER_ALL;
+    this.applyFilter(type,{scroll:true});
+  },
   submitForm(e){e.preventDefault();const n=document.getElementById('name').value.trim(),em=document.getElementById('email').value.trim(),msg=document.getElementById('message').value.trim();if(!n||!em||!msg)return this.toast('فیلدهای ضروری را پر کنید','error');const btn=this.contactForm.querySelector('button');const t=btn.textContent;btn.textContent='...';btn.disabled=true;fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:em,message:msg})}).then(()=>{this.toast('پیام ارسال شد','success');this.contactForm.reset()}).catch(()=>this.toast('خطا','error')).finally(()=>{btn.textContent=t;btn.disabled=false})},
   toast(msg,type='info'){if(!this.notification)return;if(this._t)clearTimeout(this._t);this.notification.textContent=msg;this.notification.className=`notification notification-${type} visible`;this._t=setTimeout(()=>this.notification.classList.remove('visible'),3000)},
 

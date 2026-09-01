@@ -39,7 +39,6 @@
             <ul class="nav-links" role="menubar" aria-label="منوی اصلی">
                 <li role="none"><a href="#home" role="menuitem" aria-current="page" class="active">خانه</a></li>
                 <li role="none"><a href="#residences" role="menuitem">املاک</a></li>
-                <li role="none"><a href="#projects" role="menuitem">پروژه‌ها</a></li>
                 <li role="none"><a href="#agents" role="menuitem">مشاوران</a></li>
                 <li role="none"><a href="#contact" role="menuitem">تماس</a></li>
             </ul>
@@ -65,19 +64,20 @@
                 <p class="hero-subtitle">وب‌سایت برند لوکس و پیشرفته املاک</p>
                 
                 <div class="luxury-search-bar" role="search" aria-label="جستجوی ملک">
-                    <div class="search-field" tabindex="0" role="button" aria-haspopup="listbox" aria-label="انتخاب موقعیت">
-                        <span class="search-label">موقعیت</span>
-                        <span class="search-value">انتخاب شهر <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                    </div>
-                    <div class="search-field" tabindex="0" role="button" aria-haspopup="listbox" aria-label="انتخاب نوع ملک">
+                    <div class="search-field search-field-type" id="searchTypeField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب نوع ملک">
                         <span class="search-label">نوع ملک</span>
-                        <span class="search-value">همه انواع <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
+                        <span class="search-value" id="searchTypeValue">همه انواع <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
+                        <div class="search-dropdown" id="searchTypeDropdown" role="listbox" hidden>
+                            <button type="button" class="search-dropdown-item active" data-type="همه">همه انواع</button>
+                            <button type="button" class="search-dropdown-item" data-type="ویلا">ویلا</button>
+                            <button type="button" class="search-dropdown-item" data-type="آپارتمان">آپارتمان</button>
+                            <button type="button" class="search-dropdown-item" data-type="پنت‌هاوس">پنت‌هاوس</button>
+                            <button type="button" class="search-dropdown-item" data-type="باغ">باغ</button>
+                            <button type="button" class="search-dropdown-item" data-type="زمین">زمین</button>
+                            <button type="button" class="search-dropdown-item" data-type="دفتر کار">دفتر کار</button>
+                        </div>
                     </div>
-                    <div class="search-field" tabindex="0" role="button" aria-haspopup="listbox" aria-label="انتخاب بودجه">
-                        <span class="search-label">بودجه</span>
-                        <span class="search-value">هر قیمت <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                    </div>
-                    <button class="btn-search-gold" aria-label="جستجوی املاک"><i data-lucide="search"></i> جستجو</button>
+                    <button type="button" class="btn-search-gold" aria-label="جستجوی املاک"><i data-lucide="search"></i> جستجو</button>
                 </div>
             </div>
             
@@ -91,13 +91,14 @@
         <!-- ========== فیلترهای سریع ========== -->
         <section class="quick-filters" aria-label="فیلترهای سریع">
             <div class="container">
-                <div class="filter-buttons">
-                    <button class="filter-btn active">همه</button>
-                    <button class="filter-btn">ویلا</button>
-                    <button class="filter-btn">آپارتمان</button>
-                    <button class="filter-btn">پنت‌هاوس</button>
-                    <button class="filter-btn">زمین</button>
-                    <button class="filter-btn">دفتر کار</button>
+                <div class="filter-buttons" role="tablist" aria-label="فیلتر نوع ملک">
+                    <button type="button" class="filter-btn active" data-type="همه">همه</button>
+                    <button type="button" class="filter-btn" data-type="ویلا">ویلا</button>
+                    <button type="button" class="filter-btn" data-type="آپارتمان">آپارتمان</button>
+                    <button type="button" class="filter-btn" data-type="پنت‌هاوس">پنت‌هاوس</button>
+                    <button type="button" class="filter-btn" data-type="باغ">باغ</button>
+                    <button type="button" class="filter-btn" data-type="زمین">زمین</button>
+                    <button type="button" class="filter-btn" data-type="دفتر کار">دفتر کار</button>
                 </div>
             </div>
         </section>
@@ -106,9 +107,12 @@
         <!-- ========== املاک ویژه (از API پر میشه) ========== -->
         <section id="residences" class="signature-properties" aria-labelledby="properties-heading">
             <div class="container">
-                <h2 id="properties-heading" class="section-title">املاک ویژه</h2>
+                <div class="properties-section-header">
+                    <h2 id="properties-heading" class="section-title">املاک ویژه</h2>
+                    <p class="properties-results-meta" id="propertiesResultsMeta" aria-live="polite"></p>
+                </div>
                 <div class="properties-grid" id="propertiesContainer">
-                    <p style="color:var(--gray-300);text-align:center;grid-column:1/-1;padding:40px;">در حال بارگذاری املاک...</p>
+                    <p class="properties-loading">در حال بارگذاری املاک...</p>
                 </div>
             </div>
         </section>
@@ -140,6 +144,18 @@
                         <h3 class="why-title">معاملات امن</h3>
                         <p class="why-description">ارائه شرکای طلایی فوق‌العاده و معاملات کاملاً امن و مطمئن.</p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========== مشاوران ========== -->
+        <section id="agents" class="agents-section pt-4 pb-4" aria-labelledby="agents-heading">
+            <div class="container">
+                <h2 id="agents-heading" class="section-title">مشاوران ما</h2>
+                <p class="section-subtitle">تیمی از متخصصان املاک لوکس برای همراهی شما در هر مرحله</p>
+                <div class="agents-grid" id="agentsContainer">
+                    <p class="section-loading-note">در حال بارگذاری مشاوران...</p>
                 </div>
             </div>
         </section>
@@ -228,15 +244,14 @@
                         <ul>
                             <li><a href="#home">خانه</a></li>
                             <li><a href="#residences">املاک</a></li>
-                            <li><a href="#">پروژه‌ها</a></li>
+                            <li><a href="#agents">مشاوران</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
                         <h4>شرکت</h4>
                         <ul>
-                            <li><a href="#">مشاوران</a></li>
+                            <li><a href="#agents">مشاوران</a></li>
                             <li><a href="#contact">تماس</a></li>
-                            <li><a href="#">فرصت‌های شغلی</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
