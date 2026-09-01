@@ -71,15 +71,51 @@
             <div class="hero-overlay" aria-hidden="true"></div>
             
             <div class="hero-content">
-                <p class="hero-eyebrow">ASTORIA · ELITE ESTATES</p>
+                <p class="hero-eyebrow hero-eyebrow-mobile">ASTORIA · ELITE ESTATES</p>
                 <h1 class="hero-headline">
                     <span class="hero-headline-mobile">املاک لوکس،<br>منتخب برای شما</span>
                     <span class="hero-headline-desktop">زندگی بدون محدودیت<br>را تجربه کنید</span>
                 </h1>
-                <p class="hero-subtitle-mobile">املاک منتخب با مشاوران آستوریا</p>
+                <p class="hero-subtitle-mobile">کشف املاک استثنایی با مشاوران حرفه‌ای آستوریا</p>
                 <p class="hero-subtitle hero-subtitle-desktop">وب‌سایت برند لوکس و پیشرفته املاک</p>
-                
-                <div class="luxury-search-bar" role="search" aria-label="جستجوی ملک">
+
+                <!-- Mobile: Google-like search -->
+                <div class="m-hero-search" role="search" aria-label="جستجوی ملک">
+                    <div class="m-search-wrap" id="mobileSearchWrap">
+                        <label class="sr-only" for="mobilePropertySearch">جستجوی ملک، منطقه یا نوع ملک</label>
+                        <div class="m-search-field" id="mobileSearchField">
+                            <i data-lucide="search" class="m-search-icon" aria-hidden="true"></i>
+                            <input
+                                type="search"
+                                id="mobilePropertySearch"
+                                class="m-search-input"
+                                placeholder="جستجوی ملک، منطقه یا نوع ملک"
+                                autocomplete="off"
+                                enterkeyhint="search"
+                                inputmode="search"
+                                aria-autocomplete="list"
+                                aria-controls="mobileSearchSuggestions"
+                                aria-expanded="false"
+                            >
+                            <button type="button" class="m-search-clear" id="mobileSearchClear" aria-label="پاک کردن جستجو" hidden>
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                        <div class="m-search-suggestions" id="mobileSearchSuggestions" role="listbox" hidden>
+                            <div class="m-suggestions-section">
+                                <p class="m-suggestions-label">نوع ملک</p>
+                                <div class="m-suggestions-chips" id="mobileTypeSuggestions"></div>
+                            </div>
+                            <div class="m-suggestions-section">
+                                <p class="m-suggestions-label">جستجوهای پیشنهادی</p>
+                                <div class="m-suggestions-chips" id="mobileQuerySuggestions"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop: type dropdown search -->
+                <div class="luxury-search-bar luxury-search-desktop" role="search" aria-label="جستجوی ملک">
                     <div class="search-field search-field-type" id="searchTypeField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب نوع ملک">
                         <span class="search-label">نوع ملک</span>
                         <span class="search-value" id="searchTypeValue">همه انواع <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>

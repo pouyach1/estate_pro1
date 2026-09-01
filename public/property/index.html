@@ -57,11 +57,37 @@
 
         <div class="property-summary" id="propertySummary">
             <div class="container property-summary-inner">
-                <span class="property-status-badge" id="listingType">آگهی ویژه</span>
+                <span class="property-type-badge" id="propertyTypeBadge"></span>
                 <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
                 <p class="property-hero-location" id="propertyLocation"></p>
-                <p class="property-location-meta" id="propertyLocationMeta"></p>
                 <div class="property-hero-price" id="propertyPrice"></div>
+            </div>
+        </div>
+
+        <div class="property-mobile-panel" id="propertyMobilePanel">
+            <div class="container property-mobile-panel-inner">
+                <div class="property-quick-stats" id="quickStats">
+                    <div class="quick-stat" data-stat-wrap="area">
+                        <i data-lucide="maximize-2" class="stat-icon"></i>
+                        <span class="stat-value" data-stat="area">-</span>
+                        <span class="stat-label">متر</span>
+                    </div>
+                    <div class="quick-stat" data-stat-wrap="beds">
+                        <i data-lucide="bed" class="stat-icon"></i>
+                        <span class="stat-value" data-stat="beds">-</span>
+                        <span class="stat-label">خواب</span>
+                    </div>
+                    <div class="quick-stat" data-stat-wrap="baths">
+                        <i data-lucide="bath" class="stat-icon"></i>
+                        <span class="stat-value" data-stat="baths">-</span>
+                        <span class="stat-label">حمام</span>
+                    </div>
+                    <div class="quick-stat" data-stat-wrap="parking">
+                        <i data-lucide="car" class="stat-icon"></i>
+                        <span class="stat-value" data-stat="parking">-</span>
+                        <span class="stat-label">پارکینگ</span>
+                    </div>
+                </div>
                 <button type="button" class="btn-gold-solid m-summary-cta" id="btnRequestTourInline">
                     <i data-lucide="calendar"></i> درخواست بازدید
                 </button>
@@ -85,37 +111,41 @@
                 
                 <!-- ========== LEFT COLUMN ========== -->
                 <div class="property-content">
-                    
-                    <!-- Quick Stats -->
-                    <div class="property-quick-stats" id="quickStats">
-                        <div class="quick-stat">
-                            <i data-lucide="bed" class="stat-icon"></i>
-                            <span class="stat-value" id="statBeds">-</span>
-                            <span class="stat-label">خواب</span>
-                        </div>
-                        <div class="quick-stat">
-                            <i data-lucide="bath" class="stat-icon"></i>
-                            <span class="stat-value" id="statBaths">-</span>
-                            <span class="stat-label">حمام</span>
-                        </div>
-                        <div class="quick-stat">
+
+                    <div class="property-quick-stats property-quick-stats-desktop">
+                        <div class="quick-stat" data-stat-wrap="area">
                             <i data-lucide="maximize-2" class="stat-icon"></i>
-                            <span class="stat-value" id="statArea">-</span>
+                            <span class="stat-value" data-stat="area">-</span>
                             <span class="stat-label">متر مربع</span>
                         </div>
-                        <div class="quick-stat">
+                        <div class="quick-stat" data-stat-wrap="beds">
+                            <i data-lucide="bed" class="stat-icon"></i>
+                            <span class="stat-value" data-stat="beds">-</span>
+                            <span class="stat-label">خواب</span>
+                        </div>
+                        <div class="quick-stat" data-stat-wrap="baths">
+                            <i data-lucide="bath" class="stat-icon"></i>
+                            <span class="stat-value" data-stat="baths">-</span>
+                            <span class="stat-label">حمام</span>
+                        </div>
+                        <div class="quick-stat" data-stat-wrap="type">
                             <i data-lucide="home" class="stat-icon"></i>
-                            <span class="stat-value" id="statType">-</span>
+                            <span class="stat-value" data-stat="type">-</span>
                             <span class="stat-label">نوع ملک</span>
                         </div>
                     </div>
-
+                    
                     <!-- Description -->
-                    <div class="property-section">
-                        <h2 class="property-section-title">توضیحات</h2>
-                        <p class="property-description" id="propertyDescription">
-                            در حال بارگذاری...
-                        </p>
+                    <div class="property-section property-description-section">
+                        <h2 class="property-section-title">درباره ملک</h2>
+                        <div class="property-description-wrap">
+                            <p class="property-description" id="propertyDescription">
+                                در حال بارگذاری...
+                            </p>
+                            <button type="button" class="property-description-toggle" id="propertyDescriptionToggle" hidden>
+                                ادامه توضیحات
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Features -->
@@ -227,9 +257,9 @@
     </button>
 
     <script type="module">
-        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown } from 'lucide';
+        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin } from 'lucide';
 
-        const iconSet = { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown };
+        const iconSet = { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin };
 
         window.refreshLucideIcons = () => {
             createIcons({
