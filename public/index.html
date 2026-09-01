@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="آستوریا الیت استیتس — املاک لوکس برای خریداران خاص. مجموعه‌ای از بهترین ویلاها، پنت‌هاوس‌ها و املاک ساحلی.">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="color-scheme" content="dark">
@@ -19,6 +19,7 @@
     <title>آستوریا الیت استیتس | املاک لوکس</title>
     
     <link rel="stylesheet" href="/theme_css/pro.css">
+    <link rel="stylesheet" href="/theme_css/mobile.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070912'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23c9a227'/></svg>">
 </head>
 <body>
@@ -37,13 +38,19 @@
             </div>
             
             <ul class="nav-links" role="menubar" aria-label="منوی اصلی">
+                <button type="button" class="mobile-menu-close" aria-label="بستن منو" hidden>
+                    <i data-lucide="x"></i>
+                </button>
                 <li role="none"><a href="#home" role="menuitem" aria-current="page" class="active">خانه</a></li>
                 <li role="none"><a href="#residences" role="menuitem">املاک</a></li>
                 <li role="none"><a href="#agents" role="menuitem">مشاوران</a></li>
                 <li role="none"><a href="#contact" role="menuitem">تماس</a></li>
+                <li class="mobile-nav-cta" role="none">
+                    <button type="button" class="btn-gold-outline" aria-label="رزرو بازدید خصوصی">بازدید خصوصی</button>
+                </li>
             </ul>
             
-            <button class="btn-gold-outline" aria-label="رزرو بازدید خصوصی">بازدید خصوصی</button>
+            <button class="btn-gold-outline nav-cta-desktop" aria-label="رزرو بازدید خصوصی">بازدید خصوصی</button>
             
             <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
                 <i data-lucide="menu"></i>

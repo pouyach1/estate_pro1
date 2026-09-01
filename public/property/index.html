@@ -2,12 +2,13 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="جزئیات ملک - آستوریا الیت استیتس">
     <meta name="theme-color" content="#0a0a0a">
     <title>جزئیات ملک | آستوریا الیت استیتس</title>
     
     <link rel="stylesheet" href="/theme_css/pro.css">
+    <link rel="stylesheet" href="/theme_css/mobile.css">
     <link rel="stylesheet" href="/property/property.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +17,7 @@
 <body class="property-page">
 
     <!-- ========== NAVBAR ========== -->
-    <nav class="astoria-nav" role="navigation">
+    <nav class="astoria-nav" role="navigation" aria-label="ناوبری اصلی">
         <div class="nav-brand">
             <a href="/" aria-label="بازگشت به صفحه اصلی">
                 <span class="brand-main">ASTORIA</span>
@@ -24,11 +25,18 @@
             </a>
         </div>
         <ul class="nav-links">
+            <button type="button" class="mobile-menu-close" aria-label="بستن منو" hidden>
+                <i data-lucide="x"></i>
+            </button>
             <li><a href="/">خانه</a></li>
             <li><a href="/#residences">املاک</a></li>
+            <li><a href="/#agents">مشاوران</a></li>
             <li><a href="/#contact">تماس</a></li>
         </ul>
-        <a href="/" class="btn-gold-outline">بازگشت</a>
+        <a href="/" class="btn-gold-outline nav-cta-desktop">بازگشت</a>
+        <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
+            <i data-lucide="menu"></i>
+        </button>
     </nav>
 
     <!-- ========== HERO IMAGE ========== -->
@@ -196,6 +204,12 @@
         </div>
     </div>
 
+    <!-- ========== MOBILE STICKY CTA ========== -->
+    <div class="property-mobile-cta" id="propertyMobileCta" aria-hidden="true">
+        <div class="property-mobile-cta-price" id="mobileCtaPrice"></div>
+        <button type="button" class="btn-gold-solid" id="mobileCtaTour">درخواست بازدید</button>
+    </div>
+
     <!-- ========== NOTIFICATION ========== -->
     <div id="notification" class="notification" aria-live="polite" aria-hidden="true"></div>
 
@@ -205,9 +219,9 @@
     </button>
 
     <script type="module">
-        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown } from 'lucide';
+        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown } from 'lucide';
 
-        const iconSet = { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown };
+        const iconSet = { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown };
 
         window.refreshLucideIcons = () => {
             createIcons({

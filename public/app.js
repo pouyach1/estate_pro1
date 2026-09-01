@@ -76,7 +76,8 @@ const Astoria = {
     console.log('%cASTORIA %cPro فارسی','color:#c9a227;font-weight:bold;','color:#888;');
   },
   cacheDOM(){
-    this.navbar=document.querySelector('.astoria-nav');this.mobileToggle=document.querySelector('.mobile-menu-toggle');
+    this.mobileToggle=document.querySelector('.mobile-menu-toggle');
+    this.mobileMenuClose=document.querySelector('.mobile-menu-close');
     this.navLinksContainer=document.querySelector('.nav-links');this.navLinks=document.querySelectorAll('.nav-links a');
     this.backToTop=document.getElementById('back-to-top');this.notification=document.getElementById('notification');
     this.sections=document.querySelectorAll('section[id]');this.filterBtns=document.querySelectorAll('.filter-btn');
@@ -84,7 +85,7 @@ const Astoria = {
     this.searchTypeField=document.getElementById('searchTypeField');this.searchTypeValue=document.getElementById('searchTypeValue');
     this.searchTypeDropdown=document.getElementById('searchTypeDropdown');this.propertiesResultsMeta=document.getElementById('propertiesResultsMeta');
     this.agentsContainer=document.getElementById('agentsContainer');
-    this.contactForm=document.querySelector('.contact-form');this.bookTourBtn=document.querySelector('.btn-gold-outline');
+    this.contactForm=document.querySelector('.contact-form');this.bookTourBtns=document.querySelectorAll('.btn-gold-outline');
     this.ctaBookBtn=document.querySelector('.cta-banner .btn-gold-solid');
     this.revealElements=document.querySelectorAll('.reveal');this.favorites=JSON.parse(localStorage.getItem(CONFIG.storageKey)||'[]');
   },
@@ -92,6 +93,7 @@ const Astoria = {
   bindEvents(){
     window.addEventListener('scroll',()=>{this.navbar.classList.toggle('scrolled',scrollY>CONFIG.scrollThreshold);this.backToTop?.classList.toggle('visible',scrollY>CONFIG.backToTopThreshold);this.setActiveLink()},{passive:true});
     this.mobileToggle?.addEventListener('click',()=>this.toggleMobileMenu());
+    this.mobileMenuClose?.addEventListener('click',()=>this.toggleMobileMenu(true));
     this.navLinks.forEach(l=>l.addEventListener('click',e=>{const href=e.target.getAttribute('href');if(href?.startsWith('#')){e.preventDefault();this.scrollToSection(href)}this.toggleMobileMenu(true)}));
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){this.toggleMobileMenu(true);this.closeSearchDropdown()}});
     document.addEventListener('click',e=>{if(!e.target.closest('#searchTypeField'))this.closeSearchDropdown()});
@@ -99,7 +101,7 @@ const Astoria = {
     this.filterBtns.forEach(b=>b.addEventListener('click',()=>this.applyFilter(b.dataset.type||b.textContent.trim(),{scroll:false})));
     this.searchBtn?.addEventListener('click',()=>this.search());
     this.contactForm?.addEventListener('submit',e=>this.submitForm(e));
-    this.bookTourBtn?.addEventListener('click',()=>this.scrollToSection('#contact'));
+    this.bookTourBtns.forEach(b=>b.addEventListener('click',()=>{this.scrollToSection('#contact');this.toggleMobileMenu(true)}));
     this.ctaBookBtn?.addEventListener('click',()=>this.scrollToSection('#contact'));
     this.propertiesContainer?.addEventListener('click',e=>this.handlePropertyCardClick(e));
     this.initRevealObserver();
@@ -260,7 +262,15 @@ const Astoria = {
   async loadSettings(){try{const r=await fetch(`${API_BASE}/settings`);const s=await r.json();if(s.heroBackground){const h=document.querySelector('.hero-bg');if(h){h.style.backgroundImage=`url(${s.heroBackground})`;h.style.backgroundSize='cover'}}}catch(e){}},
   initShareButtons(){document.querySelectorAll('.share-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const id=b.closest('.property-card')?.getAttribute('data-id');const title=b.closest('.property-card')?.querySelector('.card-title')?.textContent||'ملک';const url=`${location.origin}/property/?id=${id}`;navigator.share?navigator.share({title,url}):navigator.clipboard.writeText(url).then(()=>this.toast('لینک کپی شد'))}))},
   initFavoriteButtons(){document.querySelectorAll('.favorite-btn').forEach(b=>{const id=b.closest('.property-card')?.getAttribute('data-id');if(this.favorites.includes(id))b.setAttribute('data-liked','true');b.addEventListener('click',e=>{e.stopPropagation();if(this.favorites.includes(id)){this.favorites=this.favorites.filter(x=>x!==id);b.setAttribute('data-liked','false');this.toast('حذف از علاقه‌مندی')}else{this.favorites.push(id);b.setAttribute('data-liked','true');this.toast('اضافه به علاقه‌مندی')}localStorage.setItem(CONFIG.storageKey,JSON.stringify(this.favorites))})})},
-  toggleMobileMenu(force=false){const o=force?false:!this.navLinksContainer.classList.contains('active');this.navLinksContainer.classList.toggle('active',o);this.mobileToggle.setAttribute('aria-expanded',o);document.body.classList.toggle('no-scroll',o)},
+  toggleMobileMenu(force=false){
+    const o=force?false:!this.navLinksContainer.classList.contains('active');
+    this.navLinksContainer.classList.toggle('active',o);
+    this.mobileToggle?.setAttribute('aria-expanded',o);
+    this.mobileMenuClose?.toggleAttribute('hidden',!o);
+    document.body.classList.toggle('no-scroll',o);
+    const icon=this.mobileToggle?.querySelector('[data-lucide]');
+    if(icon){icon.setAttribute('data-lucide',o?'x':'menu');createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults})}
+  },
   setActiveLink(){const pos=scrollY+120;this.sections.forEach(s=>{if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight)this.navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===`#${s.id}`))})},
   initRevealObserver(){if(this._obs)this._obs.disconnect();this._obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('revealed');this._obs.unobserve(en.target)}}),CONFIG.revealOptions);this.revealElements.forEach(el=>this._obs.observe(el))},
   search(){
@@ -276,17 +286,18 @@ const Astoria = {
     const modal=document.createElement('div');modal.className='request-modal-overlay';modal.id='requestModal';
     modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true">×</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestMessage" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestMessage" class="admin-message" style="margin-top:12px"></div></div>`;
     document.body.appendChild(modal);
-    modal.querySelector('[data-close-request-modal="true"]')?.addEventListener('click',()=>modal.classList.remove('active'));
+    modal.querySelector('[data-close-request-modal="true"]')?.addEventListener('click',()=>{modal.classList.remove('active');document.body.classList.remove('no-scroll')});
     modal.querySelector('#requestForm')?.addEventListener('submit',e=>this.submitRequest(e));
   },
   openRequestModal(id,title){
     document.getElementById('requestPropertyId').value=id;
     document.getElementById('requestModalProperty').textContent=title;
     document.getElementById('requestModal').classList.add('active');
+    document.body.classList.add('no-scroll');
   },
   submitRequest(e){
     e.preventDefault();const btn=e.target.querySelector('button');const orig=btn.textContent;btn.textContent='در حال ارسال...';btn.disabled=true;
-    fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('requestName').value,email:document.getElementById('requestPhone').value+'@request.astoria',phone:document.getElementById('requestPhone').value,message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestMessage').value}`})}).then(r=>r.json()).then(()=>{document.getElementById('requestMessage').className='admin-message success';document.getElementById('requestMessage').textContent='درخواست با موفقیت ارسال شد';document.getElementById('requestForm').reset();setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');document.getElementById('requestMessage').textContent=''},2000)}).catch(()=>{document.getElementById('requestMessage').className='admin-message error';document.getElementById('requestMessage').textContent='خطا رخ داد'}).finally(()=>{btn.textContent=orig;btn.disabled=false});
+    fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('requestName').value,email:document.getElementById('requestPhone').value+'@request.astoria',phone:document.getElementById('requestPhone').value,message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestMessage').value}`})}).then(r=>r.json()).then(()=>{document.getElementById('requestMessage').className='admin-message success';document.getElementById('requestMessage').textContent='درخواست با موفقیت ارسال شد';document.getElementById('requestForm').reset();setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');document.getElementById('requestMessage').textContent='';document.body.classList.remove('no-scroll')},2000)}).catch(()=>{document.getElementById('requestMessage').className='admin-message error';document.getElementById('requestMessage').textContent='خطا رخ داد'}).finally(()=>{btn.textContent=orig;btn.disabled=false});
   }
 };
 
