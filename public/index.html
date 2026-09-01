@@ -41,6 +41,10 @@
                 <button type="button" class="mobile-menu-close" aria-label="بستن منو" hidden>
                     <i data-lucide="x"></i>
                 </button>
+                <li class="mobile-menu-brand" aria-hidden="true">
+                    <span class="brand-main">ASTORIA</span>
+                    <span class="brand-sub">ELITE ESTATES</span>
+                </li>
                 <li role="none"><a href="#home" role="menuitem" aria-current="page" class="active">خانه</a></li>
                 <li role="none"><a href="#residences" role="menuitem">املاک</a></li>
                 <li role="none"><a href="#agents" role="menuitem">مشاوران</a></li>
@@ -67,8 +71,13 @@
             <div class="hero-overlay" aria-hidden="true"></div>
             
             <div class="hero-content">
-                <h1 class="hero-headline">زندگی بدون محدودیت<br>را تجربه کنید</h1>
-                <p class="hero-subtitle">وب‌سایت برند لوکس و پیشرفته املاک</p>
+                <p class="hero-eyebrow">ASTORIA · ELITE ESTATES</p>
+                <h1 class="hero-headline">
+                    <span class="hero-headline-mobile">املاک لوکس،<br>منتخب برای شما</span>
+                    <span class="hero-headline-desktop">زندگی بدون محدودیت<br>را تجربه کنید</span>
+                </h1>
+                <p class="hero-subtitle-mobile">کشف املاک استثنایی با مشاوران حرفه‌ای آستوریا</p>
+                <p class="hero-subtitle hero-subtitle-desktop">وب‌سایت برند لوکس و پیشرفته املاک</p>
                 
                 <div class="luxury-search-bar" role="search" aria-label="جستجوی ملک">
                     <div class="search-field search-field-type" id="searchTypeField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب نوع ملک">
@@ -96,9 +105,11 @@
 
 
         <!-- ========== فیلترهای سریع ========== -->
-        <section class="quick-filters" aria-label="فیلترهای سریع">
-            <div class="container">
-                <div class="filter-buttons" role="tablist" aria-label="فیلتر نوع ملک">
+        <div class="mobile-discovery">
+            <span class="mobile-discovery-label">کشف املاک</span>
+            <section class="quick-filters" aria-label="فیلترهای سریع">
+                <div class="container">
+                    <div class="filter-buttons" role="tablist" aria-label="فیلتر نوع ملک">
                     <button type="button" class="filter-btn active" data-type="همه">همه</button>
                     <button type="button" class="filter-btn" data-type="ویلا">ویلا</button>
                     <button type="button" class="filter-btn" data-type="آپارتمان">آپارتمان</button>
@@ -106,9 +117,10 @@
                     <button type="button" class="filter-btn" data-type="باغ">باغ</button>
                     <button type="button" class="filter-btn" data-type="زمین">زمین</button>
                     <button type="button" class="filter-btn" data-type="دفتر کار">دفتر کار</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
 
         <!-- ========== املاک ویژه (از API پر میشه) ========== -->

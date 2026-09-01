@@ -39,27 +39,35 @@
         </button>
     </nav>
 
-    <!-- ========== HERO IMAGE ========== -->
-    <section class="property-hero" id="propertyHero">
-        <div class="property-hero-overlay"></div>
-        <div class="property-hero-content">
-            <span class="property-status-badge" id="listingType">آگهی ویژه</span>
-            <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
-            <p class="property-hero-location" id="propertyLocation"></p>
-            <p class="property-location-meta" id="propertyLocationMeta"></p>
-            <div class="property-hero-price" id="propertyPrice"></div>
+    <!-- ========== HERO + SUMMARY ========== -->
+    <div class="property-hero-wrap">
+        <section class="property-hero" id="propertyHero">
+            <div class="property-hero-overlay"></div>
+            <div class="property-hero-counter" id="imageCounter" aria-live="polite"></div>
+            <div class="property-hero-nav">
+                <button class="hero-nav-btn" id="prevImage" aria-label="تصویر قبلی">
+                    <i data-lucide="chevron-right"></i>
+                </button>
+                <button class="hero-nav-btn" id="nextImage" aria-label="تصویر بعدی">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+            </div>
+            <div class="property-hero-dots" id="imageDots"></div>
+        </section>
+
+        <div class="property-summary" id="propertySummary">
+            <div class="container property-summary-inner">
+                <span class="property-status-badge" id="listingType">آگهی ویژه</span>
+                <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
+                <p class="property-hero-location" id="propertyLocation"></p>
+                <p class="property-location-meta" id="propertyLocationMeta"></p>
+                <div class="property-hero-price" id="propertyPrice"></div>
+                <button type="button" class="btn-gold-solid m-summary-cta" id="btnRequestTourInline">
+                    <i data-lucide="calendar"></i> درخواست بازدید
+                </button>
+            </div>
         </div>
-        <div class="property-hero-counter" id="imageCounter" aria-live="polite"></div>
-        <div class="property-hero-nav">
-            <button class="hero-nav-btn" id="prevImage" aria-label="تصویر قبلی">
-                <i data-lucide="chevron-right"></i>
-            </button>
-            <button class="hero-nav-btn" id="nextImage" aria-label="تصویر بعدی">
-                <i data-lucide="chevron-left"></i>
-            </button>
-        </div>
-        <div class="property-hero-dots" id="imageDots"></div>
-    </section>
+    </div>
 
     <!-- ========== ERROR STATE ========== -->
     <section class="property-error-state" id="propertyErrorState" hidden>
@@ -119,7 +127,7 @@
                     </div>
 
                     <!-- Gallery Thumbnails -->
-                    <div class="property-section">
+                    <div class="property-section property-gallery-section">
                         <h2 class="property-section-title">گالری تصاویر</h2>
                         <div class="property-gallery" id="propertyGallery">
                             <p style="color:var(--gray-300);">تصاویر بیشتر در حال بارگذاری...</p>
