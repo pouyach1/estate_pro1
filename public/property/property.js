@@ -70,10 +70,10 @@ function refreshIcons() {
 }
 
 function setPageMode(mode) {
-  const hero = document.getElementById('propertyHero');
+  const heroWrap = document.querySelector('.property-hero-wrap');
   const main = document.getElementById('propertyMain');
   const error = document.getElementById('propertyErrorState');
-  if (hero) hero.hidden = mode === 'error';
+  if (heroWrap) heroWrap.hidden = mode === 'error';
   if (main) main.hidden = mode === 'error' || mode === 'loading';
   if (error) error.hidden = mode !== 'error';
 }
@@ -394,6 +394,10 @@ document.getElementById('btnFavorite')?.addEventListener('click', function () {
 });
 
 document.getElementById('btnRequestTour')?.addEventListener('click', () => {
+  setModalOpen(document.getElementById('tourModal'), true);
+});
+
+document.getElementById('btnRequestTourInline')?.addEventListener('click', () => {
   setModalOpen(document.getElementById('tourModal'), true);
 });
 

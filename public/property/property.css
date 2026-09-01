@@ -28,13 +28,6 @@
   z-index: 1;
 }
 
-.property-hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 60px;
-  max-width: 900px;
-}
-
 .property-status-badge {
   display: inline-block;
   background: var(--gold);
@@ -561,6 +554,28 @@
   text-align: center;
 }
 
+/* ========== HERO WRAP (desktop overlay / mobile stack) ========== */
+.property-hero-wrap {
+  position: relative;
+}
+
+.property-summary {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+}
+
+.property-summary-inner {
+  padding: 60px;
+  max-width: 900px;
+}
+
+.m-summary-cta {
+  display: none;
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 1024px) {
   .property-layout {
@@ -573,277 +588,5 @@
   
   .property-quick-stats {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .property-hero {
-    height: auto;
-    min-height: 52dvh;
-    max-height: 70dvh;
-    align-items: flex-end;
-    touch-action: pan-y pinch-zoom;
-  }
-  
-  .property-hero-content {
-    padding: 24px max(16px, env(safe-area-inset-left)) 28px max(16px, env(safe-area-inset-right));
-    max-width: 100%;
-  }
-
-  .property-hero-title {
-    font-size: clamp(1.5rem, 6vw, 2rem);
-    line-height: 1.25;
-    text-wrap: balance;
-  }
-
-  .property-hero-location {
-    font-size: 0.95rem;
-    margin-bottom: 6px;
-  }
-
-  .property-location-meta {
-    font-size: 0.82rem;
-    margin-bottom: 10px;
-  }
-
-  .property-hero-price {
-    font-size: clamp(1.5rem, 6vw, 2rem);
-    line-height: 1.25;
-    word-break: keep-all;
-  }
-
-  .property-status-badge {
-    font-size: 0.7rem;
-    padding: 6px 14px;
-    margin-bottom: 12px;
-  }
-
-  .property-hero-counter {
-    top: max(12px, env(safe-area-inset-top));
-    left: max(12px, env(safe-area-inset-left));
-    font-size: 0.72rem;
-    padding: 8px 12px;
-  }
-
-  .hero-nav-btn {
-    width: var(--touch-min, 44px);
-    height: var(--touch-min, 44px);
-  }
-
-  .property-hero-nav {
-    padding: 0 10px;
-  }
-
-  .property-hero-dots {
-    bottom: max(12px, env(safe-area-inset-bottom));
-  }
-  
-  .property-main {
-    padding: 24px 0 32px;
-  }
-
-  .property-layout {
-    gap: 24px;
-  }
-
-  .property-quick-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 20px 16px;
-    margin-bottom: 28px;
-  }
-
-  .stat-value {
-    font-size: 1.2rem;
-  }
-
-  .property-section {
-    margin-bottom: 28px;
-  }
-
-  .property-section-title {
-    font-size: 1.25rem;
-    margin-bottom: 16px;
-  }
-
-  .property-description {
-    font-size: 0.95rem;
-    line-height: 1.85;
-  }
-
-  .property-features-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
-  .feature-tag {
-    padding: 12px 12px;
-    font-size: 0.82rem;
-    gap: 8px;
-    min-height: var(--touch-min, 44px);
-  }
-
-  .property-gallery {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    gap: 10px;
-    padding-bottom: 8px;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
-  .property-gallery::-webkit-scrollbar {
-    display: none;
-  }
-
-  .gallery-thumb {
-    flex: 0 0 72%;
-    max-width: 280px;
-    height: 140px;
-    scroll-snap-align: start;
-  }
-  
-  .similar-properties-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .similar-properties-grid .card-image {
-    aspect-ratio: 16 / 10;
-    height: auto;
-    min-height: 180px;
-  }
-
-  .property-sidebar {
-    order: -1;
-  }
-
-  .sidebar-card {
-    padding: 22px 18px;
-  }
-
-  .price-card-value {
-    font-size: clamp(1.6rem, 6vw, 2rem);
-    line-height: 1.25;
-    word-break: keep-all;
-  }
-
-  .btn-full,
-  .btn-favorite-outline {
-    min-height: var(--touch-min, 44px);
-    padding: 14px 16px;
-    font-size: 0.9rem;
-  }
-
-  .quick-contact-form input,
-  .quick-contact-form textarea {
-    font-size: 16px;
-    min-height: var(--touch-min, 44px);
-    padding: 14px 16px;
-  }
-
-  .quick-contact-form textarea {
-    min-height: 100px;
-  }
-
-  .agent-contact-btn {
-    min-height: var(--touch-min, 44px);
-    padding: 12px;
-  }
-
-  /* Hide duplicate sidebar CTA on mobile — sticky bar handles it */
-  .price-card .btn-full#btnRequestTour {
-    display: none;
-  }
-
-  .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
-  }
-
-  .modal-card {
-    width: 100%;
-    max-width: none;
-    max-height: min(92dvh, 680px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    padding: 28px 20px max(28px, env(safe-area-inset-bottom));
-  }
-
-  .modal-close {
-    width: var(--touch-min, 44px);
-    height: var(--touch-min, 44px);
-  }
-
-  .property-error-card {
-    padding: 36px 24px;
-    margin: 0 var(--mobile-gutter, 16px);
-  }
-
-  .property-error-title {
-    font-size: 1.5rem;
-  }
-}
-
-/* ========== MOBILE STICKY CTA BAR ========== */
-.property-mobile-cta {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .property-mobile-cta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    padding: 12px max(16px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-    background: rgba(8, 8, 12, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(201, 162, 39, 0.2);
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
-    transform: translateY(100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: transform var(--transition-base), opacity var(--transition-base), visibility var(--transition-base);
-  }
-
-  .property-mobile-cta.visible {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .property-mobile-cta-price {
-    flex: 1;
-    min-width: 0;
-    font-family: var(--font-heading);
-    font-size: clamp(1rem, 4.5vw, 1.25rem);
-    font-weight: 600;
-    color: var(--gold);
-    line-height: 1.25;
-    word-break: keep-all;
-  }
-
-  .property-mobile-cta .btn-gold-solid {
-    flex-shrink: 0;
-    min-height: var(--touch-min, 44px);
-    padding: 12px 20px;
-    font-size: 0.82rem;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 430px) {
-  .property-features-grid {
-    grid-template-columns: 1fr;
   }
 }

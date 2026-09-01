@@ -195,31 +195,35 @@ const Astoria = {
     const propertyId=escapeHTML(p._id||'');
     const propertyType=escapeHTML(p.type||'');
     const propertyTitle=escapeHTML(p.title||'');
+    const propertyLocation=escapeHTML(p.location||'');
     const listingType=escapeHTML(p.listingType||'آگهی ویژه');
     const f=p.features||{};const all={...(f.common||{}),...(f.specific||{}),...(f.luxury||{})};
     const cfg=getFeaturesForType(p.type);const allCfg=[...(cfg.common||[]),...(cfg.specific||[]),...(cfg.luxury||[])];
     const feats=[];allCfg.forEach(c=>{const v=all[c.key];if(v===true||(typeof v==='number'&&v>0)||(typeof v==='string'&&v.length>0)){const valueText=typeof v==='number'&&c.field_type==='number'?`${escapeHTML(v)} `:'';feats.push(`<span class="feature-item"><i data-lucide="${escapeHTML(c.icon||'car')}"></i> ${valueText}${escapeHTML(c.label_fa)}</span>`)}});
     const pf=formatPrice(p.price);const price=pf?`${escapeHTML(pf)} تومان`:'<button type="button" class="contact-price-link" data-scroll-target="contact">تماس بگیرید</button>';
     const img=escapeHTML(p.image||(p.images&&p.images[0])||'');
+    const locationRow=propertyLocation?`<p class="m-card-location"><i data-lucide="map-pin"></i> ${propertyLocation}</p>`:'';
     return`<article class="property-card reveal" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
       <div class="card-image" data-property-link="true">
         ${img?`<img src="${img}" alt="${propertyTitle}" loading="lazy">`:''}
+        <span class="m-card-type">${propertyType}</span>
         <div class="card-image-badge">${p.isExclusive?'<span class="badge badge-exclusive">اختصاصی</span>':''}</div>
         <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
         ${p.images&&p.images.length>1?`<span class="badge badge-image-count">${escapeHTML(p.images.length)} عکس</span>`:''}
       </div>
       <div class="card-details">
         <h3 class="card-title" data-property-link="true">${propertyTitle}</h3>
+        ${locationRow}
         <p class="card-price">${price}</p>
         <p class="card-listing-type">${listingType}</p>
         <div class="card-features">
           ${p.beds>0?`<span class="feature-item"><i data-lucide="bed"></i> ${escapeHTML(p.beds)} خواب</span>`:''}
           ${p.baths>0?`<span class="feature-item"><i data-lucide="bath"></i> ${escapeHTML(p.baths)} حمام</span>`:''}
           ${p.area>0?`<span class="feature-item"><i data-lucide="maximize-2"></i> ${escapeHTML(p.area)} متر</span>`:''}
-          ${feats.slice(0,4).join('')}
+          ${feats.slice(0,2).join('')}
         </div>
         <div class="card-buttons">
-          <a href="/property/?id=${propertyId}" class="btn-card-primary"><i data-lucide="eye"></i> جزئیات</a>
+          <a href="/property/?id=${propertyId}" class="btn-card-primary"><i data-lucide="eye"></i> مشاهده ملک</a>
           <button type="button" class="btn-card-secondary" data-request-property="true"><i data-lucide="calendar"></i> بازدید</button>
         </div>
       </div></article>`;
