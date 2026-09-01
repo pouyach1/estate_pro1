@@ -23,7 +23,12 @@ const getProperties = async (req, res) => {
     if (sort === 'price-desc') sortOption = { price: -1 };
     if (sort === 'oldest') sortOption = { createdAt: 1 };
     if (sort === 'views') sortOption = { views: -1 };
-    const properties = await Property.find(query).sort(sortOption);
+    let queryBuilder = Property.find(query).sort(sortOption);
+    if (req.query.limit) {
+      const limit = Math.min(Math.max(Number(req.query.limit) || 0, 1), 20);
+      if (limit) queryBuilder = queryBuilder.limit(limit);
+    }
+    const properties = await queryBuilder;
     res.json({ count: properties.length, properties });
   } catch (error) {
     res.status(500).json({ message: 'خطای سرور', error: error.message });
