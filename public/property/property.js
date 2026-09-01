@@ -63,17 +63,45 @@ function featureLabel(field, value) {
   return field.label_fa;
 }
 
-function refreshIcons() {
-  if (typeof window.refreshLucideIcons === 'function') {
-    window.refreshLucideIcons();
-  }
+function setStatValue(key, value, visible = true) {
+  document.querySelectorAll(`[data-stat="${key}"]`).forEach((el) => {
+    el.textContent = value;
+  });
+  document.querySelectorAll(`[data-stat-wrap="${key}"]`).forEach((el) => {
+    el.style.display = visible ? '' : 'none';
+  });
+}
+
+function initDescriptionToggle() {
+  const description = document.getElementById('propertyDescription');
+  const toggle = document.getElementById('propertyDescriptionToggle');
+  if (!description || !toggle) return;
+
+  const checkLength = () => {
+    description.classList.remove('is-expanded');
+    const lineHeight = parseFloat(getComputedStyle(description).lineHeight) || 22;
+    const maxLines = 4;
+    const needsToggle = description.scrollHeight > lineHeight * maxLines + 4;
+    toggle.hidden = !needsToggle;
+    toggle.textContent = 'ادامه توضیحات';
+  };
+
+  toggle.addEventListener('click', () => {
+    const expanded = description.classList.toggle('is-expanded');
+    toggle.textContent = expanded ? 'بستن توضیحات' : 'ادامه توضیحات';
+  });
+
+  checkLength();
+  window.addEventListener('resize', checkLength);
 }
 
 function setPageMode(mode) {
   const heroWrap = document.querySelector('.property-hero-wrap');
+  const mobilePanel = document.getElementById('propertyMobilePanel');
   const main = document.getElementById('propertyMain');
   const error = document.getElementById('propertyErrorState');
   if (heroWrap) heroWrap.hidden = mode === 'error';
+  if (mobilePanel) mobilePanel.hidden = mode === 'error' || mode === 'loading';
   if (main) main.hidden = mode === 'error' || mode === 'loading';
   if (error) error.hidden = mode !== 'error';
 }
@@ -127,28 +155,22 @@ function renderProperty() {
 
   document.title = `${p.title || 'جزئیات ملک'} | آستوریا الیت استیتس`;
 
+  const typeBadge = document.getElementById('propertyTypeBadge');
+  if (typeBadge) typeBadge.textContent = p.type || '';
+
   document.getElementById('propertyTitle').textContent = p.title || 'ملک';
   document.getElementById('propertyLocation').textContent = p.location || 'موقعیت نامشخص';
   document.getElementById('propertyPrice').textContent = formatPriceDisplay(p.price);
-  document.getElementById('listingType').textContent = p.listingType || 'آگهی ویژه';
   document.getElementById('propertyDescription').textContent = p.description || 'توضیحات بیشتری برای این ملک ثبت نشده است.';
-
-  const bedsStat = document.getElementById('statBeds')?.closest('.quick-stat');
-  const bathsStat = document.getElementById('statBaths')?.closest('.quick-stat');
-  if (bedsStat) bedsStat.style.display = p.beds > 0 ? '' : 'none';
-  if (bathsStat) bathsStat.style.display = p.baths > 0 ? '' : 'none';
-
-  if (p.beds > 0) document.getElementById('statBeds').textContent = p.beds.toLocaleString('fa-IR');
-  if (p.baths > 0) document.getElementById('statBaths').textContent = p.baths.toLocaleString('fa-IR');
-  document.getElementById('statArea').textContent = (p.area || 0).toLocaleString('fa-IR');
-  document.getElementById('statType').textContent = p.type || '-';
   document.getElementById('sidebarPrice').textContent = formatPriceDisplay(p.price);
 
-  const locationMeta = document.getElementById('propertyLocationMeta');
-  if (locationMeta) {
-    const parts = [p.type, p.location].filter(Boolean);
-    locationMeta.textContent = parts.join(' · ');
-  }
+  setStatValue('area', (p.area || 0).toLocaleString('fa-IR'), (p.area || 0) > 0);
+  setStatValue('beds', (p.beds || 0).toLocaleString('fa-IR'), p.beds > 0);
+  setStatValue('baths', (p.baths || 0).toLocaleString('fa-IR'), p.baths > 0);
+  setStatValue('type', p.type || '-', true);
+
+  const parking = p.features?.common?.parking;
+  setStatValue('parking', parking > 0 ? parking.toLocaleString('fa-IR') : '-', parking > 0);
 
   const hasMultiple = propertyImages.length > 1;
   document.querySelector('.property-hero-nav')?.classList.toggle('is-hidden', !hasMultiple);
@@ -159,6 +181,7 @@ function renderProperty() {
   renderDots();
   renderFeatures(p);
   updateMobileCta();
+  initDescriptionToggle();
   refreshIcons();
 }
 
@@ -332,22 +355,20 @@ async function loadSimilarProperties() {
       const id = escapeHTML(p._id || '');
       const image = escapeHTML(p.image || (p.images && p.images[0]) || PLACEHOLDER_IMAGE);
       const title = escapeHTML(p.title || '');
-      const listingType = escapeHTML(p.listingType || 'ویژه');
+      const type = escapeHTML(p.type || '');
+      const location = escapeHTML(p.location || '');
       const price = escapeHTML(formatPriceDisplay(p.price));
-      const beds = p.beds > 0 ? `<span class="feature-item"><i data-lucide="bed"></i> ${escapeHTML(p.beds)} خواب</span>` : '';
-      const baths = p.baths > 0 ? `<span class="feature-item"><i data-lucide="bath"></i> ${escapeHTML(p.baths)} حمام</span>` : '';
-      const area = p.area > 0 ? `<span class="feature-item"><i data-lucide="maximize-2"></i> ${escapeHTML(p.area)} متر</span>` : '';
 
       return `
       <article class="property-card" data-similar-property-id="${id}">
         <div class="card-image">
           <img src="${image}" alt="${title}" loading="lazy" width="300" height="200">
-          <span class="badge badge-exclusive">${listingType}</span>
+          ${type ? `<span class="m-card-type">${type}</span>` : ''}
         </div>
         <div class="card-details">
           <h3 class="card-title">${title}</h3>
+          ${location ? `<p class="m-card-location"><i data-lucide="map-pin"></i> ${location}</p>` : ''}
           <p class="card-price">${price}</p>
-          <div class="card-features">${beds}${baths}${area}</div>
         </div>
       </article>`;
     }).join('');

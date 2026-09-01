@@ -298,6 +298,20 @@
     display: none;
   }
 
+  .hero-eyebrow-mobile {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    color: var(--m-gold);
+    margin-bottom: 8px;
+    padding: 4px 10px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: var(--m-radius-pill);
+    background: rgba(201, 162, 39, 0.08);
+    opacity: 0.9;
+  }
+
   .hero-headline-desktop {
     display: none;
   }
@@ -329,63 +343,168 @@
     display: none;
   }
 
-  /* ── MOBILE SEARCH CARD ── */
-  .luxury-search-bar {
-    flex-direction: column;
-    gap: 0;
-    padding: 0;
-    border-radius: var(--m-radius-sm);
-    border: 1px solid var(--m-border);
-    background: var(--m-surface);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
-    animation: none;
-    overflow: hidden;
+  /* ── MOBILE GOOGLE-LIKE SEARCH ── */
+  .luxury-search-desktop {
+    display: none;
   }
 
-  .luxury-search-bar:hover {
-    animation: none;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+  .m-hero-search {
+    position: relative;
+    z-index: 20;
+    margin-top: 2px;
   }
 
-  .search-field {
+  .m-search-wrap {
+    position: relative;
+  }
+
+  .m-search-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 14px;
+    border-radius: var(--m-radius-pill);
+    background: rgba(14, 14, 18, 0.55);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+
+  .m-search-wrap.is-focused .m-search-field,
+  .m-search-wrap.has-suggestions .m-search-field {
+    border-color: rgba(201, 162, 39, 0.45);
+    background: rgba(16, 16, 22, 0.72);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(201, 162, 39, 0.12);
+  }
+
+  .m-search-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--m-muted);
+    flex-shrink: 0;
+  }
+
+  .m-search-wrap.is-focused .m-search-icon {
+    color: var(--m-gold);
+  }
+
+  .m-search-input {
+    flex: 1;
+    min-width: 0;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 0;
-    padding: 11px 14px;
-    min-height: 40px;
-  }
-
-  .search-label {
-    font-size: 0.62rem;
-    letter-spacing: 1.5px;
-  }
-
-  .search-value {
-    font-size: 0.9rem;
+    background: transparent;
     color: var(--m-text);
-  }
-
-  .search-dropdown {
-    top: calc(100% + 4px);
-    border-radius: var(--m-radius-sm);
-    max-height: min(48dvh, 300px);
-  }
-
-  .search-dropdown-item {
-    min-height: 40px;
-    padding: 10px 14px;
     font-size: 0.88rem;
+    line-height: 1.4;
+    padding: 12px 0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
-  .btn-search-gold {
-    width: 100%;
-    margin: 0;
-    border-radius: 0;
-    min-height: 40px;
-    padding: 11px 16px;
-    font-size: 0.82rem;
-    letter-spacing: 0.5px;
-    overflow: hidden;
+  .m-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.42);
+  }
+
+  .m-search-input::-webkit-search-cancel-button,
+  .m-search-input::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+
+  .m-search-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--m-muted);
+    flex-shrink: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .m-search-clear svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .m-search-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    z-index: 30;
+    padding: 10px;
+    border-radius: var(--m-radius);
+    background: rgba(12, 12, 16, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    max-height: min(42dvh, 280px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: mSuggestIn 0.18s ease;
+  }
+
+  @keyframes mSuggestIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .m-suggestions-section + .m-suggestions-section {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .m-suggestions-label {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    color: var(--m-muted);
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+
+  .m-suggestions-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .m-suggest-chip {
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: var(--m-radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--m-text);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .m-suggest-chip:active,
+  .m-suggest-chip:hover {
+    background: var(--m-gold-soft);
+    border-color: rgba(201, 162, 39, 0.35);
+    color: var(--m-gold);
+  }
+
+  body.search-suggestions-open {
+    overflow: clip;
   }
 
   /* ── DISCOVERY: filters + results ── */
@@ -931,14 +1050,19 @@
 
 /* Desktop-only headline variants */
 @media (min-width: 769px) {
-  .hero-eyebrow,
+  .hero-eyebrow-mobile,
   .hero-headline-mobile,
   .hero-subtitle-mobile,
   .mobile-discovery-label,
   .mobile-menu-brand,
+  .m-hero-search,
   .m-card-type,
   .m-card-location {
     display: none !important;
+  }
+
+  .luxury-search-desktop {
+    display: flex;
   }
 
   .hero-headline-desktop,
@@ -950,6 +1074,14 @@
   .mobile-nav-cta {
     display: none !important;
   }
+
+  .property-mobile-panel {
+    display: none !important;
+  }
+
+  .property-quick-stats-desktop {
+    display: grid;
+  }
 }
 
 @media (max-width: 768px) {
@@ -959,9 +1091,22 @@
   }
 
   .mobile-discovery-label,
+  .hero-eyebrow-mobile,
   .m-card-type,
   .m-card-location {
     display: block;
+  }
+
+  .hero-eyebrow-mobile {
+    display: inline-flex;
+  }
+
+  .luxury-search-desktop {
+    display: none;
+  }
+
+  .property-quick-stats-desktop {
+    display: none;
   }
 
   .m-card-location {
@@ -989,11 +1134,13 @@
 
   .property-hero {
     position: relative;
-    height: 42dvh;
-    min-height: 200px;
-    max-height: 340px;
+    height: 40dvh;
+    min-height: 190px;
+    max-height: 320px;
     align-items: stretch;
     touch-action: pan-y pinch-zoom;
+    border-radius: 0 0 14px 14px;
+    overflow: hidden;
   }
 
   .property-hero-overlay {
@@ -1015,10 +1162,70 @@
     text-align: right;
   }
 
-  .property-status-badge {
-    font-size: 0.62rem;
+  .property-type-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #0a0a0a;
+    background: var(--m-gold);
     padding: 4px 10px;
-    margin-bottom: 6px;
+    border-radius: var(--m-radius-pill);
+    margin-bottom: 8px;
+  }
+
+  .property-status-badge {
+    display: none;
+  }
+
+  .property-mobile-panel {
+    background: #060608;
+    padding: 0 0 10px;
+  }
+
+  .property-mobile-panel-inner {
+    padding-top: 2px;
+  }
+
+  .property-mobile-panel .property-quick-stats {
+    margin-bottom: 10px;
+  }
+
+  .property-mobile-panel .m-summary-cta {
+    margin-bottom: 0;
+  }
+
+  .property-description-wrap {
+    position: relative;
+  }
+
+  .property-description {
+    font-size: 0.84rem;
+    line-height: 1.7;
+    text-align: right;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .property-description.is-expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+  }
+
+  .property-description-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--m-gold);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 36px;
   }
 
   .property-hero-title {
@@ -1129,12 +1336,6 @@
     font-size: 0.95rem;
     text-align: right;
     margin-bottom: 8px;
-  }
-
-  .property-description {
-    font-size: 0.84rem;
-    line-height: 1.7;
-    text-align: right;
   }
 
   .property-features-grid {
