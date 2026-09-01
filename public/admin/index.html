@@ -20,16 +20,16 @@
             <form id="loginForm" class="admin-login-form">
                 <div class="form-group">
                     <label for="username">نام کاربری</label>
-                    <input type="text" id="username" placeholder="نام کاربری" required autofocus>
+                    <input type="text" id="username" placeholder="نام کاربری" required autofocus autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="password">رمز عبور</label>
-                    <input type="password" id="password" placeholder="رمز عبور" required>
+                    <input type="password" id="password" placeholder="رمز عبور" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn-gold-solid btn-full">ورود به پنل</button>
             </form>
             
-            <div id="loginMessage" class="admin-message"></div>
+            <div id="loginMessage" class="admin-message" role="alert" aria-live="polite"></div>
         </div>
     </div>
 

@@ -3,6 +3,8 @@
    ============================================== */
 
 const API = '/api';
+const FAVORITES_KEY = 'astoria_favorites';
+const refreshIcons = () => window.refreshLucideIcons?.();
 const urlParams = new URLSearchParams(window.location.search);
 const propertyId = urlParams.get('id');
 
@@ -182,6 +184,16 @@ function renderProperty() {
   renderFeatures(p);
   updateMobileCta();
   initDescriptionToggle();
+
+  const favBtn = document.getElementById('btnFavorite');
+  if (favBtn && propertyId) {
+    const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+    if (favorites.includes(propertyId)) {
+      favBtn.classList.add('liked');
+      favBtn.innerHTML = '<i data-lucide="heart"></i> حذف از علاقه‌مندی‌ها';
+    }
+  }
+
   refreshIcons();
 }
 
@@ -402,14 +414,21 @@ document.addEventListener('click', (e) => {
 
 document.getElementById('btnFavorite')?.addEventListener('click', function () {
   const btn = this;
-  btn.classList.toggle('liked');
+  if (!propertyId) return;
+  const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  const isLiked = favorites.includes(propertyId);
 
-  if (btn.classList.contains('liked')) {
-    btn.innerHTML = '<i data-lucide="heart"></i> حذف از علاقه‌مندی‌ها';
-    showNotification('به علاقه‌مندی‌ها اضافه شد.');
-  } else {
+  if (isLiked) {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites.filter((id) => id !== propertyId)));
+    btn.classList.remove('liked');
     btn.innerHTML = '<i data-lucide="heart"></i> افزودن به علاقه‌مندی‌ها';
     showNotification('از علاقه‌مندی‌ها حذف شد.');
+  } else {
+    favorites.push(propertyId);
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    btn.classList.add('liked');
+    btn.innerHTML = '<i data-lucide="heart"></i> حذف از علاقه‌مندی‌ها';
+    showNotification('به علاقه‌مندی‌ها اضافه شد.');
   }
   refreshIcons();
 });
@@ -451,7 +470,7 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
   btn.textContent = 'در حال ارسال...';
   btn.disabled = true;
   messageEl.textContent = '';
-  messageEl.className = 'admin-message';
+  messageEl.className = 'form-message';
 
   try {
     const res = await fetch(`${API}/customers`, {
@@ -468,7 +487,7 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
 
     if (!res.ok) throw new Error('request failed');
 
-    messageEl.className = 'admin-message success';
+    messageEl.className = 'form-message success';
     messageEl.textContent = 'درخواست شما با موفقیت ثبت شد.';
     document.getElementById('tourForm').reset();
 
@@ -477,7 +496,7 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
       messageEl.textContent = '';
     }, 2000);
   } catch (error) {
-    messageEl.className = 'admin-message error';
+    messageEl.className = 'form-message error';
     messageEl.textContent = 'خطا در ثبت درخواست. لطفاً دوباره تلاش کنید.';
   } finally {
     btn.textContent = originalText;
@@ -499,7 +518,7 @@ document.getElementById('quickContactForm')?.addEventListener('submit', async (e
   btn.textContent = 'در حال ارسال...';
   btn.disabled = true;
   messageEl.textContent = '';
-  messageEl.className = 'admin-message';
+  messageEl.className = 'form-message';
 
   try {
     const res = await fetch(`${API}/customers`, {
@@ -516,11 +535,11 @@ document.getElementById('quickContactForm')?.addEventListener('submit', async (e
 
     if (!res.ok) throw new Error('request failed');
 
-    messageEl.className = 'admin-message success';
+    messageEl.className = 'form-message success';
     messageEl.textContent = 'پیام شما ارسال شد.';
     document.getElementById('quickContactForm').reset();
   } catch (error) {
-    messageEl.className = 'admin-message error';
+    messageEl.className = 'form-message error';
     messageEl.textContent = 'خطا در ارسال پیام. لطفاً دوباره تلاش کنید.';
   } finally {
     btn.textContent = originalText;

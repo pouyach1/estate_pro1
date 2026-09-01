@@ -45,12 +45,13 @@
             </button>
         </div>
     </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" aria-hidden="true"></div>
 
     <!-- ==================== MAIN ==================== -->
     <main class="admin-main">
         <section class="admin-shell-topbar" aria-label="خلاصه فضای کاری">
             <div>
-                <div class="topbar-eyebrow">Enterprise Workspace</div>
+                <div class="topbar-eyebrow">فضای کاری حرفه‌ای</div>
                 <div class="topbar-title">مرکز فرماندهی املاک آستوریا</div>
             </div>
             <div class="topbar-meta">
@@ -60,7 +61,7 @@
                 <button class="topbar-action secondary" type="button" onclick="navigateTo('customers')">پیام‌های جدید</button>
             </div>
         </section>
-        <button class="mobile-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+        <button class="mobile-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="باز کردن منو" aria-expanded="false">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         </button>
 
@@ -68,7 +69,7 @@
         <div class="page-content active" id="page-dashboard">
             <section class="dashboard-hero-panel" aria-labelledby="dashboard-heading">
                 <div class="hero-copy">
-                    <span class="hero-kicker">ASTORIA PRO COMMAND CENTER</span>
+                    <span class="hero-kicker">مرکز فرماندهی آستوریا</span>
                     <h1 class="page-title hero-title" id="dashboard-heading">داشبورد هوشمند مدیریت املاک</h1>
                     <p class="hero-description">نمای یکپارچه عملکرد دارایی‌ها، پیام‌های مشتریان و شاخص‌های بازار برای تصمیم‌گیری سریع و دقیق.</p>
                     <div class="hero-actions" aria-label="اقدام‌های سریع داشبورد">
@@ -90,7 +91,7 @@
                 <article class="metric-card metric-primary">
                     <div class="metric-card-top">
                         <span class="metric-label">کل املاک</span>
-                        <span class="metric-icon">PR</span>
+                        <span class="metric-icon">ملک</span>
                     </div>
                     <div class="metric-number" id="totalProperties">۰</div>
                     <p class="metric-context">موجودی فعال و قابل مدیریت</p>
@@ -99,7 +100,7 @@
                 <article class="metric-card">
                     <div class="metric-card-top">
                         <span class="metric-label">کل بازدیدها</span>
-                        <span class="metric-icon">VW</span>
+                        <span class="metric-icon">بازدید</span>
                     </div>
                     <div class="metric-number" id="totalViews">۰</div>
                     <p class="metric-context">تعاملات ثبت‌شده با آگهی‌ها</p>
@@ -108,7 +109,7 @@
                 <article class="metric-card">
                     <div class="metric-card-top">
                         <span class="metric-label">کل پیام‌ها</span>
-                        <span class="metric-icon">CX</span>
+                        <span class="metric-icon">پیام</span>
                     </div>
                     <div class="metric-number" id="totalCustomers">۰</div>
                     <p class="metric-context">سرنخ‌ها و فرصت‌های فروش</p>
@@ -117,7 +118,7 @@
                 <article class="metric-card urgent">
                     <div class="metric-card-top">
                         <span class="metric-label">پیام‌های جدید</span>
-                        <span class="metric-icon">NW</span>
+                        <span class="metric-icon">جدید</span>
                     </div>
                     <div class="metric-number" id="unreadMessages">۰</div>
                     <p class="metric-context">نیازمند پیگیری سریع</p>
@@ -129,7 +130,7 @@
                 <article class="glass-card chart-card analytics-card wide-card">
                     <div class="section-heading">
                         <div>
-                            <span class="section-kicker">Portfolio Mix</span>
+                            <span class="section-kicker">ترکیب پرتفوی</span>
                             <h3 class="chart-title">ترکیب پرتفوی املاک</h3>
                         </div>
                     </div>
@@ -139,7 +140,7 @@
                 <article class="glass-card chart-card analytics-card">
                     <div class="section-heading">
                         <div>
-                            <span class="section-kicker">Message Flow</span>
+                            <span class="section-kicker">جریان پیام‌ها</span>
                             <h3 class="chart-title">وضعیت پیام‌ها</h3>
                         </div>
                     </div>
@@ -149,7 +150,7 @@
                 <article class="glass-card quick-command-card">
                     <div class="section-heading">
                         <div>
-                            <span class="section-kicker">Quick Actions</span>
+                            <span class="section-kicker">اقدام سریع</span>
                             <h3 class="chart-title">مرکز اقدام سریع</h3>
                         </div>
                     </div>
@@ -163,7 +164,7 @@
                 <article class="glass-card market-card">
                     <div class="section-heading">
                         <div>
-                            <span class="section-kicker">Top Performance</span>
+                            <span class="section-kicker">عملکرد برتر</span>
                             <h3 class="chart-title"><span class="chart-title-icon" aria-hidden="true">↗</span> پربازدیدترین املاک</h3>
                         </div>
                     </div>
@@ -173,7 +174,7 @@
                 <article class="glass-card market-card">
                     <div class="section-heading">
                         <div>
-                            <span class="section-kicker">Needs Attention</span>
+                            <span class="section-kicker">نیازمند توجه</span>
                             <h3 class="chart-title"><span class="chart-title-icon" aria-hidden="true">↘</span> کم‌بازدیدترین املاک</h3>
                         </div>
                     </div>
@@ -183,7 +184,7 @@
                 <article class="glass-card timeline-card">
                     <div class="section-heading">
                         <div>
-                            <span class="section-kicker">Recent Listings</span>
+                            <span class="section-kicker">آخرین ثبت‌ها</span>
                             <h3 class="chart-title">آخرین املاک ثبت‌شده</h3>
                         </div>
                         <button class="ghost-action compact" type="button" onclick="navigateTo('properties')">مشاهده همه</button>
@@ -195,7 +196,7 @@
             <section class="glass-card message-stream-card" aria-labelledby="latest-messages-heading">
                 <div class="section-heading">
                     <div>
-                        <span class="section-kicker">Client Signals</span>
+                        <span class="section-kicker">سیگنال مشتری</span>
                         <h3 class="chart-title" id="latest-messages-heading">آخرین پیام‌ها</h3>
                     </div>
                     <button class="ghost-action compact" type="button" onclick="navigateTo('customers')">مشاهده همه</button>

@@ -22,8 +22,19 @@ function logout() {
   window.location.href = '/admin/';
 }
 
+function closeSidebar() {
+  document.getElementById('sidebar')?.classList.remove('open');
+  document.getElementById('sidebarBackdrop')?.classList.remove('active');
+  document.getElementById('sidebarToggle')?.setAttribute('aria-expanded', 'false');
+}
+
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const toggle = document.getElementById('sidebarToggle');
+  const isOpen = sidebar?.classList.toggle('open');
+  backdrop?.classList.toggle('active', isOpen);
+  toggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 }
 
 function navigateTo(page) {
@@ -41,7 +52,7 @@ function navigateTo(page) {
   if (navBtn) navBtn.classList.add('active');
   if (pageEl) pageEl.classList.add('active');
 
-  if (window.innerWidth < 768) toggleSidebar();
+  if (window.innerWidth <= 768) closeSidebar();
 
   if (page === 'dashboard' && typeof loadDashboardStats === 'function') loadDashboardStats();
   if (page === 'properties' && typeof loadProperties === 'function') loadProperties();
@@ -57,9 +68,21 @@ function toast(msg, type = 'info') {
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
   el.textContent = msg;
+  el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  el.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
   container.appendChild(el);
   setTimeout(() => el.remove(), 3000);
 }
+
+function closeActiveModal(modalId) {
+  document.getElementById(modalId)?.classList.remove('active');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  ['deleteModal', 'customerModal', 'deleteCustomerModal'].forEach(closeActiveModal);
+  closeModal();
+});
 
 function animateNumber(id, target) {
   const el = document.getElementById(id);
@@ -158,7 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
     const id = window._deleteTargetId;
-    if (!id) return;
+    const btn = document.getElementById('confirmDeleteBtn');
+    if (!id || !btn) return;
+    const original = btn.textContent;
+    btn.textContent = 'در حال حذف...';
+    btn.disabled = true;
     try {
       const res = await fetch(`${API}/properties/${id}`, { method: 'DELETE', headers: headers() });
       if (res.ok) {
@@ -172,6 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) {
       toast('اتصال به سرور برقرار نشد', 'error');
+    } finally {
+      btn.textContent = original;
+      btn.disabled = false;
     }
   });
 });

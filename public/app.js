@@ -51,9 +51,10 @@ function getFeaturesForType(t){return{common:COMMON_FEATURES,specific:SPECIFIC_F
 function formatPrice(price) {
   if (!price && price !== 0) return null;
   const num = Number(price);
-  if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace('.0','') + ' میلیارد';
-  if (num >= 1000000) return Math.floor(num / 1000000) + ' میلیون';
-  if (num >= 1000) return Math.floor(num / 1000) + ' هزار';
+  if (Number.isNaN(num)) return null;
+  if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace('.0', '') + ' میلیارد';
+  if (num >= 1000000) return Math.floor(num / 1000000).toLocaleString('fa-IR') + ' میلیون';
+  if (num >= 1000) return Math.floor(num / 1000).toLocaleString('fa-IR') + ' هزار';
   return num.toLocaleString('fa-IR');
 }
 
@@ -352,7 +353,7 @@ const Astoria = {
       this.agentsContainer.innerHTML=d.agents.map(a=>this.renderAgentCard(a)).join('');
       createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
     }catch(e){
-      this.agentsContainer.innerHTML='<p class="section-empty-note">دریافت اطلاعات مشاوران با مشکل مواجه شد. لطفاً دوباره تلاش کنید.</p>';
+      this.agentsContainer.innerHTML='<div class="section-empty-note"><p>دریافت اطلاعات مشاوران با مشکل مواجه شد.</p><button type="button" class="btn-gold-outline" onclick="Astoria.loadAgents()">تلاش مجدد</button></div>';
     }
   },
   renderAgentCard(agent){
@@ -375,7 +376,7 @@ const Astoria = {
     if(e.target.closest('[data-property-link="true"]')){window.location.href=`/property/?id=${encodeURIComponent(card.getAttribute('data-id')||'')}`;}
   },
   async loadSettings(){try{const r=await fetch(`${API_BASE}/settings`);const s=await r.json();if(s.heroBackground){const h=document.querySelector('.hero-bg');if(h){h.style.backgroundImage=`url(${s.heroBackground})`;h.style.backgroundSize='cover'}}}catch(e){}},
-  initShareButtons(){document.querySelectorAll('.share-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const id=b.closest('.property-card')?.getAttribute('data-id');const title=b.closest('.property-card')?.querySelector('.card-title')?.textContent||'ملک';const url=`${location.origin}/property/?id=${id}`;navigator.share?navigator.share({title,url}):navigator.clipboard.writeText(url).then(()=>this.toast('لینک کپی شد'))}))},
+  initShareButtons(){document.querySelectorAll('.share-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const id=b.closest('.property-card')?.getAttribute('data-id');const title=b.closest('.property-card')?.querySelector('.card-title')?.textContent||'ملک';const url=`${location.origin}/property/?id=${id}`;if(navigator.share){navigator.share({title,url}).catch(()=>{});return;}navigator.clipboard.writeText(url).then(()=>this.toast('لینک کپی شد')).catch(()=>this.toast('کپی لینک انجام نشد','error'))}))},
   initFavoriteButtons(){document.querySelectorAll('.favorite-btn').forEach(b=>{const id=b.closest('.property-card')?.getAttribute('data-id');if(this.favorites.includes(id))b.setAttribute('data-liked','true');b.addEventListener('click',e=>{e.stopPropagation();if(this.favorites.includes(id)){this.favorites=this.favorites.filter(x=>x!==id);b.setAttribute('data-liked','false');this.toast('حذف از علاقه‌مندی')}else{this.favorites.push(id);b.setAttribute('data-liked','true');this.toast('اضافه به علاقه‌مندی')}localStorage.setItem(CONFIG.storageKey,JSON.stringify(this.favorites))})})},
   toggleMobileMenu(force=false){
     const o=force?false:!this.navLinksContainer.classList.contains('active');
@@ -393,13 +394,35 @@ const Astoria = {
     const type=active?.dataset.type||PROPERTY_FILTER_ALL;
     this.applyFilter(type,{scroll:true});
   },
-  submitForm(e){e.preventDefault();const n=document.getElementById('name').value.trim(),em=document.getElementById('email').value.trim(),msg=document.getElementById('message').value.trim();if(!n||!em||!msg)return this.toast('فیلدهای ضروری را پر کنید','error');const btn=this.contactForm.querySelector('button');const t=btn.textContent;btn.textContent='...';btn.disabled=true;fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:em,message:msg})}).then(()=>{this.toast('پیام ارسال شد','success');this.contactForm.reset()}).catch(()=>this.toast('خطا','error')).finally(()=>{btn.textContent=t;btn.disabled=false})},
+  async submitForm(e){
+    e.preventDefault();
+    const n=document.getElementById('name').value.trim();
+    const ph=document.getElementById('phone')?.value.trim()||'';
+    const em=document.getElementById('email').value.trim();
+    const msg=document.getElementById('message').value.trim();
+    if(!n||!em||!msg)return this.toast('فیلدهای ضروری را پر کنید','error');
+    const btn=this.contactForm.querySelector('button');
+    const t=btn.textContent;
+    btn.textContent='در حال ارسال...';
+    btn.disabled=true;
+    try{
+      const res=await fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:em,phone:ph,message:msg,source:'فرم تماس'})});
+      if(!res.ok)throw new Error('failed');
+      this.toast('درخواست شما با موفقیت ثبت شد','success');
+      this.contactForm.reset();
+    }catch{
+      this.toast('ارسال پیام انجام نشد. لطفاً دوباره تلاش کنید','error');
+    }finally{
+      btn.textContent=t;
+      btn.disabled=false;
+    }
+  },
   toast(msg,type='info'){if(!this.notification)return;if(this._t)clearTimeout(this._t);this.notification.textContent=msg;this.notification.className=`notification notification-${type} visible`;this._t=setTimeout(()=>this.notification.classList.remove('visible'),3000)},
 
   // ===== REQUEST MODAL =====
   createRequestModal(){
     const modal=document.createElement('div');modal.className='request-modal-overlay';modal.id='requestModal';
-    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true">×</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestMessage" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestMessage" class="admin-message" style="margin-top:12px"></div></div>`;
+    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true" aria-label="بستن">×</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestNote" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestStatus" class="form-message" role="status" aria-live="polite"></div></div>`;
     document.body.appendChild(modal);
     modal.querySelector('[data-close-request-modal="true"]')?.addEventListener('click',()=>{modal.classList.remove('active');document.body.classList.remove('no-scroll')});
     modal.querySelector('#requestForm')?.addEventListener('submit',e=>this.submitRequest(e));
@@ -410,9 +433,33 @@ const Astoria = {
     document.getElementById('requestModal').classList.add('active');
     document.body.classList.add('no-scroll');
   },
-  submitRequest(e){
-    e.preventDefault();const btn=e.target.querySelector('button');const orig=btn.textContent;btn.textContent='در حال ارسال...';btn.disabled=true;
-    fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('requestName').value,email:document.getElementById('requestPhone').value+'@request.astoria',phone:document.getElementById('requestPhone').value,message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestMessage').value}`})}).then(r=>r.json()).then(()=>{document.getElementById('requestMessage').className='admin-message success';document.getElementById('requestMessage').textContent='درخواست با موفقیت ارسال شد';document.getElementById('requestForm').reset();setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');document.getElementById('requestMessage').textContent='';document.body.classList.remove('no-scroll')},2000)}).catch(()=>{document.getElementById('requestMessage').className='admin-message error';document.getElementById('requestMessage').textContent='خطا رخ داد'}).finally(()=>{btn.textContent=orig;btn.disabled=false});
+  async submitRequest(e){
+    e.preventDefault();
+    const btn=e.target.querySelector('button');
+    const statusEl=document.getElementById('requestStatus');
+    const orig=btn.textContent;
+    btn.textContent='در حال ارسال...';
+    btn.disabled=true;
+    try{
+      const res=await fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        name:document.getElementById('requestName').value,
+        email:document.getElementById('requestPhone').value+'@request.astoria',
+        phone:document.getElementById('requestPhone').value,
+        message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestNote').value}`,
+        source:'درخواست ملک'
+      })});
+      if(!res.ok)throw new Error('failed');
+      statusEl.className='form-message success';
+      statusEl.textContent='درخواست با موفقیت ارسال شد';
+      document.getElementById('requestForm').reset();
+      setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');statusEl.textContent='';statusEl.className='form-message';document.body.classList.remove('no-scroll')},2000);
+    }catch{
+      statusEl.className='form-message error';
+      statusEl.textContent='ارسال درخواست انجام نشد. لطفاً دوباره تلاش کنید';
+    }finally{
+      btn.textContent=orig;
+      btn.disabled=false;
+    }
   }
 };
 
