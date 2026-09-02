@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="جزئیات ملک - آستوریا الیت استیتس">
-    <meta name="theme-color" content="#0a0a0a">
+    <meta name="description" content="جزئیات ملک در آستوریا الیت استیتس">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#070707">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:site_name" content="آستوریا الیت استیتس">
+    <meta name="twitter:card" content="summary_large_image">
     <title>جزئیات ملک | آستوریا الیت استیتس</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070707'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23C8C8C2'/></svg>">
 
     <link rel="stylesheet" href="/theme_css/pro.css">
     <link rel="stylesheet" href="/theme_css/mobile.css">
@@ -34,7 +40,7 @@
             <li><a href="/#agents">مشاوران</a></li>
             <li><a href="/#contact">تماس</a></li>
         </ul>
-        <a href="/#residences" class="btn-gold-outline nav-cta-desktop property-back-link">
+        <a href="/#residences" class="btn-secondary nav-cta-desktop property-back-link">
             <i data-lucide="arrow-right"></i> بازگشت به املاک
         </a>
         <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
@@ -118,7 +124,7 @@
                     <div class="property-hero-price" id="propertyPrice"></div>
                 </div>
                 <div class="property-identity-actions">
-                    <button type="button" class="btn-gold-solid property-cta-primary" id="btnRequestTourPrimary">
+                    <button type="button" class="btn-primary property-cta-primary" id="btnRequestTourPrimary">
                         <i data-lucide="calendar"></i> درخواست بازدید اختصاصی
                     </button>
                     <div class="property-secondary-actions">
@@ -155,7 +161,7 @@
                     <span class="property-spec-label">پارکینگ</span>
                 </div>
             </div>
-            <button type="button" class="btn-gold-solid m-summary-cta" id="btnRequestTourInline">
+            <button type="button" class="btn-primary m-summary-cta" id="btnRequestTourInline">
                 <i data-lucide="calendar"></i> درخواست بازدید اختصاصی
             </button>
         </div>
@@ -166,7 +172,7 @@
         <div class="property-error-card">
             <h1 class="property-error-title" id="propertyErrorTitle">ملک موردنظر یافت نشد</h1>
             <p class="property-error-message" id="propertyErrorMessage">ممکن است این ملک حذف شده یا آدرس آن اشتباه باشد.</p>
-            <a href="/#residences" class="btn-gold-solid">بازگشت به املاک</a>
+            <a href="/#residences" class="btn-primary">بازگشت به املاک</a>
         </div>
     </section>
 
@@ -231,7 +237,7 @@
                             <span class="price-card-label">قیمت</span>
                             <span class="price-card-value" id="sidebarPrice">—</span>
                         </div>
-                        <button type="button" class="btn-gold-solid btn-full" id="btnRequestTour">
+                        <button type="button" class="btn-primary btn-full" id="btnRequestTour">
                             <i data-lucide="calendar"></i> درخواست بازدید اختصاصی
                         </button>
                         <button type="button" class="btn-favorite-outline btn-full" id="btnFavorite">
@@ -253,7 +259,7 @@
                             <input type="tel" id="quickPhone" placeholder="شماره تماس" required>
                             <label class="sr-only" for="quickMessage">پیام</label>
                             <textarea id="quickMessage" rows="3" placeholder="پیام شما...">در مورد این ملک اطلاعات بیشتری می‌خواهم.</textarea>
-                            <button type="submit" class="btn-gold-solid btn-full">ارسال درخواست</button>
+                            <button type="submit" class="btn-primary btn-full">ارسال درخواست</button>
                         </form>
                         <div id="quickFormMessage" class="form-message"></div>
                     </div>
@@ -300,7 +306,7 @@
                     <input type="date" id="tourDate" required>
                     <label class="form-label" for="tourNote">یادداشت (اختیاری)</label>
                     <textarea id="tourNote" rows="2" placeholder="سوال یا درخواست خاص خود را بنویسید"></textarea>
-                    <button type="submit" class="btn-gold-solid btn-full">ارسال درخواست بازدید</button>
+                    <button type="submit" class="btn-primary btn-full">ارسال درخواست بازدید</button>
                 </form>
                 <p class="modal-afternote">پس از ثبت، اطلاعات شما برای تیم مشاوره ارسال می‌شود.</p>
                 <div id="tourFormMessage" class="form-message"></div>
@@ -311,8 +317,8 @@
                 <p class="astoria-success-text">اطلاعات ملک و درخواست شما برای تیم آستوریا ارسال شد.</p>
                 <p class="astoria-success-thanks">از اعتماد شما سپاسگزاریم.</p>
                 <div class="astoria-success-actions">
-                    <button type="button" class="btn-gold-outline" id="tourSuccessClose">بازگشت به ملک</button>
-                    <a href="/#residences" class="btn-gold-solid">مشاهده سایر املاک</a>
+                    <button type="button" class="btn-secondary" id="tourSuccessClose">بازگشت به ملک</button>
+                    <a href="/#residences" class="btn-primary">مشاهده سایر املاک</a>
                 </div>
             </div>
         </div>
@@ -320,7 +326,7 @@
 
     <div class="property-mobile-cta" id="propertyMobileCta" aria-hidden="true">
         <div class="property-mobile-cta-price" id="mobileCtaPrice"></div>
-        <button type="button" class="btn-gold-solid" id="mobileCtaTour">درخواست بازدید اختصاصی</button>
+        <button type="button" class="btn-primary" id="mobileCtaTour">درخواست بازدید اختصاصی</button>
     </div>
 
     <div id="notification" class="notification" aria-live="polite" aria-hidden="true"></div>

@@ -122,8 +122,10 @@
   --admin-surface: rgba(14, 14, 20, 0.92);
   --admin-border: var(--color-border);
   --admin-border-active: rgba(200, 200, 194, 0.28);
-  --admin-gold: var(--color-platinum);
-  --admin-gold-light: var(--color-platinum-light);
+  --admin-accent: var(--color-platinum);
+  --admin-accent-light: var(--color-platinum-light);
+  --admin-gold: var(--admin-accent);
+  --admin-gold-light: var(--admin-accent-light);
   --admin-gold-glow: var(--gold-glow);
   --admin-text: var(--gray-100);
   --admin-text-muted: var(--color-muted);
@@ -267,6 +269,7 @@ h1, h2, h3, h4, h5, h6,
   box-shadow: none;
 }
 
+.btn-search-primary,
 .btn-search-gold {
   font-family: var(--font-ui);
   font-weight: 500;
@@ -275,10 +278,12 @@ h1, h2, h3, h4, h5, h6,
   box-shadow: none;
 }
 
+.btn-search-primary::after,
 .btn-search-gold::after {
   display: none;
 }
 
+.btn-search-primary:hover,
 .btn-search-gold:hover {
   transform: none;
   box-shadow: none;

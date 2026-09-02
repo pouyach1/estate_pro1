@@ -5,6 +5,7 @@
 
 import { createIcons, Menu, Search, Bed, Bath, Maximize2, Crown, UserCheck, TrendingUp, ShieldCheck, MapPin, Phone, Mail, ArrowUp, Heart, X, ChevronDown, ChevronLeft, Eye, Calendar, Share2, Car, Warehouse, Thermometer, Wind, Waves, Camera, Dumbbell, Building, Palette, Users, Gamepad, Film, Video, ArrowUpDown, Home } from 'lucide';
 import { formatPrice, formatPriceDisplay, getPropertyMetric, getStatusLabel, escapeHTML } from './js/shared/format.js';
+import { getSiteConfig, applyHomepageSeo } from './js/shared/seo.js';
 
 const API_BASE = '/api';
 const PROPERTY_FILTER_ALL = 'همه';
@@ -16,7 +17,7 @@ const BUDGET_RANGES = {
   '20to50': { label: '۲۰ تا ۵۰ میلیارد', min: 20_000_000_000, max: 50_000_000_000 },
   over50: { label: 'بالای ۵۰ میلیارد', min: 50_000_000_000, max: Infinity },
 };
-const AGENT_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121822'/%3E%3Ccircle cx='50' cy='36' r='18' fill='%23c9a227'/%3E%3Cpath d='M20 88c4-18 18-28 30-28s26 10 30 28' fill='%23c9a227'/%3E%3C/svg%3E";
+const AGENT_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121822'/%3E%3Ccircle cx='50' cy='36' r='18' fill='%23c8c8c2'/%3E%3Cpath d='M20 88c4-18 18-28 30-28s26 10 30 28' fill='%23c8c8c2'/%3E%3C/svg%3E";
 
 // ===== FEATURES =====
 const FEATURE_CATEGORIES = { common: 'ویژگی‌های عمومی', specific: 'ویژگی‌های اختصاصی', luxury: 'ویژگی‌های لوکس' };
@@ -72,12 +73,16 @@ const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingU
 
 // ===== ASTORIA APP =====
 const Astoria = {
-  init(){
+  async init(){
     this.allProperties=[];
     this.featuredProperty=null;
     this.currentFilter=PROPERTY_FILTER_ALL;
     this.currentBudget='all';
     this.searchQuery='';
+    try {
+      const site = await getSiteConfig();
+      await applyHomepageSeo(site);
+    } catch (_) { /* SEO bootstrap optional */ }
     this.heroImages=[];
     this.heroSlideIndex=0;
     this.heroActiveLayer='a';
@@ -97,7 +102,7 @@ const Astoria = {
     this.navLinksContainer=document.querySelector('.nav-links');this.navLinks=document.querySelectorAll('.nav-links a');
     this.backToTop=document.getElementById('back-to-top');this.notification=document.getElementById('notification');
     this.sections=document.querySelectorAll('section[id]');this.filterBtns=document.querySelectorAll('.filter-btn');
-    this.propertiesContainer=document.getElementById('propertiesContainer');this.searchBtn=document.querySelector('.btn-search-gold');
+    this.propertiesContainer=document.getElementById('propertiesContainer');this.searchBtn=document.querySelector('.btn-search-primary');
     this.searchTypeField=document.getElementById('searchTypeField');this.searchTypeValue=document.getElementById('searchTypeValue');
     this.searchTypeDropdown=document.getElementById('searchTypeDropdown');
     this.searchBudgetField=document.getElementById('searchBudgetField');
@@ -333,7 +338,7 @@ const Astoria = {
       this.setPhilosophyImage();
       this.applyFiltersAndSearch({scroll:false});
     }catch(e){
-      this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>دریافت اطلاعات با مشکل مواجه شد</h3><p>لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-gold-outline" id="retryPropertiesLoad">تلاش مجدد</button></div>`;
+      this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>دریافت اطلاعات با مشکل مواجه شد</h3><p>لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-secondary" id="retryPropertiesLoad">تلاش مجدد</button></div>`;
       document.getElementById('retryPropertiesLoad')?.addEventListener('click',()=>this.loadProperties());
     }
   },
@@ -357,8 +362,8 @@ const Astoria = {
         <h3>نتیجه‌ای یافت نشد</h3>
         <p>انتخاب فعلی نتیجه‌ای نداشت. مشاوران آستوریا می‌توانند گزینه‌های مشابه یا اختصاصی را برای شما پیدا کنند.</p>
         <div class="astoria-empty-actions">
-          <button type="button" class="btn-gold-solid" id="emptyConsultationCta">درخواست مشاوره اختصاصی</button>
-          <button type="button" class="btn-gold-outline" id="resetPropertiesFilter">مشاهده همه املاک</button>
+          <button type="button" class="btn-primary" id="emptyConsultationCta">درخواست مشاوره اختصاصی</button>
+          <button type="button" class="btn-secondary" id="resetPropertiesFilter">مشاهده همه املاک</button>
         </div>
       </div>`;
       this.featuredSection?.setAttribute('hidden','');
@@ -441,7 +446,7 @@ const Astoria = {
     const statusBadge=p.isExclusive?'<span class="m-card-status m-card-status--exclusive">اختصاصی آستوریا</span>':statusLabel&&p.status==='reserved'?`<span class="m-card-status m-card-status--reserved">${escapeHTML(statusLabel)}</span>`:'';
     return`<article class="property-card collection-card reveal ${variant}" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
       <div class="card-image" data-property-link="true">
-        ${img?`<img src="${img}" alt="${propertyTitle}" loading="lazy">`:''}
+        ${img?`<img src="${img}" alt="${propertyTitle}${p.location ? ` — ${escapeHTML(p.location)}` : ''}" loading="lazy">`:''}
         <span class="m-card-type">${propertyType}</span>
         ${statusBadge}
         <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
@@ -470,7 +475,7 @@ const Astoria = {
       this.agentsContainer.innerHTML=d.agents.map(a=>this.renderAgentCard(a)).join('');
       createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
     }catch(e){
-      this.agentsContainer.innerHTML='<div class="section-empty-note"><p>دریافت اطلاعات مشاوران با مشکل مواجه شد.</p><button type="button" class="btn-gold-outline" onclick="Astoria.loadAgents()">تلاش مجدد</button></div>';
+      this.agentsContainer.innerHTML='<div class="section-empty-note"><p>دریافت اطلاعات مشاوران با مشکل مواجه شد.</p><button type="button" class="btn-secondary" onclick="Astoria.loadAgents()">تلاش مجدد</button></div>';
     }
   },
   renderAgentCard(agent){
@@ -621,7 +626,7 @@ const Astoria = {
           <input type="tel" id="requestPhone" placeholder="شماره موبایل" required>
           <label for="requestNote">توضیحات (اختیاری)</label>
           <textarea id="requestNote" rows="3" placeholder="زمان یا سوال خاص خود را بنویسید"></textarea>
-          <button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست بازدید</button>
+          <button type="submit" class="btn-primary" style="width:100%">ارسال درخواست بازدید</button>
         </form>
         <p class="request-modal-afternote">پس از ثبت، اطلاعات شما برای تیم مشاوره ارسال می‌شود.</p>
         <div id="requestStatus" class="form-message" role="status" aria-live="polite"></div>
@@ -632,8 +637,8 @@ const Astoria = {
         <p class="astoria-success-text">اطلاعات ملک و درخواست شما برای تیم آستوریا ارسال شد.</p>
         <p class="astoria-success-thanks">از اعتماد شما سپاسگزاریم.</p>
         <div class="astoria-success-actions">
-          <button type="button" class="btn-gold-outline" data-close-request-modal="true">بستن</button>
-          <a href="#residences" class="btn-gold-solid" data-close-and-scroll="residences">مشاهده سایر املاک</a>
+          <button type="button" class="btn-secondary" data-close-request-modal="true">بستن</button>
+          <a href="#residences" class="btn-primary" data-close-and-scroll="residences">مشاهده سایر املاک</a>
         </div>
       </div>
     </div>`;

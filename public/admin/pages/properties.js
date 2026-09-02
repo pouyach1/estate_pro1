@@ -45,7 +45,7 @@ async function loadProperties() {
     const data = await res.json();
 
     if (!data.properties?.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><h3>هنوز ملکی ثبت نشده است</h3><p>اولین ملک خود را اضافه کنید تا در وب‌سایت نمایش داده شود.</p><button type="button" class="btn-gold-outline" onclick="navigateTo('add-property')">افزودن اولین ملک</button></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><h3>هنوز ملکی ثبت نشده است</h3><p>اولین ملک خود را اضافه کنید تا در وب‌سایت نمایش داده شود.</p><button type="button" class="btn-secondary" onclick="navigateTo('add-property')">افزودن اولین ملک</button></div></td></tr>`;
       tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
       return;
     }
@@ -66,7 +66,7 @@ async function loadProperties() {
       </tr>
     `).join('');
   } catch (e) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><h3>بارگذاری املاک انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-gold-outline" onclick="loadProperties()">تلاش مجدد</button></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><h3>بارگذاری املاک انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-secondary" onclick="loadProperties()">تلاش مجدد</button></div></td></tr>';
     tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
   }
 }

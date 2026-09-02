@@ -461,7 +461,7 @@
   }
 
   .astoria-empty-actions .btn-gold-solid,
-  .astoria-empty-actions .btn-gold-outline {
+  .astoria-empty-actions .btn-secondary, .btn-gold-outline {
     width: 100%;
   }
 }

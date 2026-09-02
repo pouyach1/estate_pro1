@@ -15,6 +15,7 @@ Astoria runs as a single Express server with MongoDB. In production/staging, the
 | `PORT` | No | Default `5000` |
 | `NODE_ENV` | Recommended | Set to `production` on staging/production |
 | `SERVE_STATIC` | Staging/Prod | Set to `true` to serve `dist/` + API from one process |
+| `SITE_ORIGIN` | Recommended | Public canonical origin, e.g. `https://astoriaelite.com` (no trailing slash) |
 | `CORS_ORIGIN` | Conditional | Required in production when `SERVE_STATIC` is not `true` |
 
 ### Example `.env` (staging)
@@ -114,6 +115,18 @@ Use `--drop` only when intentionally replacing data.
 
 ---
 
+## SEO Endpoints
+
+| Path | Description |
+|------|-------------|
+| `/api/site` | Public site metadata (origin, contact, default OG image) |
+| `/sitemap.xml` | Dynamic sitemap from public properties |
+| `/robots.txt` | Crawl rules + sitemap reference |
+
+Set `SITE_ORIGIN` in production so canonical URLs, sitemap, and Open Graph use the real domain.
+
+---
+
 ## Smoke Tests
 
 ### Development (Vite + API)
@@ -136,6 +149,7 @@ node scripts/conversion-smoke-qa.mjs
 ```bash
 npm run build
 node scripts/staging-smoke-qa.mjs
+node scripts/seo-smoke-qa.mjs
 ```
 
 ---

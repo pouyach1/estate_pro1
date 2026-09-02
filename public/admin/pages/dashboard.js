@@ -47,7 +47,7 @@ async function loadDashboardStats() {
     else document.getElementById('recentMessages').innerHTML = '<div class="empty-state"><h3>هنوز پیامی دریافت نشده است</h3><p>پیام‌های فرم تماس و درخواست بازدید اینجا نمایش داده می‌شوند.</p></div>';
 
     if (data.recentProperties?.length) renderRecentProperties(data.recentProperties);
-    else document.getElementById('recentPropertiesList').innerHTML = '<div class="empty-state"><h3>هنوز ملکی ثبت نشده است</h3><button type="button" class="btn-gold-outline" onclick="navigateTo(\'add-property\')">افزودن اولین ملک</button></div>';
+    else document.getElementById('recentPropertiesList').innerHTML = '<div class="empty-state"><h3>هنوز ملکی ثبت نشده است</h3><button type="button" class="btn-secondary" onclick="navigateTo(\'add-property\')">افزودن اولین ملک</button></div>';
 
     if (data.topProperties?.length) renderTopProperties(data.topProperties);
     else document.getElementById('topPropertiesList').innerHTML = '<div class="empty-state"><p>داده‌ای موجود نیست</p></div>';
@@ -58,7 +58,7 @@ async function loadDashboardStats() {
     console.error('Dashboard error:', e);
     sections.forEach((id) => {
       const el = document.getElementById(id);
-      if (el) el.innerHTML = '<div class="empty-state"><h3>بارگذاری داشبورد انجام نشد</h3><p>اتصال به سرور برقرار نشد. لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-gold-outline" onclick="loadDashboardStats()">تلاش مجدد</button></div>';
+      if (el) el.innerHTML = '<div class="empty-state"><h3>بارگذاری داشبورد انجام نشد</h3><p>اتصال به سرور برقرار نشد. لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-secondary" onclick="loadDashboardStats()">تلاش مجدد</button></div>';
     });
   }
 }

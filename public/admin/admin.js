@@ -137,7 +137,7 @@ async function uploadBackground() {
   if (!file) return toast('لطفاً یک تصویر انتخاب کنید', 'error');
   const fd = new FormData();
   fd.append('image', file);
-  const btn = document.querySelector('#page-settings .btn-gold-solid');
+  const btn = document.querySelector('#page-settings .btn-primary');
   const original = btn?.textContent;
   if (btn) { btn.textContent = 'در حال آپلود...'; btn.disabled = true; }
   try {

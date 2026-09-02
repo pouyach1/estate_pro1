@@ -3,6 +3,7 @@
    ============================================== */
 
 import { formatPrice, formatPriceDisplay, escapeHTML } from '../js/shared/format.js';
+import { getSiteConfig, applyPropertySeo, applyNoIndex } from '../js/shared/seo.js';
 
 const API = '/api';
 const FAVORITES_KEY = 'astoria_favorites';
@@ -98,6 +99,7 @@ function setPageMode(mode) {
 
 function showErrorState(message) {
   setPageMode('error');
+  applyNoIndex();
   const errorTitle = document.getElementById('propertyErrorTitle');
   const errorMessage = document.getElementById('propertyErrorMessage');
   if (errorTitle) errorTitle.textContent = message || 'ملک موردنظر یافت نشد';
@@ -160,8 +162,9 @@ async function loadProperty() {
     currentImageIndex = 0;
     activeBgLayer = 'a';
 
+    const site = await getSiteConfig();
     setPageMode('content');
-    renderProperty();
+    renderProperty(site);
     loadSimilarProperties();
     loadAgent();
     initHeroSwipe();
@@ -171,47 +174,15 @@ async function loadProperty() {
   }
 }
 
-function updatePropertySeo(p) {
-  if (!p) return;
-  const title = `${p.title || 'ملک'} | آستوریا الیت استیتس`;
-  document.title = title;
-
-  const desc = (p.description || `${p.type || 'ملک'} در ${p.location || 'آستوریا'}`).slice(0, 160);
-  let meta = document.querySelector('meta[name="description"]');
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.name = 'description';
-    document.head.appendChild(meta);
-  }
-  meta.content = desc;
-
-  const price = formatPriceDisplay(p.price);
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateListing',
-    name: p.title,
-    description: p.description || undefined,
-    url: `${location.origin}/property/?id=${encodeURIComponent(propertyId || '')}`,
-    offers: p.price ? { '@type': 'Offer', price: p.price, priceCurrency: 'IRR' } : undefined,
-    address: p.location ? { '@type': 'PostalAddress', addressLocality: p.location } : undefined,
-    floorSize: p.area ? { '@type': 'QuantitativeValue', value: p.area, unitCode: 'MTK' } : undefined,
-  };
-
-  let script = document.getElementById('propertyJsonLd');
-  if (!script) {
-    script = document.createElement('script');
-    script.id = 'propertyJsonLd';
-    script.type = 'application/ld+json';
-    document.head.appendChild(script);
-  }
-  script.textContent = JSON.stringify(jsonLd, (_, v) => (v === undefined ? undefined : v));
+async function updatePropertySeo(p, site) {
+  applyPropertySeo(p, site, propertyId);
 }
 
-function renderProperty() {
+function renderProperty(site) {
   const p = propertyData;
   if (!p) return;
 
-  updatePropertySeo(p);
+  updatePropertySeo(p, site);
 
   const breadcrumb = document.getElementById('breadcrumbTitle');
   if (breadcrumb) breadcrumb.textContent = p.title || 'جزئیات ملک';

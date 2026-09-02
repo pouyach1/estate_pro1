@@ -8,6 +8,7 @@ const fs = require('fs');
 const { validateEnv } = require('./config/env');
 const securityHeaders = require('./middleware/securityHeaders');
 const errorHandler = require('./middleware/errorHandler');
+const { getSitemap, getRobots } = require('./controllers/seoController');
 
 validateEnv();
 
@@ -24,7 +25,13 @@ app.use(securityHeaders);
 app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: isProduction ? '7d' : 0,
+  etag: true,
+}));
+
+app.get('/sitemap.xml', getSitemap);
+app.get('/robots.txt', getRobots);
 
 app.get('/api/health', (req, res) => {
   const dbState = mongoose.connection.readyState;
@@ -43,6 +50,7 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/agents', require('./routes/agentRoutes'));
+app.use('/api', require('./routes/siteRoutes'));
 
 app.get('/', (req, res) => {
   if (serveStatic) {
@@ -58,7 +66,12 @@ if (serveStatic) {
     process.exit(1);
   }
 
-  app.use(express.static(distPath, { index: 'index.html', fallthrough: true }));
+  app.use(express.static(distPath, {
+    index: 'index.html',
+    fallthrough: true,
+    maxAge: isProduction ? '1d' : 0,
+    etag: true,
+  }));
 
   const sendSpa = (res, relativePath) => {
     const filePath = path.join(distPath, relativePath);
