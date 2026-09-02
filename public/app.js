@@ -93,6 +93,9 @@ const Astoria = {
     this.initMobileSearch();
     this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
+    requestAnimationFrame(()=>{
+      document.body.classList.add('is-ready');
+    });
     console.log('%cASTORIA %cElite Estates','color:#2D5A4C;font-weight:bold;','color:#5C5F5E;');
   },
   cacheDOM(){
@@ -125,7 +128,13 @@ const Astoria = {
   },
   initIcons(){createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults})},
   bindEvents(){
-    window.addEventListener('scroll',()=>{this.navbar.classList.toggle('scrolled',scrollY>CONFIG.scrollThreshold);this.backToTop?.classList.toggle('visible',scrollY>CONFIG.backToTopThreshold);this.setActiveLink()},{passive:true});
+.window.addEventListener('scroll',()=>{
+      const y=scrollY;
+      this.navbar.classList.toggle('scrolled',y>CONFIG.scrollThreshold);
+      this.backToTop?.classList.toggle('visible',y>CONFIG.backToTopThreshold);
+      this.setActiveLink();
+      this.updateHeroParallax(y);
+    },{passive:true});
     this.mobileToggle?.addEventListener('click',()=>this.toggleMobileMenu());
     this.mobileMenuClose?.addEventListener('click',()=>this.toggleMobileMenu(true));
     this.navLinks.forEach(l=>l.addEventListener('click',e=>{const href=e.target.getAttribute('href');if(href?.startsWith('#')){e.preventDefault();this.scrollToSection(href)}this.toggleMobileMenu(true)}));
@@ -407,15 +416,20 @@ const Astoria = {
     const img=escapeHTML(p.image||(p.images&&p.images[0])||'');
     const pf=formatPrice(p.price);
     const price=pf?`${escapeHTML(pf)} تومان`:'تماس برای اطلاع از قیمت';
+    const metric=getPropertyMetric(p);
+    const beds=p.bedrooms!=null?`<span class="featured-metric"><i data-lucide="bed"></i> ${escapeHTML(String(p.bedrooms))} خواب</span>`:'';
+    const baths=p.bathrooms!=null?`<span class="featured-metric"><i data-lucide="bath"></i> ${escapeHTML(String(p.bathrooms))} حمام</span>`:'';
+    const area=metric?`<span class="featured-metric"><i data-lucide="maximize-2"></i> ${escapeHTML(metric)}</span>`:'';
     this.featuredContainer.innerHTML=`
       <a href="/property/?id=${id}" class="featured-property-link">
-        <div class="featured-property-image" style="background-image:url('${img}')"></div>
+        <div class="featured-property-image" style="background-image:url('${img}')" role="img" aria-label="${title}"></div>
         <div class="featured-property-body">
           <span class="featured-property-type">${type}</span>
           <h3 class="featured-property-title">${title}</h3>
           ${location?`<p class="featured-property-location"><i data-lucide="map-pin"></i> ${location}</p>`:''}
+          <div class="featured-property-metrics">${beds}${baths}${area}</div>
           <p class="featured-property-price">${price}</p>
-          <span class="featured-property-cta">مشاهده ملک <i data-lucide="chevron-left"></i></span>
+          <span class="featured-property-cta">مشاهده پروندهٔ کامل <i data-lucide="chevron-left"></i></span>
         </div>
       </a>`;
     this.featuredSection.removeAttribute('hidden');
@@ -432,7 +446,7 @@ const Astoria = {
     this.propertiesResultsMeta.innerHTML=`<span class="collection-meta-label">${label}</span><span class="collection-meta-count">${countLabel}</span>`;
   },
   renderCard(p,layoutIndex=0){
-    const variant=layoutIndex%3===0?'collection-card--wide':layoutIndex%3===1?'collection-card--tall':'';
+    const variant=layoutIndex%5===0?'collection-card--wide':layoutIndex%5===2?'collection-card--tall':'';
     const propertyId=escapeHTML(p._id||'');
     const propertyType=escapeHTML(p.type||'');
     const propertyTitle=escapeHTML(p.title||'');
@@ -444,10 +458,12 @@ const Astoria = {
     const metricRow=metric?`<p class="m-card-metric"><i data-lucide="maximize-2"></i> ${escapeHTML(metric)}</p>`:'';
     const statusLabel=getStatusLabel(p.status);
     const statusBadge=p.isExclusive?'<span class="m-card-status m-card-status--exclusive">اختصاصی آستوریا</span>':statusLabel&&p.status==='reserved'?`<span class="m-card-status m-card-status--reserved">${escapeHTML(statusLabel)}</span>`:'';
+    const indexLabel=String(layoutIndex+1).padStart(2,'0');
     return`<article class="property-card collection-card reveal ${variant}" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
       <div class="card-image" data-property-link="true">
         ${img?`<img src="${img}" alt="${propertyTitle}${propertyLocation ? ` — ${propertyLocation}` : ''}" loading="lazy">`:''}
         <span class="m-card-type">${propertyType}</span>
+        <span class="card-index" aria-hidden="true">${indexLabel}</span>
         ${statusBadge}
         <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
       </div>
@@ -579,6 +595,15 @@ const Astoria = {
   },
   setActiveLink(){const pos=scrollY+120;this.sections.forEach(s=>{if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight)this.navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===`#${s.id}`))})},
   initRevealObserver(){if(this._obs)this._obs.disconnect();this._obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('revealed');this._obs.unobserve(en.target)}}),CONFIG.revealOptions);this.revealElements.forEach(el=>this._obs.observe(el))},
+  updateHeroParallax(y){
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const layerA=document.getElementById('homeHeroA');
+    const layerB=document.getElementById('homeHeroB');
+    if(!layerA)return;
+    const offset=`${Math.min(y*0.12,48)}px`;
+    layerA.style.setProperty('--hero-parallax',offset);
+    if(layerB)layerB.style.setProperty('--hero-parallax',offset);
+  },
   search(){
     if(this.desktopLocationSearch)this.searchQuery=this.desktopLocationSearch.value.trim();
     const active=this.searchTypeDropdown?.querySelector('.search-dropdown-item.active');
