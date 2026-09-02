@@ -36,7 +36,7 @@ async function loadDashboardStats() {
     animateNumber('totalProperties', stats.totalProperties || 0);
     animateNumber('totalViews', stats.totalViews || 0);
     animateNumber('totalCustomers', stats.totalCustomers || 0);
-    animateNumber('unreadMessages', stats.unreadMessages || 0);
+    animateNumber('unreadMessages', stats.newLeads ?? stats.unreadMessages || 0);
 
     if (data.propertiesByType?.length) renderPropertyTypeChart(data.propertiesByType);
     else document.getElementById('propertyTypeChart').innerHTML = '<div class="empty-state"><p>هنوز داده‌ای برای نمودار وجود ندارد</p></div>';
@@ -74,15 +74,19 @@ function renderMessageStats(stats) {
   const c = document.getElementById('messageStats');
   if (!c) return;
   const total = stats?.totalCustomers || 0;
-  const unread = stats?.unreadMessages || 0;
-  const read = Math.max(total - unread, 0);
+  const newLeads = stats?.newLeads ?? stats?.unreadMessages || 0;
+  const followUp = stats?.followUpLeads || 0;
   const active = stats?.activeProperties || 0;
+  const featured = stats?.featuredProperties || 0;
+  const exclusive = stats?.exclusiveProperties || 0;
 
   c.innerHTML = `
-    <div class="msg-stat-item"><div class="msg-stat-dot new"></div><span>جدید</span><strong>${unread.toLocaleString('fa-IR')}</strong></div>
-    <div class="msg-stat-item"><div class="msg-stat-dot read"></div><span>خوانده شده</span><strong>${read.toLocaleString('fa-IR')}</strong></div>
-    <div class="msg-stat-item"><div class="msg-stat-dot total"></div><span>کل پیام‌ها</span><strong>${total.toLocaleString('fa-IR')}</strong></div>
-    <div class="msg-stat-item"><div class="msg-stat-dot responded"></div><span>املاک فعال</span><strong>${active.toLocaleString('fa-IR')}</strong></div>`;
+    <div class="msg-stat-item"><div class="msg-stat-dot new"></div><span>درخواست جدید</span><strong>${newLeads.toLocaleString('fa-IR')}</strong></div>
+    <div class="msg-stat-item"><div class="msg-stat-dot read"></div><span>نیاز به پیگیری</span><strong>${followUp.toLocaleString('fa-IR')}</strong></div>
+    <div class="msg-stat-item"><div class="msg-stat-dot total"></div><span>کل درخواست‌ها</span><strong>${total.toLocaleString('fa-IR')}</strong></div>
+    <div class="msg-stat-item"><div class="msg-stat-dot responded"></div><span>املاک فعال</span><strong>${active.toLocaleString('fa-IR')}</strong></div>
+    <div class="msg-stat-item"><div class="msg-stat-dot featured"></div><span>ملک شاخص</span><strong>${featured.toLocaleString('fa-IR')}</strong></div>
+    <div class="msg-stat-item"><div class="msg-stat-dot exclusive"></div><span>اختصاصی</span><strong>${exclusive.toLocaleString('fa-IR')}</strong></div>`;
 }
 
 function renderRecentMessages(customers) {

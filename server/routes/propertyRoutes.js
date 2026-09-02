@@ -3,6 +3,8 @@ const router = express.Router();
 const {
   getProperties,
   getProperty,
+  getSimilarProperties,
+  getFeaturedProperty,
   getAdminProperties,
   getAdminProperty,
   createProperty,
@@ -14,6 +16,8 @@ const { protectAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 // Public routes — no auth needed
+router.get('/featured/home', getFeaturedProperty);
+router.get('/:id/similar', getSimilarProperties);
 router.get('/', getProperties);
 router.get('/:id', getProperty);
 

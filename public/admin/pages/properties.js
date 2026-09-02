@@ -4,9 +4,25 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+const STATUS_LABELS = {
+  available: 'فعال',
+  reserved: 'رزرو',
+  sold: 'فروخته',
+  rented: 'اجاره',
+};
+
 function formatPropertyPrice(price) {
   if (!price && price !== 0) return 'تماس بگیرید';
-  return `${Number(price).toLocaleString('fa-IR')} تومان`;
+  const num = Number(price);
+  if (num >= 1000000000) return `${(num / 1000000000).toFixed(1).replace('.0', '')} میلیارد تومان`;
+  return `${num.toLocaleString('fa-IR')} تومان`;
+}
+
+function propertyStatusBadge(p) {
+  if (p.isActive === false) return '<span class="status-badge status-inactive">مخفی</span>';
+  const label = STATUS_LABELS[p.status] || 'فعال';
+  const cls = p.status === 'reserved' ? 'status-reserved' : p.status === 'sold' || p.status === 'rented' ? 'status-inactive' : 'status-active';
+  return `<span class="status-badge ${cls}">${label}</span>`;
 }
 
 async function loadProperties() {
@@ -40,7 +56,7 @@ async function loadProperties() {
         <td><strong>${escapeHtml(p.title)}</strong><br><small class="table-sub">${escapeHtml(p.location || '')}</small></td>
         <td>${escapeHtml(p.type)}</td>
         <td>${escapeHtml(formatPropertyPrice(p.price))}</td>
-        <td>${p.isActive !== false ? '<span class="status-badge status-active">فعال</span>' : '<span class="status-badge status-inactive">غیرفعال</span>'}</td>
+        <td>${propertyStatusBadge(p)}${p.isFeatured ? ' <span class="status-badge status-featured">شاخص</span>' : ''}${p.isExclusive ? ' <span class="status-badge status-exclusive">اختصاصی</span>' : ''}</td>
         <td>${(p.views || 0).toLocaleString('fa-IR')}</td>
         <td>${new Date(p.updatedAt || p.createdAt).toLocaleDateString('fa-IR')}</td>
         <td class="table-actions">

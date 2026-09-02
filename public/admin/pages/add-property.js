@@ -243,6 +243,11 @@ async function editProperty(id) {
     document.getElementById('propLocation').value = p.location || '';
     document.getElementById('propDesc').value = p.description || '';
     document.getElementById('propListingType').value = p.listingType || 'آگهی ویژه';
+    document.getElementById('propStatus').value = p.status || 'available';
+    document.getElementById('propSortOrder').value = p.sortOrder || 0;
+    document.getElementById('propIsActive').checked = p.isActive !== false;
+    document.getElementById('propIsFeatured').checked = !!p.isFeatured;
+    document.getElementById('propIsExclusive').checked = !!p.isExclusive;
 
     const preview = document.getElementById('propImagePreview');
     if (preview && p.image) {
@@ -286,8 +291,11 @@ async function handleFormSubmit(e) {
   fd.append('location', document.getElementById('propLocation')?.value || '');
   fd.append('description', document.getElementById('propDesc')?.value || '');
   fd.append('listingType', document.getElementById('propListingType')?.value || 'آگهی ویژه');
-  fd.append('isExclusive', true);
-  fd.append('isActive', true);
+  fd.append('status', document.getElementById('propStatus')?.value || 'available');
+  fd.append('sortOrder', document.getElementById('propSortOrder')?.value || '0');
+  fd.append('isExclusive', document.getElementById('propIsExclusive')?.checked ? 'true' : 'false');
+  fd.append('isFeatured', document.getElementById('propIsFeatured')?.checked ? 'true' : 'false');
+  fd.append('isActive', document.getElementById('propIsActive')?.checked ? 'true' : 'false');
   fd.append('features', JSON.stringify(collectFeatures()));
   
   const imgFile = document.getElementById('propImage')?.files?.[0];

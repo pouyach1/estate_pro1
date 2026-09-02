@@ -123,6 +123,11 @@ const getDashboardStats = async (req, res) => {
     const totalCustomers = await Customer.countDocuments();
     const unreadMessages = await Customer.countDocuments({ isRead: false });
 
+    const featuredProperties = await Property.countDocuments({ isFeatured: true, isActive: true });
+    const exclusiveProperties = await Property.countDocuments({ isExclusive: true, isActive: true });
+    const newLeads = await Customer.countDocuments({ status: 'new' });
+    const followUpLeads = await Customer.countDocuments({ status: 'follow_up' });
+
     const totalViewsResult = await Property.aggregate([
       { $group: { _id: null, total: { $sum: '$views' } } }
     ]);
@@ -147,8 +152,12 @@ const getDashboardStats = async (req, res) => {
       stats: {
         totalProperties,
         activeProperties,
+        featuredProperties,
+        exclusiveProperties,
         totalCustomers,
         unreadMessages,
+        newLeads,
+        followUpLeads,
         totalViews
       },
       propertiesByType,
