@@ -34,7 +34,7 @@ function formatPrice(price) {
 
 function formatPriceDisplay(price) {
   const formatted = formatPrice(price);
-  return formatted ? `${formatted} تومان` : 'تماس بگیرید';
+  return formatted ? `${formatted} تومان` : 'تماس برای اطلاع از قیمت';
 }
 
 function getPropertyImages(property) {
@@ -499,6 +499,27 @@ function setModalOpen(modal, open) {
   if (!modal) return;
   modal.classList.toggle('active', open);
   document.body.classList.toggle('no-scroll', open);
+  if (!open) setTimeout(resetTourModal, 320);
+}
+
+function resetTourModal() {
+  const body = document.getElementById('tourModalBody');
+  const success = document.getElementById('tourModalSuccess');
+  const messageEl = document.getElementById('tourFormMessage');
+  if (body) body.hidden = false;
+  if (success) success.hidden = true;
+  if (messageEl) {
+    messageEl.textContent = '';
+    messageEl.className = 'form-message';
+  }
+  document.getElementById('tourForm')?.reset();
+}
+
+function showTourSuccess() {
+  const body = document.getElementById('tourModalBody');
+  const success = document.getElementById('tourModalSuccess');
+  if (body) body.hidden = true;
+  if (success) success.hidden = false;
 }
 
 function setLightboxOpen(open) {
@@ -534,6 +555,7 @@ function initMobileNav() {
 }
 
 function openTourModal() {
+  resetTourModal();
   setModalOpen(document.getElementById('tourModal'), true);
   const dateInput = document.getElementById('tourDate');
   if (dateInput && !dateInput.value) {
@@ -602,6 +624,10 @@ document.getElementById('btnShare')?.addEventListener('click', shareProperty);
   document.getElementById(id)?.addEventListener('click', openTourModal);
 });
 
+document.getElementById('tourSuccessClose')?.addEventListener('click', () => {
+  setModalOpen(document.getElementById('tourModal'), false);
+});
+
 document.getElementById('closeTourModal')?.addEventListener('click', () => {
   setModalOpen(document.getElementById('tourModal'), false);
 });
@@ -648,14 +674,7 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
 
     if (!res.ok) throw new Error('request failed');
 
-    messageEl.className = 'form-message success';
-    messageEl.textContent = 'درخواست شما با موفقیت ثبت شد.';
-    document.getElementById('tourForm').reset();
-
-    setTimeout(() => {
-      setModalOpen(document.getElementById('tourModal'), false);
-      messageEl.textContent = '';
-    }, 2000);
+    showTourSuccess();
   } catch (error) {
     messageEl.className = 'form-message error';
     messageEl.textContent = 'خطا در ثبت درخواست. لطفاً دوباره تلاش کنید.';
@@ -697,7 +716,7 @@ document.getElementById('quickContactForm')?.addEventListener('submit', async (e
     if (!res.ok) throw new Error('request failed');
 
     messageEl.className = 'form-message success';
-    messageEl.textContent = 'پیام شما ارسال شد.';
+    messageEl.textContent = 'پیام شما ثبت شد. تیم آستوریا به زودی با شما تماس خواهد گرفت.';
     document.getElementById('quickContactForm').reset();
   } catch (error) {
     messageEl.className = 'form-message error';
