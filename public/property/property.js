@@ -2,40 +2,21 @@
    PROPERTY DETAIL — Flagship Experience
    ============================================== */
 
+import { formatPrice, formatPriceDisplay, escapeHTML } from '../js/shared/format.js';
+
 const API = '/api';
 const FAVORITES_KEY = 'astoria_favorites';
 const refreshIcons = () => window.refreshLucideIcons?.();
 const urlParams = new URLSearchParams(window.location.search);
 const propertyId = urlParams.get('id');
 
-const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='%23070912'/%3E%3Cpath d='M160 210h480L400 90 160 210Zm64 32h64v192h-64V242Zm128 0h64v192h-64V242Zm128 0h64v192h-64V242ZM176 456h448v-48H176v48Z' fill='%23c9a227'/%3E%3Ctext x='400' y='430' text-anchor='middle' fill='%23888' font-family='sans-serif' font-size='20'%3EASTORIA ELITE ESTATES%3C/text%3E%3C/svg%3E";
+const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='%23070707'/%3E%3Cpath d='M160 210h480L400 90 160 210Zm64 32h64v192h-64V242Zm128 0h64v192h-64V242Zm128 0h64v192h-64V242ZM176 456h448v-48H176v48Z' fill='%23c8c8c2'/%3E%3Ctext x='400' y='430' text-anchor='middle' fill='%2370706c' font-family='sans-serif' font-size='20'%3EASTORIA ELITE ESTATES%3C/text%3E%3C/svg%3E";
 
 let currentImageIndex = 0;
 let propertyImages = [];
 let propertyData = null;
 let activeBgLayer = 'a';
 let assignedAgent = null;
-
-function escapeHTML(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
-}
-
-function formatPrice(price) {
-  if (!price && price !== 0) return null;
-  const num = Number(price);
-  if (Number.isNaN(num)) return null;
-  if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace('.0', '') + ' میلیارد';
-  if (num >= 1000000) return Math.floor(num / 1000000).toLocaleString('fa-IR') + ' میلیون';
-  if (num >= 1000) return Math.floor(num / 1000).toLocaleString('fa-IR') + ' هزار';
-  return num.toLocaleString('fa-IR');
-}
-
-function formatPriceDisplay(price) {
-  const formatted = formatPrice(price);
-  return formatted ? `${formatted} تومان` : 'تماس برای اطلاع از قیمت';
-}
 
 function getPropertyImages(property) {
   const images = [];
@@ -190,11 +171,47 @@ async function loadProperty() {
   }
 }
 
+function updatePropertySeo(p) {
+  if (!p) return;
+  const title = `${p.title || 'ملک'} | آستوریا الیت استیتس`;
+  document.title = title;
+
+  const desc = (p.description || `${p.type || 'ملک'} در ${p.location || 'آستوریا'}`).slice(0, 160);
+  let meta = document.querySelector('meta[name="description"]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.name = 'description';
+    document.head.appendChild(meta);
+  }
+  meta.content = desc;
+
+  const price = formatPriceDisplay(p.price);
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: p.title,
+    description: p.description || undefined,
+    url: `${location.origin}/property/?id=${encodeURIComponent(propertyId || '')}`,
+    offers: p.price ? { '@type': 'Offer', price: p.price, priceCurrency: 'IRR' } : undefined,
+    address: p.location ? { '@type': 'PostalAddress', addressLocality: p.location } : undefined,
+    floorSize: p.area ? { '@type': 'QuantitativeValue', value: p.area, unitCode: 'MTK' } : undefined,
+  };
+
+  let script = document.getElementById('propertyJsonLd');
+  if (!script) {
+    script = document.createElement('script');
+    script.id = 'propertyJsonLd';
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(jsonLd, (_, v) => (v === undefined ? undefined : v));
+}
+
 function renderProperty() {
   const p = propertyData;
   if (!p) return;
 
-  document.title = `${p.title || 'جزئیات ملک'} | آستوریا الیت استیتس`;
+  updatePropertySeo(p);
 
   const breadcrumb = document.getElementById('breadcrumbTitle');
   if (breadcrumb) breadcrumb.textContent = p.title || 'جزئیات ملک';
@@ -333,7 +350,7 @@ function renderAgentCard(agent, container) {
 
   container.innerHTML = `
     <div class="agent-showcase">
-      ${photo ? `<img src="${photo}" alt="${name}" class="agent-showcase-photo" loading="lazy">` : `<div class="agent-showcase-photo" style="background:rgba(201,162,39,0.1);display:flex;align-items:center;justify-content:center;"><i data-lucide="user"></i></div>`}
+      ${photo ? `<img src="${photo}" alt="${name}" class="agent-showcase-photo" loading="lazy">` : `<div class="agent-showcase-photo" style="background:rgba(200,200,194,0.08);display:flex;align-items:center;justify-content:center;"><i data-lucide="user"></i></div>`}
       <div class="agent-showcase-body">
         <h3 class="agent-showcase-name">${name}</h3>
         <p class="agent-showcase-role">${title}</p>

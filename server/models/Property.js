@@ -30,4 +30,9 @@ const propertySchema = new mongoose.Schema({
 
 propertySchema.pre('save', function (next) { this.updatedAt = new Date(); next(); });
 
+propertySchema.index({ isActive: 1, status: 1, sortOrder: -1 });
+propertySchema.index({ isActive: 1, isFeatured: -1, sortOrder: -1 });
+propertySchema.index({ type: 1, isActive: 1 });
+propertySchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Property', propertySchema);

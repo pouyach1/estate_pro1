@@ -14,4 +14,8 @@ const customerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+customerSchema.index({ status: 1, createdAt: -1 });
+customerSchema.index({ propertyId: 1, createdAt: -1 });
+customerSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Customer', customerSchema);

@@ -1,0 +1,218 @@
+/* ==============================================
+   ASTORIA — Phase 9 Obsidian / Platinum Overrides
+   Removes residual warm/gold styling across pages
+   ============================================== */
+
+:root {
+  --gold: var(--color-platinum);
+  --gold-light: var(--color-platinum-light);
+  --gold-border: rgba(200, 200, 194, 0.22);
+  --gold-glow: rgba(200, 200, 194, 0.06);
+}
+
+/* ── Neutralize warm hardcoded rgba ── */
+.home-page .filter-btn.active,
+.home-page .collection-card:hover,
+.home-page .filter-btn:hover,
+.philosophy-frame::before,
+.home-page .advisor-card:hover,
+.home-contact-link:hover,
+.featured-property-link:hover {
+  border-color: rgba(200, 200, 194, 0.18) !important;
+}
+
+.home-page .filter-btn.active {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--color-ivory) !important;
+}
+
+/* ── Featured cover story ── */
+.featured-section {
+  padding: 88px 0 72px;
+}
+
+.featured-property-link {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--color-charcoal);
+  overflow: hidden;
+  min-height: 480px;
+  transition: border-color var(--duration-transition) ease;
+}
+
+.featured-property-link:hover {
+  border-color: rgba(200, 200, 194, 0.2);
+}
+
+.featured-property-image {
+  min-height: 480px;
+  background-size: cover;
+  background-position: center;
+}
+
+.featured-property-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 44px;
+  background: linear-gradient(180deg, rgba(13, 13, 15, 0.2), rgba(13, 13, 15, 0.92));
+}
+
+.featured-property-type {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-platinum);
+  margin-bottom: 16px;
+}
+
+.featured-property-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.35;
+  color: var(--color-ivory);
+  margin-bottom: 14px;
+}
+
+.featured-property-location {
+  color: var(--color-stone);
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+}
+
+.featured-property-price {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--color-ivory);
+  margin-bottom: 8px;
+}
+
+.featured-property-cta {
+  color: var(--color-platinum);
+}
+
+/* ── Collection cards ── */
+.collection-meta-label {
+  color: var(--color-platinum) !important;
+}
+
+.m-card-metric i,
+.collection-meta-label {
+  color: var(--color-platinum-dark) !important;
+}
+
+/* ── Pro.css warm rgba neutralization ── */
+::selection { background: rgba(200, 200, 194, 0.22) !important; }
+
+.property-card,
+.why-item,
+.agent-card,
+.contact-form,
+.info-item,
+.astoria-footer,
+.search-dropdown,
+.properties-empty-state,
+.properties-loading,
+.properties-error {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.badge-exclusive,
+.skip-link,
+.notification-info {
+  background: rgba(243, 241, 236, 0.92) !important;
+  color: var(--color-void) !important;
+}
+
+.back-to-top {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(200, 200, 194, 0.22) !important;
+}
+
+.filter-btn.active {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(200, 200, 194, 0.2) !important;
+  color: var(--color-ivory) !important;
+}
+
+.btn-search-gold:hover {
+  box-shadow: none !important;
+}
+
+.card-image::before {
+  display: none !important;
+}
+
+/* ── Admin obsidian ── */
+@keyframes goldBorderSpin { to { border-color: rgba(200, 200, 194, 0.25); } }
+@keyframes goldPulse { to { box-shadow: none; } }
+
+.admin-login-header .brand-main,
+.sidebar-brand .brand-main,
+.stat-number,
+.chart-bar-fill,
+.top-prop-rank,
+.unread-badge,
+.btn-full,
+.btn-gold-solid {
+  color: var(--color-void) !important;
+}
+
+.btn-full,
+.btn-gold-solid,
+.top-prop-rank,
+.unread-badge {
+  background: var(--color-ivory) !important;
+  box-shadow: none !important;
+}
+
+.btn-full:hover,
+.btn-gold-solid:hover {
+  background: var(--color-ivory-soft) !important;
+  box-shadow: none !important;
+}
+
+.sidebar-nav-item.active {
+  border-right-color: var(--color-platinum) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--color-ivory) !important;
+}
+
+.chart-bar-fill {
+  background: linear-gradient(90deg, #8f8f8a, var(--color-platinum)) !important;
+}
+
+.edit-mode-indicator {
+  animation: none !important;
+  border-color: rgba(200, 200, 194, 0.25) !important;
+  color: var(--color-platinum) !important;
+}
+
+/* ── 404 ── */
+.astoria-404-code {
+  color: rgba(200, 200, 194, 0.18) !important;
+}
+
+@media (max-width: 900px) {
+  .featured-property-link {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .featured-property-image {
+    min-height: 280px;
+  }
+
+  .featured-property-body {
+    padding: 32px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-property-link,
+  .home-page .collection-card {
+    transition: none !important;
+  }
+}

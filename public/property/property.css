@@ -129,7 +129,7 @@
 }
 
 .property-hero-fullscreen:hover {
-  background: rgba(201, 162, 39, 0.9);
+  background: rgba(200,200,194, 0.9);
   border-color: var(--gold);
   color: var(--text-dark);
 }
@@ -163,7 +163,7 @@
 }
 
 .hero-nav-btn:hover {
-  background: rgba(201, 162, 39, 0.92);
+  background: rgba(200,200,194, 0.92);
   border-color: var(--gold);
   color: var(--text-dark);
 }
@@ -395,7 +395,7 @@
 }
 
 .property-action-btn:hover {
-  border-color: rgba(201, 162, 39, 0.4);
+  border-color: rgba(200,200,194, 0.4);
   color: var(--gold);
 }
 
@@ -427,9 +427,9 @@
   gap: 20px;
   padding: 16px 20px;
   margin-bottom: 36px;
-  border: 1px solid rgba(201, 162, 39, 0.12);
+  border: 1px solid rgba(200,200,194, 0.12);
   border-radius: var(--radius-md);
-  background: rgba(201, 162, 39, 0.04);
+  background: rgba(200,200,194, 0.04);
 }
 
 .property-trust-item {
@@ -546,7 +546,7 @@
 }
 
 .feature-tag:hover {
-  border-color: rgba(201, 162, 39, 0.2);
+  border-color: rgba(200,200,194, 0.2);
 }
 
 .feature-check {
@@ -584,7 +584,7 @@
   height: 64px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(201, 162, 39, 0.25);
+  border: 2px solid rgba(200,200,194, 0.25);
   flex-shrink: 0;
 }
 
@@ -660,7 +660,7 @@
 }
 
 .similar-card:hover {
-  border-color: rgba(201, 162, 39, 0.25);
+  border-color: rgba(200,200,194, 0.25);
   transform: translateY(-2px);
 }
 
@@ -805,7 +805,7 @@
 .quick-contact-form input:focus,
 .quick-contact-form textarea:focus {
   outline: none;
-  border-color: rgba(201, 162, 39, 0.5);
+  border-color: rgba(200,200,194, 0.5);
 }
 
 /* ── Lightbox ── */
@@ -901,7 +901,7 @@
 
 .modal-card {
   background: rgba(14, 14, 18, 0.98);
-  border: 1px solid rgba(201, 162, 39, 0.18);
+  border: 1px solid rgba(200,200,194, 0.18);
   border-radius: var(--radius-xl);
   padding: 36px 32px;
   max-width: 440px;
@@ -960,7 +960,7 @@
   text-align: center;
   max-width: 480px;
   padding: 48px 32px;
-  border: 1px solid rgba(201, 162, 39, 0.12);
+  border: 1px solid rgba(200,200,194, 0.12);
   border-radius: var(--radius-xl);
   background: rgba(255, 255, 255, 0.02);
 }
