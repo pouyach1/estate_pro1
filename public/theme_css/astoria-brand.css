@@ -1,0 +1,487 @@
+/* ==============================================
+   ASTORIA ELITE ESTATES — Brand Design System
+   Phase 6 · Quiet Luxury
+   ============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Arabic:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* ── Typography ── */
+  --font-ui: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+  --font-display: 'Noto Serif Arabic', 'Vazirmatn', serif;
+  --font-heading: var(--font-display);
+  --font-body: var(--font-ui);
+
+  --text-display: clamp(2rem, 4.5vw, 3.5rem);
+  --text-h1: clamp(1.75rem, 3vw, 2.5rem);
+  --text-h2: clamp(1.35rem, 2.2vw, 1.85rem);
+  --text-h3: 1.125rem;
+  --text-body: 0.9375rem;
+  --text-small: 0.8125rem;
+  --text-meta: 0.75rem;
+  --text-eyebrow: 0.6875rem;
+
+  --leading-tight: 1.25;
+  --leading-body: 1.75;
+  --leading-relaxed: 1.9;
+  --tracking-eyebrow: 0.12em;
+  --tracking-brand: 0.08em;
+
+  /* ── Color — architectural palette ── */
+  --color-void: #050508;
+  --color-charcoal: #0a0a0c;
+  --color-surface: #0e0e12;
+  --color-elevated: #141418;
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.1);
+  --color-cream: #f0ebe3;
+  --color-stone: #9a9690;
+  --color-muted: #6e6e74;
+  --color-champagne: #c4a962;
+  --color-champagne-light: #d4bc7a;
+  --color-champagne-dark: #a68b42;
+  --color-champagne-muted: rgba(196, 169, 98, 0.14);
+
+  /* Legacy aliases (public + property pages) */
+  --bg-void: var(--color-void);
+  --bg-deep: var(--color-charcoal);
+  --bg-navy: #0c1118;
+  --bg-card: rgba(14, 14, 18, 0.65);
+  --gold: var(--color-champagne);
+  --gold-light: var(--color-champagne-light);
+  --gold-dark: var(--color-champagne-dark);
+  --gold-glow: rgba(196, 169, 98, 0.15);
+  --gold-border: rgba(196, 169, 98, 0.22);
+  --white: #ffffff;
+  --gray-100: #e8e8e8;
+  --gray-200: #c4c4c4;
+  --gray-300: #9a9a9a;
+  --gray-400: var(--color-muted);
+  --text-dark: #0a0a0a;
+
+  /* ── Spacing scale ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-xs: var(--space-2);
+  --space-sm: var(--space-3);
+  --space-md: var(--space-4);
+  --space-lg: var(--space-6);
+  --space-xl: var(--space-8);
+  --space-2xl: var(--space-12);
+  --space-3xl: var(--space-20);
+  --space-4xl: var(--space-24);
+
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+
+  /* ── Shadows (restrained) ── */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.45);
+  --shadow-gold: none;
+  --shadow-gold-strong: none;
+
+  /* ── Motion ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-micro: 180ms;
+  --duration-base: 240ms;
+  --duration-transition: 320ms;
+  --duration-reveal: 480ms;
+  --transition-fast: var(--duration-micro) var(--ease-in-out);
+  --transition-base: var(--duration-base) var(--ease-in-out);
+  --transition-slow: var(--duration-transition) var(--ease-out);
+
+  /* ── Layout ── */
+  --max-width: 1280px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  /* ── Admin aliases ── */
+  --admin-bg: var(--color-void);
+  --admin-surface: rgba(14, 14, 20, 0.92);
+  --admin-border: var(--color-border);
+  --admin-border-active: rgba(196, 169, 98, 0.35);
+  --admin-gold: var(--color-champagne);
+  --admin-gold-light: var(--color-champagne-light);
+  --admin-gold-glow: var(--gold-glow);
+  --admin-text: var(--gray-100);
+  --admin-text-muted: var(--color-muted);
+  --admin-radius: var(--radius-lg);
+  --admin-radius-sm: var(--radius-md);
+  --admin-radius-pill: var(--radius-pill);
+  --admin-shadow: var(--shadow-lg);
+  --admin-shadow-gold: none;
+  --admin-transition: var(--transition-base);
+  --admin-sidebar-width: 260px;
+  --admin-danger: #e74c3c;
+  --admin-success: #2ecc71;
+  --admin-info: #3498db;
+  --admin-warning: #f39c12;
+
+  /* Glass (minimal use) */
+  --glass-bg: rgba(12, 12, 16, 0.72);
+  --glass-blur: blur(16px);
+  --glass-blur-heavy: blur(20px);
+}
+
+/* ── Base typography ── */
+html {
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  line-height: var(--leading-body);
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+}
+
+.font-ui {
+  font-family: var(--font-ui);
+}
+
+.text-eyebrow {
+  font-family: var(--font-ui);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.text-meta {
+  font-family: var(--font-ui);
+  font-size: var(--text-meta);
+  color: var(--gray-400);
+  letter-spacing: 0.02em;
+}
+
+/* ── Buttons ── */
+.btn-gold-solid,
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  padding: 13px 28px;
+  min-height: 44px;
+  background: var(--gold);
+  color: var(--text-dark);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold-solid::after,
+.btn-primary::after {
+  display: none;
+}
+
+.btn-gold-solid:hover,
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-gold-solid:focus-visible,
+.btn-primary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.btn-gold-solid:disabled,
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-gold-outline,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  padding: 11px 24px;
+  min-height: 42px;
+  border: 1px solid rgba(196, 169, 98, 0.4);
+  border-radius: var(--radius-pill);
+  color: var(--gold);
+  background: transparent;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-gold-outline::after,
+.btn-secondary::after {
+  display: none;
+}
+
+.btn-gold-outline:hover,
+.btn-secondary:hover {
+  background: var(--color-champagne-muted);
+  color: var(--gold-light);
+  border-color: rgba(196, 169, 98, 0.55);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-search-gold {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.btn-search-gold::after {
+  display: none;
+}
+
+.btn-search-gold:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Form controls ── */
+.astoria-input,
+.form-group input,
+.form-group textarea,
+.form-group select,
+.quick-contact-form input,
+.quick-contact-form textarea,
+.admin-login-form input,
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select,
+.quick-contact-form input,
+.quick-contact-form textarea {
+  background: rgba(8, 8, 12, 0.6);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--white);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus,
+.quick-contact-form input:focus,
+.quick-contact-form textarea:focus {
+  outline: none;
+  border-color: rgba(196, 169, 98, 0.45);
+  box-shadow: 0 0 0 3px rgba(196, 169, 98, 0.08);
+}
+
+.form-group label {
+  font-family: var(--font-ui);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--gray-300);
+}
+
+/* ── States ── */
+.astoria-state,
+.properties-empty-state,
+.properties-loading,
+.properties-error,
+.section-empty-note,
+.section-loading-note,
+.empty-state {
+  font-family: var(--font-ui);
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.astoria-state h3,
+.properties-empty-state h3,
+.properties-error,
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: var(--space-3);
+}
+
+.astoria-state p,
+.properties-empty-state p,
+.properties-loading,
+.properties-error,
+.section-empty-note,
+.section-loading-note,
+.empty-state p {
+  font-size: var(--text-small);
+  color: var(--gray-300);
+  line-height: var(--leading-relaxed);
+}
+
+.form-message {
+  font-family: var(--font-ui);
+  font-size: var(--text-small);
+  border-radius: var(--radius-sm);
+}
+
+.form-message.success {
+  background: rgba(46, 125, 80, 0.12);
+  color: #8fd4a8;
+  border: 1px solid rgba(46, 125, 80, 0.25);
+}
+
+.form-message.error {
+  background: rgba(180, 60, 60, 0.1);
+  color: #e8a8a8;
+  border: 1px solid rgba(180, 60, 60, 0.2);
+}
+
+/* ── Navigation baseline ── */
+.astoria-nav:not(.home-nav):not(.property-nav) {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+.astoria-nav:not(.home-nav):not(.property-nav):hover {
+  animation: none;
+  border-color: var(--color-border-strong);
+}
+
+.brand-main {
+  font-family: var(--font-display);
+  text-shadow: none;
+  letter-spacing: var(--tracking-brand);
+}
+
+.brand-main:hover {
+  text-shadow: none;
+  transform: none;
+}
+
+.brand-sub {
+  font-family: var(--font-ui);
+  letter-spacing: 0.2em;
+}
+
+.nav-links a::after {
+  box-shadow: none;
+}
+
+/* ── Section titles (global fallback) ── */
+.section-title {
+  font-family: var(--font-display);
+  letter-spacing: 0;
+}
+
+.section-title::after {
+  box-shadow: none;
+  animation: none;
+  height: 1px;
+  width: 48px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ── Property cards (global refinement) ── */
+.property-card:not(.collection-card) {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-base), transform var(--transition-base);
+}
+
+.property-card:not(.collection-card):hover {
+  transform: translateY(-4px);
+  border-color: rgba(196, 169, 98, 0.2);
+  box-shadow: var(--shadow-md);
+  animation: none;
+}
+
+.property-card:not(.collection-card)::before,
+.property-card:not(.collection-card)::after {
+  display: none;
+}
+
+.property-card .card-title {
+  font-family: var(--font-display);
+}
+
+.property-card .card-price {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-shadow: none;
+}
+
+.card-image::before {
+  animation: none;
+  display: none;
+}
+
+/* ── Filter buttons ── */
+.filter-btn.active {
+  animation: none;
+  box-shadow: none;
+}
+
+/* ── Reveal ── */
+.reveal {
+  transition: opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
