@@ -137,7 +137,7 @@
   color: var(--color-ivory) !important;
 }
 
-.btn-search-gold:hover {
+.btn-search-primary, .btn-search-gold:hover {
   box-shadow: none !important;
 }
 

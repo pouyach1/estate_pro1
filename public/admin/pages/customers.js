@@ -75,7 +75,7 @@ async function loadCustomers() {
       </tr>`;
     }).join('');
   } catch (e) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><h3>بارگذاری پیام‌ها انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-gold-outline" onclick="loadCustomers()">تلاش مجدد</button></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><h3>بارگذاری پیام‌ها انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-secondary" onclick="loadCustomers()">تلاش مجدد</button></div></td></tr>';
     tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
   }
 }

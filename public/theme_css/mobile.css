@@ -127,7 +127,7 @@
     opacity: 0.7;
   }
 
-  .btn-gold-outline.nav-cta-desktop {
+  .btn-secondary, .btn-gold-outline.nav-cta-desktop {
     display: none;
   }
 
@@ -248,7 +248,7 @@
     padding-top: 12px;
   }
 
-  .mobile-nav-cta .btn-gold-outline {
+  .mobile-nav-cta .btn-secondary, .btn-gold-outline {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1260,7 +1260,7 @@
 }
 
 @media (max-width: 480px) {
-  .mobile-nav-cta .btn-gold-outline {
+  .mobile-nav-cta .btn-secondary, .btn-gold-outline {
     display: inline-flex;
   }
 }

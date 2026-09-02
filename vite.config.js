@@ -22,6 +22,8 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:5000',
       '/uploads': 'http://localhost:5000',
+      '/sitemap.xml': 'http://localhost:5000',
+      '/robots.txt': 'http://localhost:5000',
     },
   },
   plugins: [
