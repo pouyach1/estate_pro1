@@ -93,7 +93,7 @@ const Astoria = {
     this.initMobileSearch();
     this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
-    console.log('%cASTORIA %cPro فارسی','color:#C8C8C2;font-weight:bold;','color:#70706C;');
+    console.log('%cASTORIA %cElite Estates','color:#2D5A4C;font-weight:bold;','color:#5C5F5E;');
   },
   cacheDOM(){
     this.navbar=document.querySelector('.astoria-nav');
