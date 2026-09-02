@@ -1,4 +1,17 @@
+const multer = require('multer');
+
 module.exports = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ message: 'حجم فایل بیش از حد مجاز است' });
+    }
+    return res.status(400).json({ message: 'خطا در آپلود فایل' });
+  }
+
+  if (err && /مجاز/.test(err.message || '')) {
+    return res.status(400).json({ message: err.message });
+  }
+
   console.error('[API Error]', err.message);
 
   if (err.name === 'ValidationError') {
@@ -7,10 +20,6 @@ module.exports = (err, req, res, next) => {
 
   if (err.name === 'CastError') {
     return res.status(400).json({ message: 'شناسه نامعتبر است' });
-  }
-
-  if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({ message: 'حجم فایل بیش از حد مجاز است' });
   }
 
   const status = err.status || 500;
