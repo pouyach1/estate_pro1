@@ -1,0 +1,452 @@
+/* ==============================================
+   ASTORIA — Phase 7 Conversion & Prestige
+   Empty states, success moments, skeletons, 404
+   ============================================== */
+
+/* ── Results meta hierarchy ── */
+.collection-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: left;
+}
+
+.collection-meta-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.collection-meta-count {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--white);
+  font-weight: 500;
+}
+
+/* ── Property card metric ── */
+.m-card-metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+  letter-spacing: 0.01em;
+}
+
+.m-card-metric i {
+  width: 14px;
+  height: 14px;
+  color: rgba(201, 162, 39, 0.65);
+  flex-shrink: 0;
+}
+
+.m-card-status {
+  position: absolute;
+  bottom: 14px;
+  inset-inline-start: 14px;
+  z-index: 3;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(5, 5, 8, 0.55);
+  backdrop-filter: blur(6px);
+  padding: 4px 9px;
+  border-radius: 3px;
+}
+
+/* ── Card hover — restrained luxury ── */
+.home-page .collection-card {
+  transition:
+    border-color var(--motion-standard, 0.32s) ease,
+    transform var(--motion-standard, 0.32s) ease,
+    box-shadow var(--motion-standard, 0.32s) ease;
+}
+
+.home-page .collection-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.home-page .collection-card .card-image img {
+  transition: transform var(--motion-reveal, 0.48s) ease;
+}
+
+.home-page .collection-card:hover .card-image img {
+  transform: scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .collection-card:hover {
+    transform: none;
+  }
+
+  .home-page .collection-card:hover .card-image img {
+    transform: none;
+  }
+}
+
+/* ── Loading skeleton ── */
+.properties-skeleton {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+
+.skeleton-card {
+  grid-column: span 6;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.skeleton-card:nth-child(1) { grid-column: span 8; }
+.skeleton-card:nth-child(2) { grid-column: span 4; }
+.skeleton-card:nth-child(3) { grid-column: span 6; }
+
+.skeleton-image {
+  height: 260px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-card:nth-child(1) .skeleton-image { height: 320px; }
+
+.skeleton-body {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-line--short { width: 40%; }
+.skeleton-line--medium { width: 65%; }
+.skeleton-line--long { width: 85%; }
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-image,
+  .skeleton-line {
+    animation: none;
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+/* ── Premium empty state ── */
+.astoria-empty-state {
+  padding: 56px 32px;
+  text-align: center;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.astoria-empty-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.astoria-empty-state h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+  color: var(--white);
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.astoria-empty-state > p {
+  max-width: 42ch;
+  margin-inline: auto;
+  line-height: 1.85;
+  color: var(--gray-300);
+  font-weight: 300;
+}
+
+.astoria-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+/* ── Modal success moment ── */
+.astoria-success-panel {
+  text-align: center;
+  padding: 12px 4px 4px;
+}
+
+.astoria-success-panel[hidden] {
+  display: none !important;
+}
+
+.astoria-success-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--gold);
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: rgba(201, 162, 39, 0.08);
+}
+
+.astoria-success-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--white);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.astoria-success-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--gray-300);
+  margin-bottom: 8px;
+  font-weight: 300;
+}
+
+.astoria-success-thanks {
+  font-size: 0.82rem;
+  color: var(--gray-400);
+  margin-bottom: 24px;
+}
+
+.astoria-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Request / tour modal refinements ── */
+.request-modal-intro,
+.modal-intro {
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--gray-300);
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+.request-modal-property-context,
+.modal-property-context {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border-radius: var(--radius-sm, 8px);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.request-modal-property-context i,
+.modal-property-context i {
+  width: 16px;
+  height: 16px;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.request-modal-property-context span,
+.modal-property-context span {
+  font-size: 0.88rem;
+  color: var(--gray-200);
+  line-height: 1.5;
+}
+
+.request-modal-form label,
+.quick-contact-form .form-label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.request-modal-afternote,
+.modal-afternote {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  line-height: 1.65;
+  margin-top: 14px;
+  text-align: center;
+  font-weight: 300;
+}
+
+.request-modal-body[hidden],
+.modal-body[hidden],
+#requestForm[hidden] {
+  display: none !important;
+}
+
+/* ── Contact form success ── */
+.contact-success-panel {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.contact-success-panel[hidden] {
+  display: none !important;
+}
+
+/* ── Featured editorial distinction ── */
+.featured-header .featured-intro {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--gray-300);
+  max-width: 48ch;
+  margin-top: 12px;
+  font-weight: 300;
+}
+
+.featured-property-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--gold);
+  margin-top: 16px;
+  letter-spacing: 0.02em;
+  transition: gap var(--motion-micro, 0.18s) ease;
+}
+
+.featured-property-link:hover .featured-property-cta {
+  gap: 10px;
+}
+
+/* ── 404 page ── */
+.astoria-404-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-void, #050508);
+  color: var(--gray-200, #c8c8cc);
+}
+
+.astoria-404-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.astoria-404-inner {
+  max-width: 480px;
+}
+
+.astoria-404-code {
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 12vw, 7rem);
+  font-weight: 500;
+  color: rgba(201, 162, 39, 0.2);
+  line-height: 1;
+  margin-bottom: 24px;
+  letter-spacing: 0.05em;
+}
+
+.astoria-404-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  color: var(--white, #fff);
+  margin-bottom: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.astoria-404-text {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--gray-300, #9a9aa3);
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+
+.astoria-404-nav {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.astoria-404-nav .nav-brand a {
+  text-decoration: none;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .collection-meta {
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+
+  .skeleton-card,
+  .skeleton-card:nth-child(1),
+  .skeleton-card:nth-child(2),
+  .skeleton-card:nth-child(3) {
+    grid-column: span 12;
+  }
+
+  .skeleton-image,
+  .skeleton-card:nth-child(1) .skeleton-image {
+    height: 220px;
+  }
+
+  .astoria-empty-state {
+    padding: 40px 20px;
+  }
+
+  .astoria-empty-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .astoria-empty-actions .btn-gold-solid,
+  .astoria-empty-actions .btn-gold-outline {
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .request-modal-card,
+  .modal-card {
+    padding: 28px 20px;
+  }
+}

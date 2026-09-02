@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/theme_css/pro.css">
     <link rel="stylesheet" href="/theme_css/mobile.css">
     <link rel="stylesheet" href="/theme_css/home.css">
+    <link rel="stylesheet" href="/theme_css/conversion.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070912'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23c9a227'/></svg>">
 </head>
 <body class="home-page">
@@ -151,8 +152,9 @@
         <section id="featured" class="featured-section" aria-labelledby="featured-heading" hidden>
             <div class="container">
                 <div class="featured-header reveal">
-                    <span class="home-section-eyebrow">ملک ویژه</span>
-                    <h2 id="featured-heading" class="home-section-title">ملک شاخص</h2>
+                    <span class="home-section-eyebrow">منتخب آستوریا</span>
+                    <h2 id="featured-heading" class="home-section-title">اقامتگاه شاخص</h2>
+                    <p class="featured-intro">ملکی که تیم آستوریا برای شروع کاوش شما انتخاب کرده — نه صرفاً گران‌ترین، بلکه استثنایی‌ترین.</p>
                 </div>
                 <div id="featuredProperty" class="featured-property reveal"></div>
             </div>
@@ -183,10 +185,14 @@
                         <h2 id="collection-heading" class="home-section-title">مجموعه اقامتگاه‌های استثنایی</h2>
                         <p class="collection-intro">هر ملک، با دقت انتخاب شده — نه برای پر کردن لیست، بلکه برای ارزش واقعی.</p>
                     </div>
-                    <p class="collection-meta" id="propertiesResultsMeta" aria-live="polite"></p>
+                    <div class="collection-meta" id="propertiesResultsMeta" aria-live="polite"></div>
                 </header>
                 <div class="collection-grid" id="propertiesContainer">
-                    <p class="properties-loading">در حال بارگذاری املاک...</p>
+                    <div class="properties-skeleton" aria-busy="true" aria-label="در حال بارگذاری املاک">
+                        <div class="skeleton-card" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--long"></div></div></div>
+                        <div class="skeleton-card" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--long"></div></div></div>
+                        <div class="skeleton-card" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--long"></div></div></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -233,9 +239,9 @@
             <div class="container">
                 <div class="home-contact-grid reveal">
                     <div class="home-contact-intro">
-                        <span class="home-section-eyebrow">ارتباط</span>
-                        <h2 id="contact-heading" class="home-section-title">با ما در تماس باشید</h2>
-                        <p class="home-contact-lead">برای پرسش، بازدید یا مشاوره — تیم آستوریا پاسخگوی شماست.</p>
+                        <span class="home-section-eyebrow">گفت‌وگو</span>
+                        <h2 id="contact-heading" class="home-section-title">گفت‌وگو با آستوریا</h2>
+                        <p class="home-contact-lead">برای پرسش، بازدید یا هماهنگی — تیم ما آماده پاسخگویی است.</p>
                         <div class="home-contact-details">
                             <a href="tel:+982112345678" class="home-contact-link"><i data-lucide="phone"></i> ۰۲۱-۱۲۳۴۵۶۷۸</a>
                             <a href="mailto:info@astoriaelite.com" class="home-contact-link"><i data-lucide="mail"></i> info@astoriaelite.com</a>

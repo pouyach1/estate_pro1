@@ -3,7 +3,7 @@
    Self-contained — Features embedded
    ============================================== */
 
-import { createIcons, Menu, Search, Bed, Bath, Maximize2, Crown, UserCheck, TrendingUp, ShieldCheck, MapPin, Phone, Mail, ArrowUp, Heart, X, ChevronDown, ChevronLeft, Eye, Calendar, Share2, Car, Warehouse, Thermometer, Wind, Waves, Camera, Dumbbell, Building, Palette, Users, Gamepad, Film, Video, ArrowUpDown } from 'lucide';
+import { createIcons, Menu, Search, Bed, Bath, Maximize2, Crown, UserCheck, TrendingUp, ShieldCheck, MapPin, Phone, Mail, ArrowUp, Heart, X, ChevronDown, ChevronLeft, Eye, Calendar, Share2, Car, Warehouse, Thermometer, Wind, Waves, Camera, Dumbbell, Building, Palette, Users, Gamepad, Film, Video, ArrowUpDown, Home } from 'lucide';
 
 const API_BASE = '/api';
 const PROPERTY_FILTER_ALL = 'همه';
@@ -70,8 +70,27 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
+function getPropertyMetric(p) {
+  const parts = [];
+  if (p?.area) parts.push(`${Number(p.area).toLocaleString('fa-IR')} متر`);
+  if (p?.beds && Number(p.beds) > 0) parts.push(`${Number(p.beds).toLocaleString('fa-IR')} خواب`);
+  return parts.join(' · ');
+}
+
+function renderLoadingSkeleton() {
+  return `<div class="properties-skeleton" aria-busy="true" aria-label="در حال بارگذاری املاک">${[1, 2, 3].map(() => `
+    <div class="skeleton-card" aria-hidden="true">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line skeleton-line--short"></div>
+        <div class="skeleton-line skeleton-line--long"></div>
+        <div class="skeleton-line skeleton-line--medium"></div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
 // ===== CONFIG =====
-const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,ChevronLeft,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown}, iconDefaults:{'stroke-width':1.5,width:20,height:20}, storageKey:'astoria_favorites', scrollThreshold:60, backToTopThreshold:500, revealOptions:{threshold:0.15,rootMargin:'0px 0px -40px 0px'}, navScrollOffset:110 };
+const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,ChevronLeft,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown,Home}, iconDefaults:{'stroke-width':1.5,width:20,height:20}, storageKey:'astoria_favorites', scrollThreshold:60, backToTopThreshold:500, revealOptions:{threshold:0.15,rootMargin:'0px 0px -40px 0px'}, navScrollOffset:110 };
 
 // ===== ASTORIA APP =====
 const Astoria = {
@@ -311,7 +330,7 @@ const Astoria = {
   },
   async loadProperties(){
     if(!this.propertiesContainer)return;
-    this.propertiesContainer.innerHTML='<p class="properties-loading">در حال بارگذاری املاک...</p>';
+    this.propertiesContainer.innerHTML=renderLoadingSkeleton();
     try{
       const r=await fetch(`${API_BASE}/properties`);
       if(!r.ok)throw new Error('failed');
@@ -346,16 +365,18 @@ const Astoria = {
     if(!this.propertiesContainer)return;
 
     if(!properties.length){
-      const hasSearch=!!this.searchQuery;
-      const hasFilter=this.currentFilter!==PROPERTY_FILTER_ALL;
-      const hasBudget=this.currentBudget!=='all';
-      let message='در حال حاضر گزینه‌ای در این دسته موجود نیست.';
-      if(hasSearch&&hasFilter)message=`ملکی با عبارت «${escapeHTML(this.searchQuery)}» در ${escapeHTML(this.currentFilter)} پیدا نشد.`;
-      else if(hasSearch)message='ملکی با این مشخصات پیدا نشد';
-      else if(hasBudget)message='ملکی در این بازه بودجه یافت نشد.';
-      this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>${hasSearch||hasBudget?'ملکی با این مشخصات پیدا نشد':'ملکی یافت نشد'}</h3><p>${message}</p><button type="button" class="btn-gold-outline" id="resetPropertiesFilter">مشاهده همه املاک</button></div>`;
+      this.propertiesContainer.innerHTML=`<div class="properties-empty-state astoria-empty-state">
+        <p class="astoria-empty-eyebrow">انتخاب فعلی</p>
+        <h3>نتیجه‌ای یافت نشد</h3>
+        <p>انتخاب فعلی نتیجه‌ای نداشت. مشاوران آستوریا می‌توانند گزینه‌های مشابه یا اختصاصی را برای شما پیدا کنند.</p>
+        <div class="astoria-empty-actions">
+          <button type="button" class="btn-gold-solid" id="emptyConsultationCta">درخواست مشاوره اختصاصی</button>
+          <button type="button" class="btn-gold-outline" id="resetPropertiesFilter">مشاهده همه املاک</button>
+        </div>
+      </div>`;
       this.featuredSection?.setAttribute('hidden','');
       if(this.featuredContainer)this.featuredContainer.innerHTML='';
+      document.getElementById('emptyConsultationCta')?.addEventListener('click',()=>this.scrollToSection('#consultation'));
       document.getElementById('resetPropertiesFilter')?.addEventListener('click',()=>{
         this.currentFilter=PROPERTY_FILTER_ALL;
         this.currentBudget='all';
@@ -392,7 +413,7 @@ const Astoria = {
     const location=escapeHTML(p.location||'');
     const img=escapeHTML(p.image||(p.images&&p.images[0])||'');
     const pf=formatPrice(p.price);
-    const price=pf?`${escapeHTML(pf)} تومان`:'تماس بگیرید';
+    const price=pf?`${escapeHTML(pf)} تومان`:'تماس برای اطلاع از قیمت';
     this.featuredContainer.innerHTML=`
       <a href="/property/?id=${id}" class="featured-property-link">
         <div class="featured-property-image" style="background-image:url('${img}')"></div>
@@ -410,15 +431,12 @@ const Astoria = {
   updateResultsMeta(count){
     if(!this.propertiesResultsMeta)return;
     const n=count.toLocaleString('fa-IR');
-    if(this.searchQuery){
-      this.propertiesResultsMeta.textContent=`${n} ملک پیدا شد`;
-      return;
-    }
-    if(this.currentFilter===PROPERTY_FILTER_ALL){
-      this.propertiesResultsMeta.textContent=`${n} ملک`;
-      return;
-    }
-    this.propertiesResultsMeta.textContent=`${n} ${this.currentFilter} منتخب`;
+    let label='نتایج انتخاب‌شده برای شما';
+    if(this.searchQuery)label=`نتایج جستجو برای «${escapeHTML(this.searchQuery)}»`;
+    else if(this.currentFilter!==PROPERTY_FILTER_ALL)label=`${escapeHTML(this.currentFilter)} منتخب`;
+  else if(this.currentBudget!=='all')label='نتایج بر اساس بودجه شما';
+    const countLabel=count===0?'بدون نتیجه':`${n} ملک`;
+    this.propertiesResultsMeta.innerHTML=`<span class="collection-meta-label">${label}</span><span class="collection-meta-count">${countLabel}</span>`;
   },
   renderCard(p,layoutIndex=0){
     const variant=layoutIndex%3===0?'collection-card--wide':layoutIndex%3===1?'collection-card--tall':'';
@@ -426,18 +444,23 @@ const Astoria = {
     const propertyType=escapeHTML(p.type||'');
     const propertyTitle=escapeHTML(p.title||'');
     const propertyLocation=escapeHTML(p.location||'');
-    const pf=formatPrice(p.price);const price=pf?`${escapeHTML(pf)} تومان`:'<button type="button" class="contact-price-link" data-scroll-target="contact">تماس بگیرید</button>';
+    const pf=formatPrice(p.price);const price=pf?`${escapeHTML(pf)} تومان`:'<span class="card-price-contact">تماس برای اطلاع از قیمت</span>';
     const img=escapeHTML(p.image||(p.images&&p.images[0])||'');
     const locationRow=propertyLocation?`<p class="m-card-location"><i data-lucide="map-pin"></i> ${propertyLocation}</p>`:'';
+    const metric=getPropertyMetric(p);
+    const metricRow=metric?`<p class="m-card-metric"><i data-lucide="maximize-2"></i> ${escapeHTML(metric)}</p>`:'';
+    const status=p.isExclusive?'<span class="m-card-status">اختصاصی</span>':'';
     return`<article class="property-card collection-card reveal ${variant}" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
       <div class="card-image" data-property-link="true">
         ${img?`<img src="${img}" alt="${propertyTitle}" loading="lazy">`:''}
         <span class="m-card-type">${propertyType}</span>
+        ${status}
         <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
       </div>
       <div class="card-details">
         <h3 class="card-title" data-property-link="true">${propertyTitle}</h3>
         ${locationRow}
+        ${metricRow}
         <p class="card-price">${price}</p>
         <div class="card-buttons">
           <a href="/property/?id=${propertyId}" class="btn-card-primary"><i data-lucide="eye"></i> مشاهده</a>
@@ -507,7 +530,6 @@ const Astoria = {
     const card=e.target.closest('.property-card');
     if(!card)return;
     if(e.target.closest('.favorite-btn,.share-btn,.btn-card-primary'))return;
-    if(e.target.closest('[data-scroll-target="contact"]')){document.getElementById('contact')?.scrollIntoView({behavior:'smooth'});return;}
     if(e.target.closest('[data-request-property="true"]')){this.openRequestModal(card.getAttribute('data-id'),card.querySelector('.card-title')?.textContent||'');return;}
     if(e.target.closest('[data-property-link="true"]')){window.location.href=`/property/?id=${encodeURIComponent(card.getAttribute('data-id')||'')}`;}
   },
@@ -556,7 +578,7 @@ const Astoria = {
     try{
       const res=await fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:em,phone:ph,message:msg,source:'فرم تماس'})});
       if(!res.ok)throw new Error('failed');
-      this.toast('درخواست شما با موفقیت ثبت شد','success');
+      this.toast('درخواست شما با موفقیت ثبت شد. تیم آستوریا به زودی با شما تماس خواهد گرفت.','success');
       this.contactForm.reset();
     }catch{
       this.toast('ارسال پیام انجام نشد. لطفاً دوباره تلاش کنید','error');
@@ -570,40 +592,85 @@ const Astoria = {
   // ===== REQUEST MODAL =====
   createRequestModal(){
     const modal=document.createElement('div');modal.className='request-modal-overlay';modal.id='requestModal';
-    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true" aria-label="بستن">×</button><h3 class="request-modal-title">درخواست اطلاعات بیشتر</h3><p class="request-modal-subtitle" id="requestModalProperty">برای این ملک درخواست خود را ثبت کنید</p><form id="requestForm" class="request-modal-form"><input type="hidden" id="requestPropertyId"><input type="text" id="requestName" placeholder="نام و نام خانوادگی *" required><input type="tel" id="requestPhone" placeholder="شماره تماس *" required><textarea id="requestNote" rows="3" placeholder="توضیحات (اختیاری)"></textarea><button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست</button></form><div id="requestStatus" class="form-message" role="status" aria-live="polite"></div></div>`;
+    modal.innerHTML=`<div class="request-modal-card"><button type="button" class="request-modal-close" data-close-request-modal="true" aria-label="بستن">×</button>
+      <div class="request-modal-body" id="requestModalBody">
+        <h3 class="request-modal-title">درخواست بازدید اختصاصی</h3>
+        <p class="request-modal-intro">برای هماهنگی بازدید خصوصی، اطلاعات تماس خود را وارد کنید. تیم آستوریا درخواست شما را بررسی می‌کند.</p>
+        <div class="request-modal-property-context" id="requestModalPropertyWrap"><i data-lucide="home"></i><span id="requestModalProperty">ملک انتخاب‌شده</span></div>
+        <form id="requestForm" class="request-modal-form">
+          <input type="hidden" id="requestPropertyId">
+          <label for="requestName">نام و نام خانوادگی</label>
+          <input type="text" id="requestName" placeholder="نام کامل" required>
+          <label for="requestPhone">شماره تماس</label>
+          <input type="tel" id="requestPhone" placeholder="شماره موبایل" required>
+          <label for="requestNote">توضیحات (اختیاری)</label>
+          <textarea id="requestNote" rows="3" placeholder="زمان یا سوال خاص خود را بنویسید"></textarea>
+          <button type="submit" class="btn-gold-solid" style="width:100%">ارسال درخواست بازدید</button>
+        </form>
+        <p class="request-modal-afternote">پس از ثبت، اطلاعات شما برای تیم مشاوره ارسال می‌شود.</p>
+        <div id="requestStatus" class="form-message" role="status" aria-live="polite"></div>
+      </div>
+      <div class="astoria-success-panel" id="requestModalSuccess" hidden>
+        <div class="astoria-success-icon" aria-hidden="true">✓</div>
+        <h3 class="astoria-success-title">درخواست شما ثبت شد</h3>
+        <p class="astoria-success-text">اطلاعات ملک و درخواست شما برای تیم آستوریا ارسال شد.</p>
+        <p class="astoria-success-thanks">از اعتماد شما سپاسگزاریم.</p>
+        <div class="astoria-success-actions">
+          <button type="button" class="btn-gold-outline" data-close-request-modal="true">بستن</button>
+          <a href="#residences" class="btn-gold-solid" data-close-and-scroll="residences">مشاهده سایر املاک</a>
+        </div>
+      </div>
+    </div>`;
     document.body.appendChild(modal);
-    modal.querySelector('[data-close-request-modal="true"]')?.addEventListener('click',()=>{modal.classList.remove('active');document.body.classList.remove('no-scroll')});
+    modal.querySelectorAll('[data-close-request-modal="true"]').forEach(btn=>btn.addEventListener('click',()=>this.closeRequestModal()));
+    modal.querySelector('[data-close-and-scroll="residences"]')?.addEventListener('click',e=>{e.preventDefault();this.closeRequestModal();this.scrollToSection('#residences')});
     modal.querySelector('#requestForm')?.addEventListener('submit',e=>this.submitRequest(e));
   },
   openRequestModal(id,title){
+    this.resetRequestModal();
     document.getElementById('requestPropertyId').value=id;
     document.getElementById('requestModalProperty').textContent=title;
     document.getElementById('requestModal').classList.add('active');
     document.body.classList.add('no-scroll');
+    createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
+  },
+  closeRequestModal(){
+    document.getElementById('requestModal')?.classList.remove('active');
+    document.body.classList.remove('no-scroll');
+    setTimeout(()=>this.resetRequestModal(),320);
+  },
+  resetRequestModal(){
+    const body=document.getElementById('requestModalBody');
+    const success=document.getElementById('requestModalSuccess');
+    const status=document.getElementById('requestStatus');
+    if(body)body.hidden=false;
+    if(success)success.hidden=true;
+    if(status){status.textContent='';status.className='form-message';}
+    document.getElementById('requestForm')?.reset();
   },
   async submitRequest(e){
     e.preventDefault();
-    const btn=e.target.querySelector('button');
+    const btn=e.target.querySelector('button[type="submit"]');
     const statusEl=document.getElementById('requestStatus');
     const orig=btn.textContent;
     btn.textContent='در حال ارسال...';
     btn.disabled=true;
+    statusEl.textContent='';
+    statusEl.className='form-message';
     try{
       const res=await fetch(`${API_BASE}/customers`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         name:document.getElementById('requestName').value,
         email:document.getElementById('requestPhone').value+'@request.astoria',
         phone:document.getElementById('requestPhone').value,
-        message:`درخواست برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestNote').value}`,
+        message:`درخواست بازدید اختصاصی برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestNote').value}`,
         source:'درخواست ملک'
       })});
       if(!res.ok)throw new Error('failed');
-      statusEl.className='form-message success';
-      statusEl.textContent='درخواست با موفقیت ارسال شد';
-      document.getElementById('requestForm').reset();
-      setTimeout(()=>{document.getElementById('requestModal').classList.remove('active');statusEl.textContent='';statusEl.className='form-message';document.body.classList.remove('no-scroll')},2000);
+      document.getElementById('requestModalBody').hidden=true;
+      document.getElementById('requestModalSuccess').hidden=false;
     }catch{
       statusEl.className='form-message error';
-      statusEl.textContent='ارسال درخواست انجام نشد. لطفاً دوباره تلاش کنید';
+      statusEl.textContent='ارسال درخواست انجام نشد. لطفاً دوباره تلاش کنید.';
     }finally{
       btn.textContent=orig;
       btn.disabled=false;
