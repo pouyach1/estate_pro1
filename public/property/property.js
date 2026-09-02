@@ -1,5 +1,5 @@
 /* ==============================================
-   PROPERTY DETAIL PAGE — Logic
+   PROPERTY DETAIL — Flagship Experience
    ============================================== */
 
 const API = '/api';
@@ -13,6 +13,8 @@ const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 let currentImageIndex = 0;
 let propertyImages = [];
 let propertyData = null;
+let activeBgLayer = 'a';
+let assignedAgent = null;
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -82,8 +84,7 @@ function initDescriptionToggle() {
   const checkLength = () => {
     description.classList.remove('is-expanded');
     const lineHeight = parseFloat(getComputedStyle(description).lineHeight) || 22;
-    const maxLines = 4;
-    const needsToggle = description.scrollHeight > lineHeight * maxLines + 4;
+    const needsToggle = description.scrollHeight > lineHeight * 4 + 4;
     toggle.hidden = !needsToggle;
     toggle.textContent = 'ادامه توضیحات';
   };
@@ -98,13 +99,19 @@ function initDescriptionToggle() {
 }
 
 function setPageMode(mode) {
-  const heroWrap = document.querySelector('.property-hero-wrap');
+  const heroWrap = document.getElementById('propertyHeroWrap');
+  const breadcrumb = document.querySelector('.property-breadcrumb');
+  const identity = document.getElementById('propertySummary');
   const mobilePanel = document.getElementById('propertyMobilePanel');
   const main = document.getElementById('propertyMain');
   const error = document.getElementById('propertyErrorState');
+
+  const hideContent = mode === 'error' || mode === 'loading';
   if (heroWrap) heroWrap.hidden = mode === 'error';
-  if (mobilePanel) mobilePanel.hidden = mode === 'error' || mode === 'loading';
-  if (main) main.hidden = mode === 'error' || mode === 'loading';
+  if (breadcrumb) breadcrumb.hidden = mode === 'error';
+  if (identity) identity.hidden = hideContent;
+  if (mobilePanel) mobilePanel.hidden = hideContent;
+  if (main) main.hidden = hideContent;
   if (error) error.hidden = mode !== 'error';
 }
 
@@ -117,6 +124,36 @@ function showErrorState(message) {
     errorMessage.textContent = message === 'ملک موردنظر یافت نشد'
       ? 'ممکن است این ملک حذف شده یا آدرس آن اشتباه باشد.'
       : 'لطفاً چند لحظه دیگر دوباره تلاش کنید.';
+  }
+}
+
+function setFavoriteUI(liked) {
+  document.querySelectorAll('#btnFavorite, #btnFavoriteTop').forEach((btn) => {
+    if (!btn) return;
+    btn.classList.toggle('liked', liked);
+    if (btn.id === 'btnFavorite') {
+      btn.innerHTML = liked
+        ? '<i data-lucide="heart"></i> حذف از علاقه‌مندی‌ها'
+        : '<i data-lucide="heart"></i> افزودن به علاقه‌مندی‌ها';
+    }
+  });
+  refreshIcons();
+}
+
+function toggleFavorite() {
+  if (!propertyId) return;
+  const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  const isLiked = favorites.includes(propertyId);
+
+  if (isLiked) {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites.filter((id) => id !== propertyId)));
+    setFavoriteUI(false);
+    showNotification('از علاقه‌مندی‌ها حذف شد.');
+  } else {
+    favorites.push(propertyId);
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    setFavoriteUI(true);
+    showNotification('به علاقه‌مندی‌ها اضافه شد.');
   }
 }
 
@@ -140,10 +177,12 @@ async function loadProperty() {
     propertyData = data;
     propertyImages = getPropertyImages(propertyData);
     currentImageIndex = 0;
+    activeBgLayer = 'a';
 
     setPageMode('content');
     renderProperty();
     loadSimilarProperties();
+    loadAgent();
     initHeroSwipe();
   } catch (error) {
     console.error('Error loading property:', error);
@@ -157,42 +196,48 @@ function renderProperty() {
 
   document.title = `${p.title || 'جزئیات ملک'} | آستوریا الیت استیتس`;
 
+  const breadcrumb = document.getElementById('breadcrumbTitle');
+  if (breadcrumb) breadcrumb.textContent = p.title || 'جزئیات ملک';
+
   const typeBadge = document.getElementById('propertyTypeBadge');
   if (typeBadge) typeBadge.textContent = p.type || '';
 
   document.getElementById('propertyTitle').textContent = p.title || 'ملک';
-  document.getElementById('propertyLocation').textContent = p.location || 'موقعیت نامشخص';
-  document.getElementById('propertyPrice').textContent = formatPriceDisplay(p.price);
+
+  const locText = document.getElementById('propertyLocationText');
+  const location = p.location || 'موقعیت نامشخص';
+  if (locText) locText.textContent = location;
+
+  const priceDisplay = formatPriceDisplay(p.price);
+  document.getElementById('propertyPrice').textContent = priceDisplay;
+  document.getElementById('sidebarPrice').textContent = priceDisplay;
   document.getElementById('propertyDescription').textContent = p.description || 'توضیحات بیشتری برای این ملک ثبت نشده است.';
-  document.getElementById('sidebarPrice').textContent = formatPriceDisplay(p.price);
+
+  const tourSubtitle = document.getElementById('tourModalProperty');
+  if (tourSubtitle) tourSubtitle.textContent = p.title || '';
 
   setStatValue('area', (p.area || 0).toLocaleString('fa-IR'), (p.area || 0) > 0);
   setStatValue('beds', (p.beds || 0).toLocaleString('fa-IR'), p.beds > 0);
   setStatValue('baths', (p.baths || 0).toLocaleString('fa-IR'), p.baths > 0);
-  setStatValue('type', p.type || '-', true);
-
+  setStatValue('type', p.type || '—', !!p.type);
   const parking = p.features?.common?.parking;
-  setStatValue('parking', parking > 0 ? parking.toLocaleString('fa-IR') : '-', parking > 0);
+  setStatValue('parking', parking > 0 ? parking.toLocaleString('fa-IR') : '—', parking > 0);
 
   const hasMultiple = propertyImages.length > 1;
   document.querySelector('.property-hero-nav')?.classList.toggle('is-hidden', !hasMultiple);
   document.getElementById('imageDots')?.classList.toggle('is-hidden', !hasMultiple);
+  document.getElementById('btnFullscreen')?.toggleAttribute('hidden', !hasMultiple);
+  document.getElementById('filmstripWrap')?.toggleAttribute('hidden', !hasMultiple);
 
-  updateHeroImage(0);
-  renderGallery();
+  updateHeroImage(0, false);
+  renderFilmstrip();
   renderDots();
   renderFeatures(p);
   updateMobileCta();
   initDescriptionToggle();
 
-  const favBtn = document.getElementById('btnFavorite');
-  if (favBtn && propertyId) {
-    const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
-    if (favorites.includes(propertyId)) {
-      favBtn.classList.add('liked');
-      favBtn.innerHTML = '<i data-lucide="heart"></i> حذف از علاقه‌مندی‌ها';
-    }
-  }
+  const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  setFavoriteUI(propertyId && favorites.includes(propertyId));
 
   refreshIcons();
 }
@@ -207,106 +252,130 @@ function updateMobileCta() {
   document.body.classList.add('has-mobile-cta');
 }
 
-function initHeroSwipe() {
-  const hero = document.getElementById('propertyHero');
-  if (!hero || propertyImages.length <= 1) return;
-
-  let startX = 0;
-  let startY = 0;
-
-  hero.addEventListener('touchstart', (e) => {
-    startX = e.changedTouches[0].screenX;
-    startY = e.changedTouches[0].screenY;
-  }, { passive: true });
-
-  hero.addEventListener('touchend', (e) => {
-    const diffX = e.changedTouches[0].screenX - startX;
-    const diffY = e.changedTouches[0].screenY - startY;
-    if (Math.abs(diffX) < 50 || Math.abs(diffX) < Math.abs(diffY)) return;
-    if (diffX > 0) updateHeroImage(currentImageIndex - 1);
-    else updateHeroImage(currentImageIndex + 1);
-  }, { passive: true });
+function getBgEl(layer) {
+  return document.getElementById(layer === 'a' ? 'heroBgA' : 'heroBgB');
 }
 
-function setModalOpen(modal, open) {
-  if (!modal) return;
-  modal.classList.toggle('active', open);
-  document.body.classList.toggle('no-scroll', open);
-}
-
-function initMobileNav() {
-  const toggle = document.querySelector('.mobile-menu-toggle');
-  const closeBtn = document.querySelector('.mobile-menu-close');
-  const navLinks = document.querySelector('.nav-links');
-  if (!toggle || !navLinks) return;
-
-  const setOpen = (open) => {
-    navLinks.classList.toggle('active', open);
-    toggle.setAttribute('aria-expanded', open);
-    closeBtn?.toggleAttribute('hidden', !open);
-    document.body.classList.toggle('no-scroll', open);
-    const icon = toggle.querySelector('[data-lucide]');
-    if (icon) {
-      icon.setAttribute('data-lucide', open ? 'x' : 'menu');
-      refreshIcons();
-    }
-  };
-
-  toggle.addEventListener('click', () => setOpen(!navLinks.classList.contains('active')));
-  closeBtn?.addEventListener('click', () => setOpen(false));
-  navLinks.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => setOpen(false));
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setOpen(false);
-  });
-}
-
-function updateHeroImage(index) {
+function updateHeroImage(index, animate = true) {
   if (!propertyImages.length) return;
 
   currentImageIndex = ((index % propertyImages.length) + propertyImages.length) % propertyImages.length;
-  const hero = document.getElementById('propertyHero');
   const src = propertyImages[currentImageIndex];
-  hero.style.backgroundImage = `url("${src}")`;
+  const nextLayer = activeBgLayer === 'a' ? 'b' : 'a';
+  const currentEl = getBgEl(activeBgLayer);
+  const nextEl = getBgEl(nextLayer);
+
+  if (nextEl) {
+    nextEl.style.backgroundImage = `url("${src}")`;
+    if (animate) {
+      nextEl.style.opacity = '1';
+      if (currentEl) currentEl.style.opacity = '0';
+      setTimeout(() => { activeBgLayer = nextLayer; }, 450);
+    } else {
+      if (currentEl) currentEl.style.opacity = '0';
+      nextEl.style.opacity = '1';
+      activeBgLayer = nextLayer;
+    }
+  }
 
   document.querySelectorAll('.hero-dot').forEach((dot, i) => {
     dot.classList.toggle('active', i === currentImageIndex);
   });
 
-  document.querySelectorAll('.gallery-thumb').forEach((thumb, i) => {
+  document.querySelectorAll('.filmstrip-thumb').forEach((thumb, i) => {
     thumb.classList.toggle('active', i === currentImageIndex);
+    if (i === currentImageIndex) thumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   });
 
   const counter = document.getElementById('imageCounter');
   if (counter) {
     counter.textContent = propertyImages.length > 1
-      ? `تصویر ${(currentImageIndex + 1).toLocaleString('fa-IR')} از ${propertyImages.length.toLocaleString('fa-IR')}`
+      ? `${(currentImageIndex + 1).toLocaleString('fa-IR')} / ${propertyImages.length.toLocaleString('fa-IR')}`
       : '';
+  }
+
+  const lightboxImg = document.getElementById('lightboxImage');
+  const lightboxCounter = document.getElementById('lightboxCounter');
+  if (lightboxImg && !document.getElementById('propertyLightbox')?.hidden) {
+    lightboxImg.style.backgroundImage = `url("${src}")`;
+    if (lightboxCounter) {
+      lightboxCounter.textContent = `${(currentImageIndex + 1).toLocaleString('fa-IR')} / ${propertyImages.length.toLocaleString('fa-IR')}`;
+    }
   }
 }
 
 function renderDots() {
   const dotsContainer = document.getElementById('imageDots');
-  if (!dotsContainer) return;
+  if (!dotsContainer || propertyImages.length <= 1) return;
 
   dotsContainer.innerHTML = propertyImages.map((_, i) => `
     <button type="button" class="hero-dot ${i === currentImageIndex ? 'active' : ''}" data-image-index="${i}" aria-label="مشاهده تصویر ${i + 1}"></button>
   `).join('');
 }
 
-function renderGallery() {
-  const gallery = document.getElementById('propertyGallery');
-  if (!gallery) return;
+function renderFilmstrip() {
+  const filmstrip = document.getElementById('propertyFilmstrip');
+  if (!filmstrip || propertyImages.length <= 1) return;
 
-  if (propertyImages.length <= 1) {
-    gallery.innerHTML = '<p class="property-gallery-note">تصویر دیگری برای این ملک ثبت نشده است.</p>';
-    return;
-  }
-
-  gallery.innerHTML = propertyImages.map((img, i) => `
-    <button type="button" class="gallery-thumb ${i === currentImageIndex ? 'active' : ''}" style="background-image:url('${escapeHTML(img)}')" data-image-index="${i}" title="مشاهده تصویر ${i + 1}" aria-label="مشاهده تصویر ${i + 1}"></button>
+  filmstrip.innerHTML = propertyImages.map((img, i) => `
+    <button type="button" class="filmstrip-thumb ${i === currentImageIndex ? 'active' : ''}" style="background-image:url('${escapeHTML(img)}')" data-image-index="${i}" aria-label="مشاهده تصویر ${i + 1}" role="tab" aria-selected="${i === currentImageIndex}"></button>
   `).join('');
+}
+
+function renderAgentCard(agent, container) {
+  if (!container || !agent) return;
+  const photo = escapeHTML(agent.photo || '');
+  const name = escapeHTML(agent.name || 'مشاور آستوریا');
+  const title = escapeHTML(agent.title || 'مشاور املاک');
+  const bio = escapeHTML(agent.bio || '');
+  const phone = escapeHTML(agent.phone || '');
+  const email = escapeHTML(agent.email || '');
+
+  container.innerHTML = `
+    <div class="agent-showcase">
+      ${photo ? `<img src="${photo}" alt="${name}" class="agent-showcase-photo" loading="lazy">` : `<div class="agent-showcase-photo" style="background:rgba(201,162,39,0.1);display:flex;align-items:center;justify-content:center;"><i data-lucide="user"></i></div>`}
+      <div class="agent-showcase-body">
+        <h3 class="agent-showcase-name">${name}</h3>
+        <p class="agent-showcase-role">${title}</p>
+        ${bio ? `<p class="agent-showcase-bio">${bio}</p>` : ''}
+        <div class="agent-showcase-contacts">
+          ${phone ? `<a href="tel:${phone}" class="agent-contact-btn"><i data-lucide="phone"></i> ${phone}</a>` : ''}
+          ${email ? `<a href="mailto:${email}" class="agent-contact-btn"><i data-lucide="mail"></i> تماس</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  refreshIcons();
+}
+
+async function loadAgent() {
+  const sidebar = document.getElementById('agentSidebarCard');
+  const mobile = document.getElementById('agentMobileCard');
+  const mobileSection = document.getElementById('agentMobileSection');
+
+  try {
+    const res = await fetch(`${API}/agents`);
+    const data = await res.json();
+    const agents = (data.agents || []).filter((a) => a.isActive !== false);
+
+    if (!agents.length) {
+      const fallback = '<p class="property-empty-note">اطلاعات مشاور به زودی در دسترس خواهد بود.</p>';
+      if (sidebar) sidebar.innerHTML = fallback;
+      return;
+    }
+
+    const idx = propertyId
+      ? [...propertyId].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % agents.length
+      : 0;
+    assignedAgent = agents[idx];
+
+    if (sidebar) renderAgentCard(assignedAgent, sidebar);
+    if (mobile) {
+      renderAgentCard(assignedAgent, mobile);
+      mobileSection?.removeAttribute('hidden');
+    }
+  } catch (e) {
+    if (sidebar) sidebar.innerHTML = '<p class="property-empty-note">بارگذاری اطلاعات مشاور انجام نشد.</p>';
+  }
 }
 
 function renderFeatures(property) {
@@ -344,26 +413,39 @@ function renderFeatures(property) {
   }).filter(Boolean).join('');
 
   container.innerHTML = html || '<p class="property-features-empty">امکانات ثبت‌شده‌ای برای این ملک موجود نیست.</p>';
+  refreshIcons();
 }
 
 async function loadSimilarProperties() {
   const container = document.getElementById('similarProperties');
-  if (!container || !propertyData?.type) return;
+  if (!container || !propertyData) return;
 
   try {
-    const res = await fetch(`${API}/properties?type=${encodeURIComponent(propertyData.type)}&limit=5`);
-    const data = await res.json();
+    const fetchList = async (query = '') => {
+      const res = await fetch(`${API}/properties?limit=8${query}`);
+      const data = await res.json();
+      return data.properties || [];
+    };
 
-    const filtered = (data.properties || [])
-      .filter((p) => p._id !== propertyId)
-      .slice(0, 4);
+    let list = propertyData.type
+      ? await fetchList(`&type=${encodeURIComponent(propertyData.type)}`)
+      : await fetchList();
 
-    if (!filtered.length) {
+    let filtered = list.filter((p) => p._id !== propertyId);
+
+    if (filtered.length < 2 && propertyData.type) {
+      const broader = await fetchList();
+      filtered = broader.filter((p) => p._id !== propertyId);
+    }
+
+    const shown = filtered.slice(0, 4);
+
+    if (!shown.length) {
       container.innerHTML = '<p class="property-empty-note">ملک مشابهی یافت نشد.</p>';
       return;
     }
 
-    container.innerHTML = filtered.map((p) => {
+    container.innerHTML = shown.map((p) => {
       const id = escapeHTML(p._id || '');
       const image = escapeHTML(p.image || (p.images && p.images[0]) || PLACEHOLDER_IMAGE);
       const title = escapeHTML(p.title || '');
@@ -372,17 +454,17 @@ async function loadSimilarProperties() {
       const price = escapeHTML(formatPriceDisplay(p.price));
 
       return `
-      <article class="property-card" data-similar-property-id="${id}">
-        <div class="card-image">
-          <img src="${image}" alt="${title}" loading="lazy" width="300" height="200">
-          ${type ? `<span class="m-card-type">${type}</span>` : ''}
+      <a href="/property/?id=${id}" class="similar-card" data-similar-property-id="${id}">
+        <div class="similar-card-image">
+          <img src="${image}" alt="${title}" loading="lazy" width="400" height="250">
         </div>
-        <div class="card-details">
-          <h3 class="card-title">${title}</h3>
-          ${location ? `<p class="m-card-location"><i data-lucide="map-pin"></i> ${location}</p>` : ''}
-          <p class="card-price">${price}</p>
+        <div class="similar-card-body">
+          ${type ? `<div class="similar-card-type">${type}</div>` : ''}
+          <h3 class="similar-card-title">${title}</h3>
+          ${location ? `<p class="similar-card-location"><i data-lucide="map-pin"></i> ${location}</p>` : ''}
+          <p class="similar-card-price">${price}</p>
         </div>
-      </article>`;
+      </a>`;
     }).join('');
 
     refreshIcons();
@@ -392,57 +474,132 @@ async function loadSimilarProperties() {
   }
 }
 
-document.getElementById('prevImage')?.addEventListener('click', () => {
-  updateHeroImage(currentImageIndex - 1);
-});
+function initHeroSwipe() {
+  const hero = document.getElementById('propertyHero');
+  if (!hero || propertyImages.length <= 1) return;
 
-document.getElementById('nextImage')?.addEventListener('click', () => {
-  updateHeroImage(currentImageIndex + 1);
-});
+  let startX = 0;
+  let startY = 0;
+
+  hero.addEventListener('touchstart', (e) => {
+    startX = e.changedTouches[0].screenX;
+    startY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  hero.addEventListener('touchend', (e) => {
+    const diffX = e.changedTouches[0].screenX - startX;
+    const diffY = e.changedTouches[0].screenY - startY;
+    if (Math.abs(diffX) < 50 || Math.abs(diffX) < Math.abs(diffY)) return;
+    if (diffX > 0) updateHeroImage(currentImageIndex - 1);
+    else updateHeroImage(currentImageIndex + 1);
+  }, { passive: true });
+}
+
+function setModalOpen(modal, open) {
+  if (!modal) return;
+  modal.classList.toggle('active', open);
+  document.body.classList.toggle('no-scroll', open);
+}
+
+function setLightboxOpen(open) {
+  const lb = document.getElementById('propertyLightbox');
+  if (!lb) return;
+  lb.hidden = !open;
+  lb.setAttribute('aria-hidden', open ? 'false' : 'true');
+  document.body.classList.toggle('no-scroll', open);
+  if (open) updateHeroImage(currentImageIndex, false);
+}
+
+function initMobileNav() {
+  const toggle = document.querySelector('.mobile-menu-toggle');
+  const closeBtn = document.querySelector('.mobile-menu-close');
+  const navLinks = document.querySelector('.nav-links');
+  if (!toggle || !navLinks) return;
+
+  const setOpen = (open) => {
+    navLinks.classList.toggle('active', open);
+    toggle.setAttribute('aria-expanded', open);
+    closeBtn?.toggleAttribute('hidden', !open);
+    document.body.classList.toggle('no-scroll', open);
+    const icon = toggle.querySelector('[data-lucide]');
+    if (icon) {
+      icon.setAttribute('data-lucide', open ? 'x' : 'menu');
+      refreshIcons();
+    }
+  };
+
+  toggle.addEventListener('click', () => setOpen(!navLinks.classList.contains('active')));
+  closeBtn?.addEventListener('click', () => setOpen(false));
+  navLinks.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+}
+
+function openTourModal() {
+  setModalOpen(document.getElementById('tourModal'), true);
+  const dateInput = document.getElementById('tourDate');
+  if (dateInput && !dateInput.value) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateInput.value = tomorrow.toISOString().split('T')[0];
+  }
+}
+
+async function shareProperty() {
+  const url = `${location.origin}/property/?id=${encodeURIComponent(propertyId || '')}`;
+  const title = propertyData?.title || 'ملک آستوریا';
+  try {
+    if (navigator.share) {
+      await navigator.share({ title, url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      showNotification('لینک ملک کپی شد');
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') showNotification('اشتراک‌گذاری انجام نشد', 'error');
+  }
+}
+
+function showNotification(message, type = 'info') {
+  const notification = document.getElementById('notification');
+  if (!notification) return;
+  notification.textContent = message;
+  notification.className = `notification notification-${type} visible`;
+  setTimeout(() => notification.classList.remove('visible'), 3000);
+}
+
+// ── Event listeners ──
+document.getElementById('prevImage')?.addEventListener('click', () => updateHeroImage(currentImageIndex - 1));
+document.getElementById('nextImage')?.addEventListener('click', () => updateHeroImage(currentImageIndex + 1));
+document.getElementById('lightboxPrev')?.addEventListener('click', () => updateHeroImage(currentImageIndex - 1));
+document.getElementById('lightboxNext')?.addEventListener('click', () => updateHeroImage(currentImageIndex + 1));
 
 document.addEventListener('keydown', (e) => {
   if (!propertyData || propertyImages.length <= 1) return;
-  if (e.key === 'ArrowRight') updateHeroImage(currentImageIndex - 1);
-  if (e.key === 'ArrowLeft') updateHeroImage(currentImageIndex + 1);
+  const lightboxOpen = !document.getElementById('propertyLightbox')?.hidden;
+  const modalOpen = document.getElementById('tourModal')?.classList.contains('active');
+
+  if (e.key === 'Escape') {
+    if (lightboxOpen) setLightboxOpen(false);
+    else if (modalOpen) setModalOpen(document.getElementById('tourModal'), false);
+    return;
+  }
+
+  if (lightboxOpen || (!modalOpen && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')) {
+    if (e.key === 'ArrowRight') updateHeroImage(currentImageIndex - 1);
+    if (e.key === 'ArrowLeft') updateHeroImage(currentImageIndex + 1);
+  }
 });
 
 document.addEventListener('click', (e) => {
   const imageButton = e.target.closest('[data-image-index]');
-  if (!imageButton) return;
-  updateHeroImage(Number(imageButton.getAttribute('data-image-index')) || 0);
+  if (imageButton) updateHeroImage(Number(imageButton.getAttribute('data-image-index')) || 0);
 });
 
-document.getElementById('btnFavorite')?.addEventListener('click', function () {
-  const btn = this;
-  if (!propertyId) return;
-  const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
-  const isLiked = favorites.includes(propertyId);
+document.getElementById('btnFavorite')?.addEventListener('click', toggleFavorite);
+document.getElementById('btnFavoriteTop')?.addEventListener('click', toggleFavorite);
+document.getElementById('btnShare')?.addEventListener('click', shareProperty);
 
-  if (isLiked) {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites.filter((id) => id !== propertyId)));
-    btn.classList.remove('liked');
-    btn.innerHTML = '<i data-lucide="heart"></i> افزودن به علاقه‌مندی‌ها';
-    showNotification('از علاقه‌مندی‌ها حذف شد.');
-  } else {
-    favorites.push(propertyId);
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
-    btn.classList.add('liked');
-    btn.innerHTML = '<i data-lucide="heart"></i> حذف از علاقه‌مندی‌ها';
-    showNotification('به علاقه‌مندی‌ها اضافه شد.');
-  }
-  refreshIcons();
-});
-
-document.getElementById('btnRequestTour')?.addEventListener('click', () => {
-  setModalOpen(document.getElementById('tourModal'), true);
-});
-
-document.getElementById('btnRequestTourInline')?.addEventListener('click', () => {
-  setModalOpen(document.getElementById('tourModal'), true);
-});
-
-document.getElementById('mobileCtaTour')?.addEventListener('click', () => {
-  setModalOpen(document.getElementById('tourModal'), true);
+['btnRequestTour', 'btnRequestTourInline', 'btnRequestTourPrimary', 'mobileCtaTour'].forEach((id) => {
+  document.getElementById(id)?.addEventListener('click', openTourModal);
 });
 
 document.getElementById('closeTourModal')?.addEventListener('click', () => {
@@ -450,9 +607,13 @@ document.getElementById('closeTourModal')?.addEventListener('click', () => {
 });
 
 document.getElementById('tourModal')?.addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    setModalOpen(document.getElementById('tourModal'), false);
-  }
+  if (e.target === e.currentTarget) setModalOpen(document.getElementById('tourModal'), false);
+});
+
+document.getElementById('btnFullscreen')?.addEventListener('click', () => setLightboxOpen(true));
+document.getElementById('closeLightbox')?.addEventListener('click', () => setLightboxOpen(false));
+document.getElementById('propertyLightbox')?.addEventListener('click', (e) => {
+  if (e.target.id === 'propertyLightbox') setLightboxOpen(false);
 });
 
 document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
@@ -480,8 +641,8 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
         name,
         email: `${phone}@tour.astoria`,
         phone,
-        message: `درخواست بازدید برای تاریخ ${date} - ملک: ${propertyData.title}${note ? `\n${note}` : ''}`,
-        source: 'فرم سایت',
+        message: `درخواست بازدید اختصاصی برای تاریخ ${date} - ملک: ${propertyData.title}${note ? `\n${note}` : ''}`,
+        source: 'درخواست بازدید',
       }),
     });
 
@@ -547,30 +708,12 @@ document.getElementById('quickContactForm')?.addEventListener('submit', async (e
   }
 });
 
-function showNotification(message) {
-  const notification = document.getElementById('notification');
-  if (!notification) return;
-  notification.textContent = message;
-  notification.className = 'notification notification-info visible';
-  setTimeout(() => notification.classList.remove('visible'), 3000);
-}
-
 const backToTop = document.getElementById('back-to-top');
 window.addEventListener('scroll', () => {
   backToTop?.classList.toggle('visible', window.scrollY > 500);
+  document.querySelector('.astoria-nav')?.classList.toggle('scrolled', window.scrollY > 60);
 });
 backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-document.getElementById('similarProperties')?.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-similar-property-id]');
-  if (!card) return;
-  window.location.href = `?id=${encodeURIComponent(card.getAttribute('data-similar-property-id') || '')}`;
-});
-
-const navbar = document.querySelector('.astoria-nav');
-window.addEventListener('scroll', () => {
-  navbar?.classList.toggle('scrolled', window.scrollY > 60);
-});
 
 loadProperty();
 initMobileNav();
