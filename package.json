@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "server": "npm run start --prefix server",
     "server:dev": "npm run dev --prefix server",
-    "seed": "npm run seed --prefix server"
+    "server:prod": "npm run start:prod --prefix server",
+    "seed": "npm run seed --prefix server",
+    "qa:staging": "node scripts/staging-smoke-qa.mjs",
+    "qa:production": "node scripts/production-smoke-qa.mjs"
   },
   "devDependencies": {
     "sass": "^1.102.0",

@@ -1,30 +1,49 @@
 const Customer = require('../models/Customer');
-const { isValidObjectId } = require('../utils/validate');
+const { isValidObjectId, escapeRegex } = require('../utils/validate');
+const { clientErrorMessage, serverPayload } = require('../utils/httpErrors');
 
 const LEAD_STATUSES = ['new', 'contacted', 'follow_up', 'closed'];
+const MAX_SEARCH_LENGTH = 120;
+
+function sanitizePublicLead(customer) {
+  if (!customer) return { message: 'درخواست شما ثبت شد' };
+  const doc = customer.toObject ? customer.toObject() : customer;
+  return {
+    message: 'درخواست شما ثبت شد',
+    id: doc._id,
+  };
+}
 
 const getCustomers = async (req, res) => {
   try {
     const { search, unread, status, propertyId } = req.query;
-    let query = {};
+    const query = {};
     if (unread === 'true') query.isRead = false;
     if (status && LEAD_STATUSES.includes(status)) query.status = status;
-    if (propertyId) query.propertyId = propertyId;
+    if (propertyId) {
+      if (!isValidObjectId(propertyId)) {
+        return res.status(400).json({ message: 'شناسه ملک نامعتبر است' });
+      }
+      query.propertyId = propertyId;
+    }
     if (search) {
+      const term = String(search).slice(0, MAX_SEARCH_LENGTH);
+      const regex = { $regex: escapeRegex(term), $options: 'i' };
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
-        { propertyTitle: { $regex: search, $options: 'i' } },
-        { message: { $regex: search, $options: 'i' } },
+        { name: regex },
+        { email: regex },
+        { phone: regex },
+        { propertyTitle: regex },
+        { message: regex },
       ];
     }
     const customers = await Customer.find(query)
       .populate('propertyId', 'title type location image')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(500);
     res.json({ count: customers.length, customers });
   } catch (error) {
-    res.status(500).json({ message: 'خطای سرور', error: error.message });
+    res.status(500).json(serverPayload(error));
   }
 };
 
@@ -58,9 +77,9 @@ const createCustomer = async (req, res) => {
       isRead: false,
     });
 
-    res.status(201).json({ message: 'درخواست شما ثبت شد', customer });
+    res.status(201).json(sanitizePublicLead(customer));
   } catch (error) {
-    res.status(400).json({ message: 'خطا', error: error.message });
+    res.status(400).json({ message: clientErrorMessage(error, 'خطا در ثبت درخواست') });
   }
 };
 
@@ -72,12 +91,11 @@ const updateCustomer = async (req, res) => {
       if (req.body[key] !== undefined) update[key] = req.body[key];
     });
 
+    if (propertyId && !isValidObjectId(update.propertyId)) {
+      return res.status(400).json({ message: 'شناسه ملک نامعتبر است' });
+    }
     if (update.status && !LEAD_STATUSES.includes(update.status)) {
       return res.status(400).json({ message: 'وضعیت نامعتبر است' });
-    }
-
-    if (update.isRead === true && !update.status) {
-      update.status = update.status || undefined;
     }
 
     const customer = await Customer.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true })

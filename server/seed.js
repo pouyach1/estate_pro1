@@ -16,7 +16,12 @@ if (!DEMO_SEED) {
   process.exit(1);
 }
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/astoria_elite';
+if (!process.env.MONGODB_URI) {
+  console.error('❌ MONGODB_URI is required for seeding');
+  process.exit(1);
+}
+
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const DEMO_ADMIN = {
   username: 'admin@astoria.local',

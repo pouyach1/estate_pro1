@@ -1,29 +1,45 @@
 const Settings = require('../models/Settings');
 const fs = require('fs');
 const path = require('path');
+const { isValidObjectId } = require('../utils/validate');
+const { clientErrorMessage, serverPayload } = require('../utils/httpErrors');
 
-// @desc    Get all settings
-// @route   GET /api/settings
-// @access  Public
+const ALLOWED_SETTINGS_KEYS = new Set([
+  'heroBackground',
+  'featuredPropertyId',
+  'contactPhone',
+  'contactEmail',
+  'contactAddress',
+  'heroHeadline',
+  'heroSubheadline',
+  'siteTitle',
+]);
+
 const getSettings = async (req, res) => {
   try {
     const settings = await Settings.find();
     const result = {};
-    settings.forEach(s => { result[s.key] = s.value; });
+    settings.forEach((s) => { result[s.key] = s.value; });
     res.json(result);
   } catch (error) {
-    res.status(500).json({ message: 'خطای سرور', error: error.message });
+    res.status(500).json(serverPayload(error));
   }
 };
 
-// @desc    Update settings
-// @route   PUT /api/settings
-// @access  Private/Admin
 const updateSettings = async (req, res) => {
   try {
     const updates = req.body;
-    
+    if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {
+      return res.status(400).json({ message: 'داده‌های تنظیمات نامعتبر است' });
+    }
+
     for (const [key, value] of Object.entries(updates)) {
+      if (!ALLOWED_SETTINGS_KEYS.has(key)) {
+        return res.status(400).json({ message: `کلید تنظیمات مجاز نیست: ${key}` });
+      }
+      if (key === 'featuredPropertyId' && value && !isValidObjectId(value)) {
+        return res.status(400).json({ message: 'شناسه ملک ویژه نامعتبر است' });
+      }
       await Settings.findOneAndUpdate(
         { key },
         { key, value, updatedAt: Date.now() },
@@ -37,7 +53,7 @@ const updateSettings = async (req, res) => {
 
     res.json({ message: 'تنظیمات با موفقیت بروزرسانی شد', settings: result });
   } catch (error) {
-    res.status(400).json({ message: 'خطا در بروزرسانی تنظیمات', error: error.message });
+    res.status(400).json({ message: clientErrorMessage(error, 'خطا در بروزرسانی تنظیمات') });
   }
 };
 
@@ -60,7 +76,7 @@ const uploadBackground = async (req, res) => {
 
     res.json({ message: 'تصویر پس‌زمینه با موفقیت آپلود شد', image: imageUrl });
   } catch (error) {
-    res.status(500).json({ message: 'خطا در آپلود تصویر', error: error.message });
+    res.status(500).json(serverPayload(error, 'خطا در آپلود تصویر'));
   }
 };
 
