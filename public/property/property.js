@@ -255,12 +255,19 @@ function updateHeroImage(index, animate = true) {
 
   if (nextEl) {
     nextEl.style.backgroundImage = `url("${src}")`;
+    nextEl.classList.add('is-visible');
     if (animate) {
       nextEl.style.opacity = '1';
-      if (currentEl) currentEl.style.opacity = '0';
-      setTimeout(() => { activeBgLayer = nextLayer; }, 450);
+      if (currentEl) {
+        currentEl.style.opacity = '0';
+        currentEl.classList.remove('is-visible');
+      }
+      setTimeout(() => { activeBgLayer = nextLayer; }, 700);
     } else {
-      if (currentEl) currentEl.style.opacity = '0';
+      if (currentEl) {
+        currentEl.style.opacity = '0';
+        currentEl.classList.remove('is-visible');
+      }
       nextEl.style.opacity = '1';
       activeBgLayer = nextLayer;
     }

@@ -97,6 +97,39 @@ Expected (healthy):
 
 ---
 
+## Local Development (API + Vite)
+
+Vite proxies `/api`, `/uploads`, `/sitemap.xml`, and `/robots.txt` to `http://localhost:5000`.
+
+If you run **only** `npm run dev` (Vite) without Express, the browser shows:
+
+```text
+[vite] http proxy error: /api/...
+ECONNREFUSED
+```
+
+**Root cause:** nothing is listening on port 5000.
+
+**Fix — start both processes:**
+
+```bash
+# recommended
+npm run dev:all
+
+# or two terminals
+npm run server          # Express on :5000
+npm run dev             # Vite on :3000
+```
+
+Confirm:
+
+```bash
+curl http://localhost:5000/api/health
+curl -I http://localhost:3000/
+```
+
+---
+
 ## MongoDB Backup (recommended)
 
 ### Export
