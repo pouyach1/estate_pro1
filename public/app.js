@@ -446,7 +446,7 @@ const Astoria = {
     const statusBadge=p.isExclusive?'<span class="m-card-status m-card-status--exclusive">اختصاصی آستوریا</span>':statusLabel&&p.status==='reserved'?`<span class="m-card-status m-card-status--reserved">${escapeHTML(statusLabel)}</span>`:'';
     return`<article class="property-card collection-card reveal ${variant}" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
       <div class="card-image" data-property-link="true">
-        ${img?`<img src="${img}" alt="${propertyTitle}${p.location ? ` — ${escapeHTML(p.location)}` : ''}" loading="lazy">`:''}
+        ${img?`<img src="${img}" alt="${propertyTitle}${propertyLocation ? ` — ${propertyLocation}` : ''}" loading="lazy">`:''}
         <span class="m-card-type">${propertyType}</span>
         ${statusBadge}
         <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
