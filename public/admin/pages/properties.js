@@ -30,6 +30,7 @@ async function loadProperties() {
 
     if (!data.properties?.length) {
       tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><h3>هنوز ملکی ثبت نشده است</h3><p>اولین ملک خود را اضافه کنید تا در وب‌سایت نمایش داده شود.</p><button type="button" class="btn-gold-outline" onclick="navigateTo('add-property')">افزودن اولین ملک</button></div></td></tr>`;
+      tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
       return;
     }
 
@@ -50,12 +51,23 @@ async function loadProperties() {
     `).join('');
   } catch (e) {
     tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><h3>بارگذاری املاک انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-gold-outline" onclick="loadProperties()">تلاش مجدد</button></div></td></tr>';
+    tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
   }
 }
 
 function filterPropertiesTable() {
   const q = document.getElementById('propertySearch')?.value.toLowerCase() || '';
-  document.querySelectorAll('#propertiesTableBody tr').forEach((tr) => {
-    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  const tbody = document.getElementById('propertiesTableBody');
+  if (!tbody) return;
+  let visible = 0;
+  tbody.querySelectorAll('tr').forEach((tr) => {
+    if (tr.dataset.skipFilter) return;
+    const show = tr.textContent.toLowerCase().includes(q);
+    tr.style.display = show ? '' : 'none';
+    if (show) visible += 1;
   });
+  tbody.querySelector('.table-no-results')?.remove();
+  if (q && visible === 0) {
+    tbody.insertAdjacentHTML('beforeend', `<tr class="table-no-results" data-skip-filter="true"><td colspan="8">نتیجه‌ای برای «${escapeHtml(q)}» یافت نشد</td></tr>`);
+  }
 }

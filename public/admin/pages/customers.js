@@ -31,6 +31,7 @@ async function loadCustomers() {
 
     if (!customers.length) {
       tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><h3>هنوز پیامی دریافت نشده است</h3><p>پیام‌های فرم تماس و درخواست بازدید اینجا نمایش داده می‌شوند.</p></div></td></tr>';
+      tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
       return;
     }
 
@@ -50,14 +51,25 @@ async function loadCustomers() {
     `).join('');
   } catch (e) {
     tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><h3>بارگذاری پیام‌ها انجام نشد</h3><p>اتصال به سرور برقرار نشد.</p><button type="button" class="btn-gold-outline" onclick="loadCustomers()">تلاش مجدد</button></div></td></tr>';
+    tbody.querySelector('tr')?.setAttribute('data-skip-filter', 'true');
   }
 }
 
 function filterCustomersTable() {
   const q = document.getElementById('customerSearch')?.value.toLowerCase() || '';
-  document.querySelectorAll('#customersTableBody tr').forEach((tr) => {
-    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  const tbody = document.getElementById('customersTableBody');
+  if (!tbody) return;
+  let visible = 0;
+  tbody.querySelectorAll('tr').forEach((tr) => {
+    if (tr.dataset.skipFilter) return;
+    const show = tr.textContent.toLowerCase().includes(q);
+    tr.style.display = show ? '' : 'none';
+    if (show) visible += 1;
   });
+  tbody.querySelector('.table-no-results')?.remove();
+  if (q && visible === 0) {
+    tbody.insertAdjacentHTML('beforeend', `<tr class="table-no-results" data-skip-filter="true"><td colspan="7">نتیجه‌ای برای «${escapeHtml(q)}» یافت نشد</td></tr>`);
+  }
 }
 
 function showAddCustomerForm() {
@@ -157,7 +169,11 @@ function closeDeleteCustomerModal() {
 
 document.getElementById('confirmDeleteCustomerBtn')?.addEventListener('click', async () => {
   const id = window._deleteCustomerId;
-  if (!id) return;
+  const btn = document.getElementById('confirmDeleteCustomerBtn');
+  if (!id || !btn) return;
+  const original = btn.textContent;
+  btn.textContent = 'در حال حذف...';
+  btn.disabled = true;
   try {
     const res = await fetch(`${API}/customers/${id}`, { method: 'DELETE', headers: headers() });
     if (!res.ok) throw new Error('delete failed');
@@ -167,5 +183,8 @@ document.getElementById('confirmDeleteCustomerBtn')?.addEventListener('click', a
     toast('پیام حذف شد', 'success');
   } catch (e) {
     toast('حذف انجام نشد', 'error');
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
   }
 });

@@ -94,6 +94,7 @@ function nextStep() {
     const title = document.getElementById('propTitle')?.value?.trim();
     if (!title) {
       toast('عنوان ملک الزامی است', 'error');
+      document.getElementById('propTitle')?.focus();
       return;
     }
   }
