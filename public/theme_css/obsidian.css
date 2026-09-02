@@ -1,49 +1,320 @@
 /* ==============================================
-   ASTORIA — Phase 9 Obsidian / Platinum Overrides
-   Removes residual warm/gold styling across pages
+   ASTORIA — Warm Off-White × Charcoal × Emerald
+   Identity override layer (replaces Obsidian)
    ============================================== */
 
-:root {
-  --gold: var(--color-platinum);
-  --gold-light: var(--color-platinum-light);
-  --gold-border: rgba(200, 200, 194, 0.22);
-  --gold-glow: rgba(200, 200, 194, 0.06);
+::selection {
+  background: var(--color-accent-muted);
+  color: var(--color-text);
 }
 
-/* ── Neutralize warm hardcoded rgba ── */
-.home-page .filter-btn.active,
-.home-page .collection-card:hover,
-.home-page .filter-btn:hover,
-.philosophy-frame::before,
-.home-page .advisor-card:hover,
-.home-contact-link:hover,
-.featured-property-link:hover {
-  border-color: rgba(200, 200, 194, 0.18) !important;
+html {
+  background: var(--color-bg);
 }
 
-.home-page .filter-btn.active {
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: var(--color-ivory) !important;
+body {
+  background: var(--color-bg) !important;
+  background-image: none !important;
+  color: var(--color-text) !important;
+}
+
+/* ── Header / Nav ── */
+.astoria-nav,
+.home-page .home-nav,
+.property-page .property-nav {
+  background: rgba(241, 239, 234, 0.92) !important;
+  backdrop-filter: blur(16px);
+  border: none !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.home-page .home-nav.scrolled,
+.astoria-nav.scrolled {
+  background: rgba(241, 239, 234, 0.97) !important;
+  box-shadow: none !important;
+}
+
+.brand-main,
+.home-page .brand-main,
+.sidebar-brand .brand-main,
+.admin-login-header .brand-main {
+  color: var(--color-text) !important;
+}
+
+.brand-sub,
+.home-page .brand-sub {
+  color: var(--color-text-muted) !important;
+}
+
+.nav-links a,
+.home-page .nav-links a {
+  color: var(--color-text-muted) !important;
+}
+
+.nav-links a:hover,
+.nav-links a.active,
+.home-page .nav-links a:hover,
+.home-page .nav-links a.active {
+  color: var(--color-text) !important;
+}
+
+.nav-links a::after {
+  background: var(--color-accent) !important;
+}
+
+.hamburger-line {
+  background: var(--color-text) !important;
+}
+
+.mobile-menu-toggle {
+  color: var(--color-text);
+}
+
+/* ── Primary / secondary CTA ── */
+.btn-primary,
+.btn-accent,
+.btn-gold-solid,
+.btn-full,
+.btn-search-primary,
+.btn-search-gold {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-pill) !important;
+}
+
+.btn-primary:hover,
+.btn-accent:hover,
+.btn-gold-solid:hover,
+.btn-full:hover,
+.btn-search-primary:hover,
+.btn-search-gold:hover {
+  background: var(--color-accent-hover) !important;
+  color: var(--color-on-accent) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn-secondary,
+.btn-gold-outline,
+.home-page .home-nav-cta {
+  background: transparent !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-text) !important;
+  box-shadow: none !important;
+}
+
+.btn-secondary:hover,
+.btn-gold-outline:hover,
+.home-page .home-nav-cta:hover {
+  background: var(--color-text) !important;
+  color: var(--color-on-dark) !important;
+}
+
+/* ── Homepage surfaces ── */
+.home-page {
+  background: var(--color-bg);
+}
+
+.home-hero {
+  background: var(--color-dark);
+}
+
+.home-hero-headline,
+.home-hero-line,
+.home-hero-emphasis {
+  color: var(--color-on-dark) !important;
+}
+
+.home-hero-emphasis {
+  color: var(--color-on-dark) !important;
+  font-style: italic;
+}
+
+.home-hero-lead {
+  color: rgba(241, 239, 234, 0.72) !important;
+}
+
+/* ── Light editorial sections ── */
+.philosophy-section,
+.home-contact-section,
+.concierge-cta,
+.home-page .advisors-section,
+.advisors-section,
+.featured-section {
+  background: var(--color-bg) !important;
+  border-color: var(--color-border) !important;
+}
+
+.philosophy-headline,
+.concierge-headline,
+.home-contact-section .section-title {
+  color: var(--color-text) !important;
+}
+
+.concierge-cta-inner,
+.home-page .home-contact-form {
+  background: #FAF8F4 !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.concierge-text,
+.home-contact-lead,
+.home-contact-link,
+.home-contact-address {
+  color: var(--color-text-muted) !important;
+}
+
+.home-contact-link svg,
+.home-contact-address svg {
+  color: var(--color-accent) !important;
+}
+
+.home-page .home-footer {
+  background: var(--color-dark) !important;
+  border-top: none !important;
+}
+
+.home-page .collection-card .m-card-type {
+  color: var(--color-on-dark) !important;
+  background: rgba(26, 29, 30, 0.55) !important;
+}
+
+.section-title::after {
+  background: var(--color-border) !important;
+}
+
+/* ── Filters ── */
+.filter-btn {
+  background: transparent !important;
+  color: var(--color-text-muted) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.filter-btn:hover {
+  border-color: var(--color-text) !important;
+  color: var(--color-text) !important;
+}
+
+.filter-btn.active {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+}
+
+.search-label {
+  color: var(--color-text-muted) !important;
+}
+
+.luxury-search-bar {
+  background: #FAF8F4 !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: none !important;
+}
+
+.home-concierge {
+  background: rgba(26, 29, 30, 0.72) !important;
+  border: 1px solid rgba(241, 239, 234, 0.12) !important;
+  box-shadow: none !important;
+}
+
+.home-concierge-label {
+  color: rgba(241, 239, 234, 0.55) !important;
+}
+
+.home-concierge-value,
+.home-concierge-input {
+  color: var(--color-on-dark) !important;
+}
+
+.search-dropdown {
+  background: #FAF8F4 !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.search-dropdown-item:hover,
+.search-dropdown-item.active {
+  background: var(--color-accent-muted) !important;
+  color: var(--color-accent) !important;
+}
+
+/* ── Cards ── */
+.property-card,
+.collection-card,
+.why-item,
+.agent-card,
+.contact-form,
+.info-item,
+.advisor-card {
+  background: #FAF8F4 !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: none !important;
+  color: var(--color-text) !important;
+}
+
+.card-title,
+.why-title,
+.agent-card h3,
+.info-item h4 {
+  color: var(--color-text) !important;
+}
+
+.card-price,
+.feature-item svg,
+.why-icon,
+.agent-card-title,
+.agent-contact-link,
+.agent-contact-link svg,
+.contact-link,
+.contact-price-link,
+.footer-column h4 {
+  color: var(--color-accent) !important;
+}
+
+.m-card-location,
+.m-card-metric,
+.collection-meta-label,
+.collection-meta-count {
+  color: var(--color-text-muted) !important;
+}
+
+.badge-exclusive,
+.m-card-status--exclusive {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+}
+
+.m-card-status--reserved {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+}
+
+.skip-link {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
 }
 
 /* ── Featured cover story ── */
 .featured-section {
   padding: 88px 0 72px;
+  background: var(--color-bg);
 }
 
 .featured-property-link {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 0;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: var(--color-charcoal);
+  border: 1px solid var(--color-border);
+  background: #FAF8F4;
   overflow: hidden;
   min-height: 480px;
   transition: border-color var(--duration-transition) ease;
 }
 
 .featured-property-link:hover {
-  border-color: rgba(200, 200, 194, 0.2);
+  border-color: var(--color-border-strong);
 }
 
 .featured-property-image {
@@ -57,14 +328,14 @@
   flex-direction: column;
   justify-content: center;
   padding: 48px 44px;
-  background: linear-gradient(180deg, rgba(13, 13, 15, 0.2), rgba(13, 13, 15, 0.92));
+  background: #FAF8F4;
 }
 
 .featured-property-type {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-platinum);
+  color: var(--color-accent);
   margin-bottom: 16px;
 }
 
@@ -72,12 +343,12 @@
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.35;
-  color: var(--color-ivory);
+  color: var(--color-text);
   margin-bottom: 14px;
 }
 
 .featured-property-location {
-  color: var(--color-stone);
+  color: var(--color-text-muted);
   font-size: 0.88rem;
   margin-bottom: 20px;
 }
@@ -85,114 +356,213 @@
 .featured-property-price {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  color: var(--color-ivory);
+  color: var(--color-text);
   margin-bottom: 8px;
 }
 
 .featured-property-cta {
-  color: var(--color-platinum);
+  color: var(--color-accent);
 }
 
-/* ── Collection cards ── */
-.collection-meta-label {
-  color: var(--color-platinum) !important;
+/* ── Footer (intentional charcoal) ── */
+.astoria-footer {
+  background: var(--color-dark) !important;
+  border-top: none !important;
+  color: var(--color-on-dark) !important;
 }
 
-.m-card-metric i,
-.collection-meta-label {
-  color: var(--color-platinum-dark) !important;
+.astoria-footer .brand-main {
+  color: var(--color-on-dark) !important;
 }
 
-/* ── Pro.css warm rgba neutralization ── */
-::selection { background: rgba(200, 200, 194, 0.22) !important; }
-
-.property-card,
-.why-item,
-.agent-card,
-.contact-form,
-.info-item,
-.astoria-footer,
-.search-dropdown,
-.properties-empty-state,
-.properties-loading,
-.properties-error {
-  border-color: rgba(255, 255, 255, 0.06) !important;
+.astoria-footer .brand-sub,
+.astoria-footer p,
+.astoria-footer a,
+.footer-column a,
+.footer-legal,
+.footer-legal a {
+  color: rgba(241, 239, 234, 0.7) !important;
 }
 
-.badge-exclusive,
-.skip-link,
-.notification-info {
-  background: rgba(243, 241, 236, 0.92) !important;
-  color: var(--color-void) !important;
+.astoria-footer .footer-column h4 {
+  color: var(--color-on-dark) !important;
+}
+
+.footer-column a:hover,
+.footer-legal a:hover,
+.contact-link:hover {
+  color: var(--color-on-dark) !important;
 }
 
 .back-to-top {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border-color: rgba(200, 200, 194, 0.22) !important;
+  background: var(--color-dark) !important;
+  border: 1px solid var(--color-dark) !important;
+  color: var(--color-on-dark) !important;
 }
 
-.filter-btn.active {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(200, 200, 194, 0.2) !important;
-  color: var(--color-ivory) !important;
+.back-to-top:hover {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
 }
 
-.btn-search-primary, .btn-search-gold:hover {
-  box-shadow: none !important;
+/* ── Property detail ── */
+.property-page {
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
-.card-image::before {
-  display: none !important;
+.property-breadcrumb {
+  background: var(--color-bg) !important;
 }
 
-/* ── Admin obsidian ── */
-@keyframes goldBorderSpin { to { border-color: rgba(200, 200, 194, 0.25); } }
-@keyframes goldPulse { to { box-shadow: none; } }
-
-.admin-login-header .brand-main,
-.sidebar-brand .brand-main,
-.stat-number,
-.chart-bar-fill,
-.top-prop-rank,
-.unread-badge,
-.btn-full,
-.btn-gold-solid {
-  color: var(--color-void) !important;
+.property-breadcrumb-link:hover {
+  color: var(--color-accent) !important;
 }
 
-.btn-full,
-.btn-gold-solid,
-.top-prop-rank,
-.unread-badge {
-  background: var(--color-ivory) !important;
-  box-shadow: none !important;
+.property-hero-wrap,
+.property-hero {
+  background: var(--color-dark);
 }
 
-.btn-full:hover,
-.btn-gold-solid:hover {
-  background: var(--color-ivory-soft) !important;
-  box-shadow: none !important;
+.property-hero-counter,
+.property-hero-fullscreen,
+.hero-nav-btn {
+  color: var(--color-on-dark) !important;
 }
 
-.sidebar-nav-item.active {
-  border-right-color: var(--color-platinum) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  color: var(--color-ivory) !important;
+.property-identity,
+.property-main,
+.property-mobile-panel {
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
-.chart-bar-fill {
-  background: linear-gradient(90deg, #8f8f8a, var(--color-platinum)) !important;
+.property-hero-title,
+.property-type-badge,
+.sidebar-card,
+.price-card-value {
+  color: var(--color-text);
 }
 
-.edit-mode-indicator {
-  animation: none !important;
-  border-color: rgba(200, 200, 194, 0.25) !important;
-  color: var(--color-platinum) !important;
+.property-mobile-cta {
+  background: rgba(241, 239, 234, 0.96) !important;
+  border-top: 1px solid var(--color-border) !important;
+}
+
+.modal-overlay .modal-content,
+.tour-modal,
+.request-modal {
+  background: #FAF8F4 !important;
+  color: var(--color-text) !important;
 }
 
 /* ── 404 ── */
+.astoria-404-page {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
 .astoria-404-code {
-  color: rgba(200, 200, 194, 0.18) !important;
+  color: var(--color-border) !important;
+  font-size: clamp(3rem, 10vw, 5.5rem) !important;
+  margin-top: 24px;
+}
+
+.astoria-404-title,
+.astoria-404-text {
+  color: var(--color-text) !important;
+}
+
+/* ── Admin ── */
+.admin-body,
+.admin-dashboard {
+  background: var(--color-bg) !important;
+  background-image: none !important;
+  color: var(--color-text) !important;
+}
+
+.admin-login-card,
+.stat-card,
+.chart-card,
+.admin-table-wrapper,
+.contact-form {
+  background: #FAF8F4 !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: none !important;
+}
+
+.admin-sidebar {
+  background: #FAF8F4 !important;
+  border-right: 1px solid var(--color-border) !important;
+}
+
+.sidebar-nav-item {
+  color: var(--color-text-muted) !important;
+}
+
+.sidebar-nav-item:hover,
+.sidebar-nav-item.active {
+  background: var(--color-accent-muted) !important;
+  color: var(--color-accent) !important;
+  border-right-color: var(--color-accent) !important;
+}
+
+.page-title,
+.stat-number,
+.admin-table th,
+.form-section-title,
+.msg-stat-item strong {
+  color: var(--color-text) !important;
+}
+
+.stat-icon-wrap,
+.recent-msg-avatar,
+.unread-badge,
+.top-prop-rank {
+  background: var(--color-accent-muted) !important;
+  color: var(--color-accent) !important;
+}
+
+.unread-badge,
+.top-prop-rank {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+}
+
+.chart-bar-fill {
+  background: var(--color-accent) !important;
+}
+
+.admin-table tr:hover td {
+  background: var(--color-accent-muted) !important;
+}
+
+.admin-login-form input,
+.admin-login-form input:focus {
+  background: #FAF8F4 !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+.property-filmstrip-wrap,
+.property-filmstrip {
+  background: var(--color-dark) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border) !important;
+}
+
+@media (max-width: 768px) {
+  .nav-links,
+  .nav-links.active {
+    background: rgba(241, 239, 234, 0.98) !important;
+  }
+
+  .nav-links a {
+    color: var(--color-text) !important;
+  }
 }
 
 @media (max-width: 900px) {
@@ -212,7 +582,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .featured-property-link,
-  .home-page .collection-card {
+  .home-page .collection-card,
+  .property-card {
     transition: none !important;
   }
 }
