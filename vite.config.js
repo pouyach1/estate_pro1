@@ -17,13 +17,14 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 3000,
-    open: true,
+    open: false,
     proxy: {
-      '/api': 'http://localhost:5000',
-      '/uploads': 'http://localhost:5000',
-      '/sitemap.xml': 'http://localhost:5000',
-      '/robots.txt': 'http://localhost:5000',
+      '/api': 'http://127.0.0.1:5000',
+      '/uploads': 'http://127.0.0.1:5000',
+      '/sitemap.xml': 'http://127.0.0.1:5000',
+      '/robots.txt': 'http://127.0.0.1:5000',
     },
   },
   plugins: [

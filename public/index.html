@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="مجموعه املاک منتخب آستوریا — ویلا، پنت‌هاوس و اقامتگاه‌های استثنایی با مشاوره خصوصی و بازدید اختصاصی.">
-    <meta name="theme-color" content="#070707">
-    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#F1EFEA">
+    <meta name="color-scheme" content="light">
     <meta name="robots" content="index, follow">
 
     <meta property="og:title" content="آستوریا الیت استیتس | املاک لوکس و مشاوره اختصاصی">
@@ -20,12 +20,14 @@
 
     <title>آستوریا الیت استیتس | املاک لوکس و مشاوره اختصاصی</title>
 
+    <link rel="stylesheet" href="/theme_css/astoria-brand.css">
     <link rel="stylesheet" href="/theme_css/pro.css">
     <link rel="stylesheet" href="/theme_css/mobile.css">
     <link rel="stylesheet" href="/theme_css/home.css">
     <link rel="stylesheet" href="/theme_css/conversion.css">
     <link rel="stylesheet" href="/theme_css/obsidian.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070707'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23C8C8C2'/></svg>">
+    <link rel="stylesheet" href="/theme_css/flagship.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23F1EFEA'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%231A1D1E'/></svg>">
 </head>
 <body class="home-page">
 
@@ -68,96 +70,112 @@
 
     <main id="main-content" role="main">
 
-        <!-- ========== CINEMATIC HERO ========== -->
+        <!-- ========== CINEMATIC HERO — editorial magazine cover ========== -->
         <section id="home" class="home-hero" aria-label="ورود به آستوریا الیت استیتس">
             <div class="home-hero-bg home-hero-bg-a" id="homeHeroA" aria-hidden="true"></div>
             <div class="home-hero-bg home-hero-bg-b" id="homeHeroB" aria-hidden="true"></div>
             <div class="home-hero-overlay" aria-hidden="true"></div>
 
             <div class="home-hero-inner container">
-                <div class="home-hero-content reveal">
-                    <p class="home-hero-eyebrow">مجموعه املاک منتخب آستوریا</p>
-                    <h1 class="home-hero-headline">
-                        <span class="home-hero-line">جایی که</span>
-                        <span class="home-hero-line home-hero-emphasis">معماری،</span>
-                        <span class="home-hero-line">ارزش پیدا می‌کند.</span>
-                    </h1>
-                    <p class="home-hero-lead">اقامتگاه‌های استثنایی با مشاوره اختصاصی — برای کسانی که جزئیات را می‌بینند.</p>
+                <div class="home-hero-layout">
+                    <div class="home-hero-content">
+                        <p class="home-hero-eyebrow">Vol. ۰۱ · خانهٔ معماری خصوصی</p>
+                        <h1 class="home-hero-headline">
+                            <span class="home-hero-line">جایی که</span>
+                            <span class="home-hero-line home-hero-emphasis">معماری،</span>
+                            <span class="home-hero-line">ارزش پیدا می‌کند.</span>
+                        </h1>
+                        <p class="home-hero-lead">اقامتگاه‌های استثنایی با مشاوره اختصاصی — برای کسانی که جزئیات را می‌بینند.</p>
+                        <div class="home-hero-meta" aria-label="نشانه‌های خانه">
+                            <span class="home-hero-meta-item">گزینش خصوصی</span>
+                            <span class="home-hero-meta-item">بازدید اختصاصی</span>
+                            <span class="home-hero-meta-item">مشاوره آرام</span>
+                        </div>
 
-                    <!-- Desktop concierge search -->
-                    <div class="home-concierge luxury-search-desktop" role="search" aria-label="جستجوی ملک">
-                        <div class="home-concierge-field search-field-type" id="searchTypeField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب نوع ملک">
-                            <span class="home-concierge-label">نوع ملک</span>
-                            <span class="home-concierge-value" id="searchTypeValue">همه انواع <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                            <div class="search-dropdown" id="searchTypeDropdown" role="listbox" hidden>
-                                <button type="button" class="search-dropdown-item active" data-type="همه">همه انواع</button>
-                                <button type="button" class="search-dropdown-item" data-type="ویلا">ویلا</button>
-                                <button type="button" class="search-dropdown-item" data-type="آپارتمان">آپارتمان</button>
-                                <button type="button" class="search-dropdown-item" data-type="پنت‌هاوس">پنت‌هاوس</button>
-                                <button type="button" class="search-dropdown-item" data-type="باغ">باغ</button>
-                                <button type="button" class="search-dropdown-item" data-type="زمین">زمین</button>
-                                <button type="button" class="search-dropdown-item" data-type="دفتر کار">دفتر کار</button>
-                            </div>
-                        </div>
-                        <div class="home-concierge-field home-concierge-field-input">
-                            <label class="home-concierge-label" for="desktopLocationSearch">محدوده</label>
-                            <input type="search" id="desktopLocationSearch" class="home-concierge-input" placeholder="منطقه یا نام ملک" autocomplete="off">
-                        </div>
-                        <div class="home-concierge-field home-concierge-field-budget" id="searchBudgetField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب بودجه">
-                            <span class="home-concierge-label">بودجه</span>
-                            <span class="home-concierge-value" id="searchBudgetValue">همه بودجه‌ها <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                            <div class="search-dropdown" id="searchBudgetDropdown" role="listbox" hidden>
-                                <button type="button" class="search-dropdown-item active" data-budget="all">همه بودجه‌ها</button>
-                                <button type="button" class="search-dropdown-item" data-budget="under20">تا ۲۰ میلیارد</button>
-                                <button type="button" class="search-dropdown-item" data-budget="20to50">۲۰ تا ۵۰ میلیارد</button>
-                                <button type="button" class="search-dropdown-item" data-budget="over50">بالای ۵۰ میلیارد</button>
-                            </div>
-                        </div>
-                        <button type="button" class="home-concierge-submit btn-search-primary" aria-label="جستجوی املاک">
-                            <i data-lucide="search"></i>
-                            <span>کشف املاک</span>
-                        </button>
-                    </div>
-
-                    <!-- Mobile search -->
-                    <div class="m-hero-search" role="search" aria-label="جستجوی ملک">
-                        <div class="m-search-wrap" id="mobileSearchWrap">
-                            <label class="sr-only" for="mobilePropertySearch">جستجوی ملک، منطقه یا نوع ملک</label>
-                            <div class="m-search-field" id="mobileSearchField">
-                                <i data-lucide="search" class="m-search-icon" aria-hidden="true"></i>
-                                <input type="search" id="mobilePropertySearch" class="m-search-input" placeholder="جستجوی ملک یا منطقه" autocomplete="off" enterkeyhint="search" inputmode="search" aria-autocomplete="list" aria-controls="mobileSearchSuggestions" aria-expanded="false">
-                                <button type="button" class="m-search-clear" id="mobileSearchClear" aria-label="پاک کردن جستجو" hidden>
-                                    <i data-lucide="x"></i>
-                                </button>
-                            </div>
-                            <div class="m-search-suggestions" id="mobileSearchSuggestions" role="listbox" hidden>
-                                <div class="m-suggestions-section">
-                                    <p class="m-suggestions-label">نوع ملک</p>
-                                    <div class="m-suggestions-chips" id="mobileTypeSuggestions"></div>
-                                </div>
-                                <div class="m-suggestions-section">
-                                    <p class="m-suggestions-label">جستجوهای پیشنهادی</p>
-                                    <div class="m-suggestions-chips" id="mobileQuerySuggestions"></div>
+                        <!-- Desktop concierge search -->
+                        <div class="home-concierge luxury-search-desktop" role="search" aria-label="جستجوی ملک">
+                            <div class="home-concierge-field search-field-type" id="searchTypeField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب نوع ملک">
+                                <span class="home-concierge-label">نوع ملک</span>
+                                <span class="home-concierge-value" id="searchTypeValue">همه انواع <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
+                                <div class="search-dropdown" id="searchTypeDropdown" role="listbox" hidden>
+                                    <button type="button" class="search-dropdown-item active" data-type="همه">همه انواع</button>
+                                    <button type="button" class="search-dropdown-item" data-type="ویلا">ویلا</button>
+                                    <button type="button" class="search-dropdown-item" data-type="آپارتمان">آپارتمان</button>
+                                    <button type="button" class="search-dropdown-item" data-type="پنت‌هاوس">پنت‌هاوس</button>
+                                    <button type="button" class="search-dropdown-item" data-type="باغ">باغ</button>
+                                    <button type="button" class="search-dropdown-item" data-type="زمین">زمین</button>
+                                    <button type="button" class="search-dropdown-item" data-type="دفتر کار">دفتر کار</button>
                                 </div>
                             </div>
+                            <div class="home-concierge-field home-concierge-field-input">
+                                <label class="home-concierge-label" for="desktopLocationSearch">محدوده</label>
+                                <input type="search" id="desktopLocationSearch" class="home-concierge-input" placeholder="منطقه یا نام ملک" autocomplete="off">
+                            </div>
+                            <div class="home-concierge-field home-concierge-field-budget" id="searchBudgetField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب بودجه">
+                                <span class="home-concierge-label">بودجه</span>
+                                <span class="home-concierge-value" id="searchBudgetValue">همه بودجه‌ها <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
+                                <div class="search-dropdown" id="searchBudgetDropdown" role="listbox" hidden>
+                                    <button type="button" class="search-dropdown-item active" data-budget="all">همه بودجه‌ها</button>
+                                    <button type="button" class="search-dropdown-item" data-budget="under20">تا ۲۰ میلیارد</button>
+                                    <button type="button" class="search-dropdown-item" data-budget="20to50">۲۰ تا ۵۰ میلیارد</button>
+                                    <button type="button" class="search-dropdown-item" data-budget="over50">بالای ۵۰ میلیارد</button>
+                                </div>
+                            </div>
+                            <button type="button" class="home-concierge-submit btn-search-primary" aria-label="جستجوی املاک">
+                                <i data-lucide="search"></i>
+                                <span>کشف املاک</span>
+                            </button>
+                        </div>
+
+                        <!-- Mobile search -->
+                        <div class="m-hero-search" role="search" aria-label="جستجوی ملک">
+                            <div class="m-search-wrap" id="mobileSearchWrap">
+                                <label class="sr-only" for="mobilePropertySearch">جستجوی ملک، منطقه یا نوع ملک</label>
+                                <div class="m-search-field" id="mobileSearchField">
+                                    <i data-lucide="search" class="m-search-icon" aria-hidden="true"></i>
+                                    <input type="search" id="mobilePropertySearch" class="m-search-input" placeholder="جستجوی ملک یا منطقه" autocomplete="off" enterkeyhint="search" inputmode="search" aria-autocomplete="list" aria-controls="mobileSearchSuggestions" aria-expanded="false">
+                                    <button type="button" class="m-search-clear" id="mobileSearchClear" aria-label="پاک کردن جستجو" hidden>
+                                        <i data-lucide="x"></i>
+                                    </button>
+                                </div>
+                                <div class="m-search-suggestions" id="mobileSearchSuggestions" role="listbox" hidden>
+                                    <div class="m-suggestions-section">
+                                        <p class="m-suggestions-label">نوع ملک</p>
+                                        <div class="m-suggestions-chips" id="mobileTypeSuggestions"></div>
+                                    </div>
+                                    <div class="m-suggestions-section">
+                                        <p class="m-suggestions-label">جستجوهای پیشنهادی</p>
+                                        <div class="m-suggestions-chips" id="mobileQuerySuggestions"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <aside class="home-hero-aside" aria-label="پروندهٔ معماری">
+                        <span class="home-hero-aside-label">پروندهٔ معماری</span>
+                        <p class="home-hero-aside-text">اقامتگاه‌های منتخب — روایت، گزینش، مشاورهٔ خصوصی.</p>
+                        <a class="home-hero-aside-link" href="#featured">مشاهدهٔ شاخص <i data-lucide="chevron-left"></i></a>
+                    </aside>
                 </div>
             </div>
 
-            <div class="home-hero-scroll" aria-hidden="true">
+            <a class="home-hero-scroll" href="#featured" aria-label="رفتن به اقامتگاه شاخص">
                 <span>کشف</span>
                 <i data-lucide="chevron-down"></i>
-            </div>
+            </a>
         </section>
 
-        <!-- ========== FEATURED RESIDENCE ========== -->
+        <!-- ========== FEATURED RESIDENCE — cover story ========== -->
         <section id="featured" class="featured-section" aria-labelledby="featured-heading" hidden>
             <div class="container">
                 <div class="featured-header reveal">
-                    <span class="home-section-eyebrow">منتخب آستوریا</span>
-                    <h2 id="featured-heading" class="home-section-title">اقامتگاه شاخص</h2>
-                    <p class="featured-intro">ملکی که تیم آستوریا برای شروع کاوش شما انتخاب کرده — نه صرفاً گران‌ترین، بلکه استثنایی‌ترین.</p>
+                    <div>
+                        <span class="home-section-eyebrow">پروندهٔ ویژه · ۰۱</span>
+                        <h2 id="featured-heading" class="home-section-title">اقامتگاه شاخص</h2>
+                        <p class="featured-intro">ملکی که تیم آستوریا برای شروع کاوش شما انتخاب کرده — نه صرفاً گران‌ترین، بلکه استثنایی‌ترین.</p>
+                    </div>
+                    <span class="featured-index" aria-hidden="true">۰۱</span>
                 </div>
                 <div id="featuredProperty" class="featured-property reveal"></div>
             </div>
@@ -184,8 +202,8 @@
             <div class="container">
                 <header class="collection-header reveal">
                     <div class="collection-header-text">
-                        <span class="home-section-eyebrow">منتخب آستوریا</span>
-                        <h2 id="collection-heading" class="home-section-title">مجموعه اقامتگاه‌های استثنایی</h2>
+                        <span class="home-section-eyebrow">مجموعه · ۰۲</span>
+                        <h2 id="collection-heading" class="home-section-title">اقامتگاه‌های استثنایی</h2>
                         <p class="collection-intro">هر ملک، با دقت انتخاب شده — نه برای پر کردن لیست، بلکه برای ارزش واقعی.</p>
                     </div>
                     <div class="collection-meta" id="propertiesResultsMeta" aria-live="polite"></div>
@@ -205,7 +223,7 @@
             <div class="container">
                 <div class="philosophy-grid reveal">
                     <div class="philosophy-content">
-                        <span class="home-section-eyebrow">فلسفه آستوریا</span>
+                        <span class="home-section-eyebrow">فلسفه · ۰۳</span>
                         <h2 id="philosophy-heading" class="philosophy-headline">ما فقط ملک معرفی نمی‌کنیم.<br>امکان انتخاب درست را فراهم می‌کنیم.</h2>
                         <p class="philosophy-text">آستوریا مجموعه‌ای منتخب از اقامتگاه‌های استثنایی است — با مشاوره خصوصی، شناخت بازار و توجه به جزئیاتی که در نگاه اول دیده نمی‌شوند.</p>
                         <ul class="philosophy-points">
@@ -227,8 +245,8 @@
         <section id="agents" class="advisors-section" aria-labelledby="agents-heading">
             <div class="container">
                 <header class="advisors-header reveal">
-                    <span class="home-section-eyebrow">تیم مشاوره</span>
-                    <h2 id="agents-heading" class="home-section-title">مشاوران آستوریا</h2>
+                    <span class="home-section-eyebrow">مشاوران خصوصی · ۰۴</span>
+                    <h2 id="agents-heading" class="home-section-title">مشاوران خصوصی</h2>
                     <p class="advisors-lead">افرادی که پیش از شما، ارزش هر ملک را می‌بینند.</p>
                 </header>
                 <div class="advisors-grid" id="agentsContainer">
@@ -242,9 +260,9 @@
             <div class="container">
                 <div class="home-contact-grid reveal">
                     <div class="home-contact-intro">
-                        <span class="home-section-eyebrow">گفت‌وگو</span>
+                        <span class="home-section-eyebrow">دعوت خصوصی · ۰۵</span>
                         <h2 id="contact-heading" class="home-section-title">گفت‌وگو با آستوریا</h2>
-                        <p class="home-contact-lead">برای پرسش، بازدید یا هماهنگی — تیم ما آماده پاسخگویی است.</p>
+                        <p class="home-contact-lead">برای بازدید خصوصی، ارزش‌گذاری یا هماهنگی — پیام بگذارید؛ با آرامش پاسخ می‌دهیم.</p>
                         <div class="home-contact-details">
                             <a href="tel:+982112345678" class="home-contact-link footer-contact-phone"><i data-lucide="phone"></i> ۰۲۱-۱۲۳۴۵۶۷۸</a>
                             <a href="mailto:info@astoriaelite.com" class="home-contact-link footer-contact-email"><i data-lucide="mail"></i> info@astoriaelite.com</a>
@@ -278,8 +296,9 @@
         <section id="consultation" class="concierge-cta" aria-labelledby="concierge-heading">
             <div class="container">
                 <div class="concierge-cta-inner reveal">
-                    <h2 id="concierge-heading" class="concierge-headline">ملک مناسب شما،<br>ممکن است همین‌جا باشد.</h2>
-                    <p class="concierge-text">برای یک گفت‌وگوی خصوصی با مشاوران آستوریا، با ما در تماس باشید.</p>
+                    <span class="home-section-eyebrow" style="color:rgba(241,239,234,0.55)">مشاورهٔ خصوصی</span>
+                    <h2 id="concierge-heading" class="concierge-headline">مشاوره خصوصی املاک</h2>
+                    <p class="concierge-text">ملک مناسب شما ممکن است همین‌جا باشد — برای یک گفت‌وگوی آرام با مشاوران آستوریا.</p>
                     <button type="button" class="btn-primary concierge-btn" aria-label="درخواست مشاوره خصوصی">درخواست مشاوره خصوصی</button>
                 </div>
             </div>
@@ -293,7 +312,7 @@
                 <div class="footer-brand">
                     <span class="brand-main">ASTORIA</span>
                     <span class="brand-sub">ELITE ESTATES</span>
-                    <p class="footer-tagline">جایی که معماری، ارزش پیدا می‌کند.</p>
+                    <p class="footer-tagline">خانهٔ معماری خصوصی برای املاک منتخب — انتخاب، روایت، مشاوره.</p>
                 </div>
 
                 <nav class="footer-links" aria-label="ناوبری فوتر">
