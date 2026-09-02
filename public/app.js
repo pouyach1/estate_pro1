@@ -128,7 +128,7 @@ const Astoria = {
   },
   initIcons(){createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults})},
   bindEvents(){
-.window.addEventListener('scroll',()=>{
+    window.addEventListener('scroll',()=>{
       const y=scrollY;
       this.navbar.classList.toggle('scrolled',y>CONFIG.scrollThreshold);
       this.backToTop?.classList.toggle('visible',y>CONFIG.backToTopThreshold);

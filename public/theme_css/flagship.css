@@ -253,6 +253,12 @@
   border-radius: 2px !important;
   box-shadow: none !important;
   backdrop-filter: blur(18px);
+  margin-top: 8px;
+}
+
+.m-hero-search .m-search-field,
+.m-search-field {
+  border-radius: 2px !important;
 }
 
 .home-concierge-submit,
@@ -310,6 +316,14 @@
 .featured-section {
   padding: clamp(72px, 10vw, 120px) 0 clamp(48px, 6vw, 72px) !important;
   background: var(--color-bg) !important;
+}
+
+.featured-property {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  overflow: visible !important;
 }
 
 .featured-header {
@@ -556,20 +570,6 @@
   margin-top: 10px;
 }
 
-.home-page .collection-card .card-buttons {
-  display: flex !important;
-  gap: 10px;
-  margin-top: 14px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity var(--motion-base) ease, transform var(--motion-base) var(--ease-luxe);
-}
-
-.home-page .collection-card:hover .card-buttons {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .home-page .collection-card .btn-card-primary,
 .home-page .collection-card .btn-card-secondary {
   border-radius: 2px;
@@ -607,6 +607,43 @@
   letter-spacing: 0.06em;
   font-size: 0.78rem !important;
   padding: 10px 16px !important;
+  background: transparent !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text) !important;
+  box-shadow: none !important;
+}
+
+.home-page .filter-btn.active,
+.filter-btn.active {
+  background: var(--color-dark) !important;
+  border-color: var(--color-dark) !important;
+  color: var(--color-on-dark) !important;
+}
+
+.home-page .m-card-status--exclusive {
+  background: rgba(26, 29, 30, 0.72) !important;
+  color: #F1EFEA !important;
+  border-radius: 0 !important;
+  letter-spacing: 0.06em;
+  font-size: 0.65rem !important;
+}
+
+.home-page .collection-card .card-buttons {
+  display: flex !important;
+  gap: 10px;
+  margin-top: 14px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(6px);
+  transition: opacity var(--motion-base) ease, transform var(--motion-base) var(--ease-luxe), max-height var(--motion-base) ease;
+}
+
+.home-page .collection-card:hover .card-buttons,
+.home-page .collection-card:focus-within .card-buttons {
+  max-height: 64px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ── Philosophy ── */
@@ -897,6 +934,8 @@
   .home-page .collection-card .card-buttons {
     opacity: 1;
     transform: none;
+    max-height: none;
+    overflow: visible;
   }
 
   .home-page .collection-card .card-actions-top {
