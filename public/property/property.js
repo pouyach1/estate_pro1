@@ -418,27 +418,13 @@ function renderFeatures(property) {
 
 async function loadSimilarProperties() {
   const container = document.getElementById('similarProperties');
-  if (!container || !propertyData) return;
+  if (!container || !propertyData || !propertyId) return;
 
   try {
-    const fetchList = async (query = '') => {
-      const res = await fetch(`${API}/properties?limit=8${query}`);
-      const data = await res.json();
-      return data.properties || [];
-    };
-
-    let list = propertyData.type
-      ? await fetchList(`&type=${encodeURIComponent(propertyData.type)}`)
-      : await fetchList();
-
-    let filtered = list.filter((p) => p._id !== propertyId);
-
-    if (filtered.length < 2 && propertyData.type) {
-      const broader = await fetchList();
-      filtered = broader.filter((p) => p._id !== propertyId);
-    }
-
-    const shown = filtered.slice(0, 4);
+    const res = await fetch(`${API}/properties/${encodeURIComponent(propertyId)}/similar?limit=4`);
+    if (!res.ok) throw new Error('similar failed');
+    const data = await res.json();
+    const shown = data.properties || [];
 
     if (!shown.length) {
       container.innerHTML = '<p class="property-empty-note">ملک مشابهی یافت نشد.</p>';
@@ -452,6 +438,10 @@ async function loadSimilarProperties() {
       const type = escapeHTML(p.type || '');
       const location = escapeHTML(p.location || '');
       const price = escapeHTML(formatPriceDisplay(p.price));
+      const metricParts = [];
+      if (p.area) metricParts.push(`${Number(p.area).toLocaleString('fa-IR')} متر`);
+      if (p.beds) metricParts.push(`${Number(p.beds).toLocaleString('fa-IR')} خواب`);
+      const metric = metricParts.length ? `<p class="similar-card-metric">${metricParts.join(' · ')}</p>` : '';
 
       return `
       <a href="/property/?id=${id}" class="similar-card" data-similar-property-id="${id}">
@@ -462,6 +452,7 @@ async function loadSimilarProperties() {
           ${type ? `<div class="similar-card-type">${type}</div>` : ''}
           <h3 class="similar-card-title">${title}</h3>
           ${location ? `<p class="similar-card-location"><i data-lucide="map-pin"></i> ${location}</p>` : ''}
+          ${metric}
           <p class="similar-card-price">${price}</p>
         </div>
       </a>`;
@@ -667,7 +658,9 @@ document.getElementById('tourForm')?.addEventListener('submit', async (e) => {
         name,
         email: `${phone}@tour.astoria`,
         phone,
-        message: `درخواست بازدید اختصاصی برای تاریخ ${date} - ملک: ${propertyData.title}${note ? `\n${note}` : ''}`,
+        message: `درخواست بازدید اختصاصی برای تاریخ ${date}${note ? `\n${note}` : ''}`,
+        propertyId: propertyId,
+        propertyTitle: propertyData.title,
         source: 'درخواست بازدید',
       }),
     });
@@ -708,7 +701,9 @@ document.getElementById('quickContactForm')?.addEventListener('submit', async (e
         name,
         email: `${phone}@quick.astoria`,
         phone,
-        message: `${message}\n\n(در مورد ملک: ${propertyData.title})`,
+        message: message,
+        propertyId: propertyId,
+        propertyTitle: propertyData.title,
         source: 'فرم سایت',
       }),
     });

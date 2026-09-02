@@ -4,6 +4,7 @@
    ============================================== */
 
 import { createIcons, Menu, Search, Bed, Bath, Maximize2, Crown, UserCheck, TrendingUp, ShieldCheck, MapPin, Phone, Mail, ArrowUp, Heart, X, ChevronDown, ChevronLeft, Eye, Calendar, Share2, Car, Warehouse, Thermometer, Wind, Waves, Camera, Dumbbell, Building, Palette, Users, Gamepad, Film, Video, ArrowUpDown, Home } from 'lucide';
+import { formatPrice, formatPriceDisplay, getPropertyMetric, getStatusLabel, escapeHTML } from './js/shared/format.js';
 
 const API_BASE = '/api';
 const PROPERTY_FILTER_ALL = 'همه';
@@ -54,29 +55,6 @@ const SPECIFIC_FEATURES = {
 function getFeaturesForType(t){return{common:COMMON_FEATURES,specific:SPECIFIC_FEATURES[t]||[],luxury:LUXURY_FEATURES}}
 
 // ===== HELPERS =====
-function formatPrice(price) {
-  if (!price && price !== 0) return null;
-  const num = Number(price);
-  if (Number.isNaN(num)) return null;
-  if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace('.0', '') + ' میلیارد';
-  if (num >= 1000000) return Math.floor(num / 1000000).toLocaleString('fa-IR') + ' میلیون';
-  if (num >= 1000) return Math.floor(num / 1000).toLocaleString('fa-IR') + ' هزار';
-  return num.toLocaleString('fa-IR');
-}
-
-function escapeHTML(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
-}
-
-function getPropertyMetric(p) {
-  const parts = [];
-  if (p?.area) parts.push(`${Number(p.area).toLocaleString('fa-IR')} متر`);
-  if (p?.beds && Number(p.beds) > 0) parts.push(`${Number(p.beds).toLocaleString('fa-IR')} خواب`);
-  return parts.join(' · ');
-}
-
 function renderLoadingSkeleton() {
   return `<div class="properties-skeleton" aria-busy="true" aria-label="در حال بارگذاری املاک">${[1, 2, 3].map(() => `
     <div class="skeleton-card" aria-hidden="true">
@@ -96,6 +74,7 @@ const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingU
 const Astoria = {
   init(){
     this.allProperties=[];
+    this.featuredProperty=null;
     this.currentFilter=PROPERTY_FILTER_ALL;
     this.currentBudget='all';
     this.searchQuery='';
@@ -107,7 +86,7 @@ const Astoria = {
     this.initBudgetDropdown();
     this.initDesktopLocationSearch();
     this.initMobileSearch();
-    this.loadProperties();this.loadAgents();this.loadSettings();
+    this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
     console.log('%cASTORIA %cPro فارسی','color:#c9a227;font-weight:bold;','color:#888;');
   },
@@ -328,6 +307,14 @@ const Astoria = {
     }
     return results;
   },
+  async loadFeaturedProperty(){
+    try{
+      const r=await fetch(`${API_BASE}/properties/featured/home`);
+      if(!r.ok)return;
+      const d=await r.json();
+      this.featuredProperty=d.property||null;
+    }catch(e){}
+  },
   async loadProperties(){
     if(!this.propertiesContainer)return;
     this.propertiesContainer.innerHTML=renderLoadingSkeleton();
@@ -388,9 +375,10 @@ const Astoria = {
       return;
     }
 
-    const sorted=[...properties].sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));
-    const featured=sorted[0];
-    const collection=sorted.slice(1);
+    const sorted=[...properties].sort((a,b)=>(Number(b.sortOrder)||0)-(Number(a.sortOrder)||0)||(Number(b.price)||0)-(Number(a.price)||0));
+    let featured=this.featuredProperty&&properties.some(p=>p._id===this.featuredProperty._id)?this.featuredProperty:sorted.find(p=>p.isFeatured)||sorted[0];
+    if(featured&&!properties.some(p=>p._id===featured._id))featured=sorted[0];
+    const collection=sorted.filter(p=>featured&&p._id!==featured._id);
 
     this.renderFeatured(featured);
     this.propertiesContainer.innerHTML=collection.length
@@ -435,7 +423,7 @@ const Astoria = {
     if(this.searchQuery)label=`نتایج جستجو برای «${escapeHTML(this.searchQuery)}»`;
     else if(this.currentFilter!==PROPERTY_FILTER_ALL)label=`${escapeHTML(this.currentFilter)} منتخب`;
   else if(this.currentBudget!=='all')label='نتایج بر اساس بودجه شما';
-    const countLabel=count===0?'بدون نتیجه':`${n} ملک`;
+    const countLabel=count===0?'بدون نتیجه':`${n} اقامتگاه مطابق انتخاب شما`;
     this.propertiesResultsMeta.innerHTML=`<span class="collection-meta-label">${label}</span><span class="collection-meta-count">${countLabel}</span>`;
   },
   renderCard(p,layoutIndex=0){
@@ -449,12 +437,13 @@ const Astoria = {
     const locationRow=propertyLocation?`<p class="m-card-location"><i data-lucide="map-pin"></i> ${propertyLocation}</p>`:'';
     const metric=getPropertyMetric(p);
     const metricRow=metric?`<p class="m-card-metric"><i data-lucide="maximize-2"></i> ${escapeHTML(metric)}</p>`:'';
-    const status=p.isExclusive?'<span class="m-card-status">اختصاصی</span>':'';
+    const statusLabel=getStatusLabel(p.status);
+    const statusBadge=p.isExclusive?'<span class="m-card-status m-card-status--exclusive">اختصاصی آستوریا</span>':statusLabel&&p.status==='reserved'?`<span class="m-card-status m-card-status--reserved">${escapeHTML(statusLabel)}</span>`:'';
     return`<article class="property-card collection-card reveal ${variant}" data-type="${propertyType}" data-price="${escapeHTML(p.price||0)}" data-id="${propertyId}">
       <div class="card-image" data-property-link="true">
         ${img?`<img src="${img}" alt="${propertyTitle}" loading="lazy">`:''}
         <span class="m-card-type">${propertyType}</span>
-        ${status}
+        ${statusBadge}
         <div class="card-actions-top"><button type="button" class="card-action-icon favorite-btn" aria-label="افزودن به علاقه‌مندی"><i data-lucide="heart"></i></button><button type="button" class="card-action-icon share-btn" aria-label="اشتراک‌گذاری"><i data-lucide="share-2"></i></button></div>
       </div>
       <div class="card-details">
@@ -542,6 +531,33 @@ const Astoria = {
         const b=document.getElementById('homeHeroB');
         if(a){a.style.backgroundImage=`url(${s.heroBackground})`;a.style.backgroundSize='cover'}
         if(b&&!this.heroImages?.length)b.style.backgroundImage=`url(${s.heroBackground})`;
+      }
+      if(s.contactPhone){
+        document.querySelectorAll('.home-contact-link[href^="tel:"], .footer-contact-phone').forEach(el=>{
+          el.href=`tel:${s.contactPhone.replace(/\D/g,'')}`;
+          const icon=el.querySelector('i');
+          el.textContent='';
+          if(icon)el.appendChild(icon);
+          el.append(' '+s.contactPhone);
+        });
+      }
+      if(s.contactEmail){
+        document.querySelectorAll('.home-contact-link[href^="mailto:"], .footer-contact-email').forEach(el=>{
+          el.href=`mailto:${s.contactEmail}`;
+          const icon=el.querySelector('i');
+          el.textContent='';
+          if(icon)el.appendChild(icon);
+          el.append(' '+s.contactEmail);
+        });
+      }
+      if(s.contactAddress){
+        const addr=document.querySelector('.home-contact-address');
+        if(addr){
+          const icon=addr.querySelector('i');
+          addr.textContent='';
+          if(icon)addr.appendChild(icon);
+          addr.append(' '+s.contactAddress);
+        }
       }
     }catch(e){}
   },
@@ -662,7 +678,9 @@ const Astoria = {
         name:document.getElementById('requestName').value,
         email:document.getElementById('requestPhone').value+'@request.astoria',
         phone:document.getElementById('requestPhone').value,
-        message:`درخواست بازدید اختصاصی برای: ${document.getElementById('requestModalProperty').textContent}\n${document.getElementById('requestNote').value}`,
+        message:`درخواست بازدید اختصاصی\n${document.getElementById('requestNote').value}`.trim(),
+        propertyId:document.getElementById('requestPropertyId').value,
+        propertyTitle:document.getElementById('requestModalProperty').textContent,
         source:'درخواست ملک'
       })});
       if(!res.ok)throw new Error('failed');

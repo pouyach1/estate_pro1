@@ -377,8 +377,11 @@ async function seedDemo() {
     }
 
     const properties = await Property.insertMany(
-      DEMO_PROPERTIES.map((property) => ({
+      DEMO_PROPERTIES.map((property, index) => ({
         ...property,
+        status: property.status || 'available',
+        isFeatured: index === 0,
+        sortOrder: DEMO_PROPERTIES.length - index,
         isActive: true,
         createdBy: admin._id,
         createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000),
@@ -388,16 +391,22 @@ async function seedDemo() {
     const customers = await Customer.insertMany(
       DEMO_CUSTOMERS.map((customer, index) => ({
         ...customer,
+        status: customer.status || (customer.isRead ? 'contacted' : 'new'),
+        propertyTitle: customer.propertyTitle || '',
         createdAt: new Date(Date.now() - index * 3600000 * 6),
       }))
     );
 
     const agents = await Agent.insertMany(DEMO_AGENTS);
 
-    await Settings.create({
-      key: 'heroBackground',
-      value: UPLOAD_IMAGES[4],
-    });
+    await Settings.insertMany([
+      { key: 'heroBackground', value: UPLOAD_IMAGES[4] },
+      { key: 'featuredPropertyId', value: String(properties[0]._id) },
+      { key: 'contactPhone', value: '۰۲۱-۱۲۳۴۵۶۷۸' },
+      { key: 'contactEmail', value: 'info@astoriaelite.com' },
+      { key: 'contactAddress', value: 'تهران، خیابان لوکس، پلاک ۱۲۳' },
+      { key: 'heroHeadline', value: 'جایی که معماری، ارزش پیدا می‌کند.' },
+    ]);
 
     console.log('\n🎉 Demo seed completed successfully\n');
     console.log(`   Properties: ${properties.length}`);
