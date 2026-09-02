@@ -323,7 +323,7 @@
 }
 
 .featured-property:hover {
-  border-color: rgba(201, 162, 39, 0.2);
+  border-color: rgba(200,200,194, 0.2);
 }
 
 .featured-property-link {
@@ -427,13 +427,13 @@
 
 .home-page .filter-btn:hover {
   transform: none;
-  border-color: rgba(201, 162, 39, 0.35);
+  border-color: rgba(200,200,194, 0.35);
 }
 
 .home-page .filter-btn.active {
-  background: rgba(201, 162, 39, 0.12);
+  background: rgba(200,200,194, 0.12);
   color: var(--gold);
-  border-color: rgba(201, 162, 39, 0.35);
+  border-color: rgba(200,200,194, 0.35);
   box-shadow: none;
   animation: none;
 }
@@ -499,7 +499,7 @@
 }
 
 .home-page .collection-card:hover {
-  border-color: rgba(201, 162, 39, 0.22);
+  border-color: rgba(200,200,194, 0.22);
   transform: translateY(-3px);
   box-shadow: none;
   animation: none;
@@ -662,8 +662,8 @@
   inset-inline-end: 0;
   width: 60%;
   height: 60%;
-  border-top: 1px solid rgba(201, 162, 39, 0.25);
-  border-inline-end: 1px solid rgba(201, 162, 39, 0.25);
+  border-top: 1px solid rgba(200,200,194, 0.25);
+  border-inline-end: 1px solid rgba(200,200,194, 0.25);
   pointer-events: none;
 }
 
@@ -711,7 +711,7 @@
 }
 
 .home-page .advisor-card:hover {
-  border-color: rgba(201, 162, 39, 0.2);
+  border-color: rgba(200,200,194, 0.2);
   transform: none;
   box-shadow: none;
 }

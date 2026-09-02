@@ -6,9 +6,12 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.mp4', '.mov', '.avi', '.webm'];
+    const safeExt = allowed.includes(ext) ? ext : '.bin';
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, uniqueSuffix + safeExt);
+  },
 });
 
 const fileFilter = (req, file, cb) => {
@@ -36,9 +39,9 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB max
-    files: 10, // حداکثر ۱۰ فایل همزمان
-  }
+    fileSize: 25 * 1024 * 1024,
+    files: 10,
+  },
 });
 
 module.exports = upload;

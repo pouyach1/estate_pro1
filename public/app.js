@@ -88,7 +88,7 @@ const Astoria = {
     this.initMobileSearch();
     this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
-    console.log('%cASTORIA %cPro فارسی','color:#c9a227;font-weight:bold;','color:#888;');
+    console.log('%cASTORIA %cPro فارسی','color:#C8C8C2;font-weight:bold;','color:#70706C;');
   },
   cacheDOM(){
     this.navbar=document.querySelector('.astoria-nav');

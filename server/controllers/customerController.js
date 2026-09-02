@@ -1,4 +1,5 @@
 const Customer = require('../models/Customer');
+const { isValidObjectId } = require('../utils/validate');
 
 const LEAD_STATUSES = ['new', 'contacted', 'follow_up', 'closed'];
 
@@ -41,6 +42,9 @@ const createCustomer = async (req, res) => {
   try {
     const { name, email, phone, message, source, propertyId, propertyTitle } = req.body;
     if (!name || !email) return res.status(400).json({ message: 'نام و ایمیل الزامی است' });
+    if (propertyId && !isValidObjectId(propertyId)) {
+      return res.status(400).json({ message: 'شناسه ملک نامعتبر است' });
+    }
 
     const customer = await Customer.create({
       name,
