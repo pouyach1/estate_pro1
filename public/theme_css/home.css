@@ -8,6 +8,9 @@
   --home-ink: #050508;
   --home-panel: rgba(255, 255, 255, 0.02);
   --home-line: rgba(255, 255, 255, 0.08);
+  --home-reveal-dur: 520ms;
+  --home-reveal-dist: 18px;
+  --home-stagger: 72ms;
   background: var(--bg-void);
 }
 
@@ -154,9 +157,10 @@
   inset: 0;
   background-size: cover;
   background-position: 52% 42%;
-  transform: scale(1.04);
+  transform: scale(1.04) translate3d(0, 0, 0);
   transition: opacity 2s var(--home-ease);
   will-change: opacity;
+  backface-visibility: hidden;
 }
 
 /* Campaign fallbacks — painted before JS; API heroBackground must not win via CSS. */
@@ -437,7 +441,7 @@
 }
 
 .featured-property:hover .featured-property-image {
-  transform: scale(1.05);
+  transform: scale(1.025);
 }
 
 .featured-property-media::after {
@@ -604,7 +608,7 @@
   overflow: hidden;
   border: 1px solid var(--home-line);
   background: var(--home-panel);
-  transition: border-color 280ms var(--home-ease);
+  transition: border-color 280ms var(--home-ease), transform 320ms var(--home-ease);
   cursor: pointer;
 }
 
@@ -618,7 +622,7 @@
 
 .home-page .collection-card:hover {
   border-color: rgba(184, 164, 106, 0.3);
-  transform: none;
+  transform: translateY(-2px);
   box-shadow: none;
   animation: none;
 }
@@ -649,11 +653,10 @@
 
 .home-page .collection-card .card-image img {
   transition: transform 700ms var(--home-ease);
-  will-change: transform;
 }
 
 .home-page .collection-card:hover .card-image img {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .home-page .collection-card .card-details {
@@ -1209,16 +1212,104 @@
   padding-top: 22px;
 }
 
-/* ── Reveal ── */
+/* ── Scroll motion (progressive: visible without JS) ── */
 .home-page .reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 800ms var(--home-ease), transform 800ms var(--home-ease);
+  opacity: 1;
+  transform: none;
 }
 
-.home-page .reveal.revealed {
+.home-page .home-scroll-section {
+  transition: opacity 480ms var(--home-ease);
+}
+
+.home-page .home-hero-stage-item {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+}
+
+/* Enabled only when html.home-motion is set by app.js */
+html.home-motion .home-page .reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--home-reveal-dist), 0);
+  transition:
+    opacity var(--home-reveal-dur) var(--home-ease),
+    transform var(--home-reveal-dur) var(--home-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html.home-motion .home-page .reveal.revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+html.home-motion .home-page .home-scroll-section:not(.is-focused) {
+  opacity: 0.88;
+}
+
+html.home-motion .home-page .home-scroll-section.is-focused {
+  opacity: 1;
+}
+
+/* Hero staged entrance — never blocks first paint of background */
+html.home-motion .home-page .home-hero-stage-item {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 560ms var(--home-ease),
+    transform 560ms var(--home-ease);
+  transition-delay: calc(var(--i, 0) * 80ms + 40ms);
+}
+
+html.home-motion .home-page .home-hero-stage.is-ready .home-hero-stage-item {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Philosophy list stagger after parent reveal */
+html.home-motion .home-page .philosophy-points li {
+  opacity: 0;
+}
+
+html.home-motion .home-page .philosophy-content.revealed .philosophy-points li {
+  animation: homeFadeUp 520ms var(--home-ease) both;
+}
+
+html.home-motion .home-page .philosophy-content.revealed .philosophy-points li:nth-child(1) {
+  animation-delay: 60ms;
+}
+
+html.home-motion .home-page .philosophy-content.revealed .philosophy-points li:nth-child(2) {
+  animation-delay: 130ms;
+}
+
+html.home-motion .home-page .philosophy-content.revealed .philosophy-points li:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+@keyframes homeFadeUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Soft media emphasis when revealed */
+html.home-motion .home-page .home-media-zoom.revealed .philosophy-frame-inner,
+html.home-motion .home-page .home-editorial-visual.home-media-zoom.revealed {
+  animation: homeSoftZoom 900ms var(--home-ease) both;
+}
+
+@keyframes homeSoftZoom {
+  from { transform: scale(1.02); }
+  to { transform: scale(1); }
+}
+
+html.home-motion .home-page .featured-property.revealed .featured-property-image {
+  animation: homeSoftZoom 900ms var(--home-ease) both;
 }
 
 /* ── Responsive ── */
@@ -1422,14 +1513,45 @@
   .philosophy-frame-inner,
   .home-page .advisor-card-photo,
   .home-page .reveal,
+  .home-page .home-scroll-section,
+  .home-page .home-hero-stage-item,
   .home-text-link,
   .home-text-link svg {
     animation: none !important;
     transition: none !important;
   }
 
-  .home-page .reveal {
+  .home-page .reveal,
+  .home-page .home-hero-stage-item,
+  .home-page .home-scroll-section,
+  html.home-motion .home-page .reveal,
+  html.home-motion .home-page .home-hero-stage-item,
+  html.home-motion .home-page .home-scroll-section:not(.is-focused) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  html.home-motion .home-page .philosophy-content.revealed .philosophy-points li,
+  html.home-motion .home-page .home-media-zoom.revealed .philosophy-frame-inner,
+  html.home-motion .home-page .home-editorial-visual.home-media-zoom.revealed,
+  html.home-motion .home-page .featured-property.revealed .featured-property-image {
+    animation: none !important;
+  }
+}
+
+/* Soften motion on narrow / touch-first viewports */
+@media (max-width: 768px) {
+  html.home-motion .home-page .home-scroll-section:not(.is-focused) {
     opacity: 1;
+  }
+
+  html.home-motion .home-page {
+    --home-reveal-dist: 12px;
+    --home-reveal-dur: 420ms;
+    --home-stagger: 56ms;
+  }
+
+  .home-page .collection-card:hover {
     transform: none;
   }
 }
