@@ -31,15 +31,20 @@ const DEMO_ADMIN = {
   role: 'owner',
 };
 
+/** Local campaign photography under public/assets/images (no remote URLs). */
 const UPLOAD_IMAGES = [
-  '/uploads/1785353493680-196846943.jpg',
-  '/uploads/1785354838495-823428764.jpg',
-  '/uploads/1785417608318-745866872.jpg',
-  '/uploads/1785418626782-243569580.jpg',
-  '/uploads/1785426291484-895192775.jpg',
-  '/uploads/1785426345823-409447736.jpg',
-  '/uploads/1785426362571-307861419.jpg',
+  '/assets/images/astoria-featured-residence.webp',
+  '/assets/images/astoria-hero-villa-twilight.webp',
+  '/assets/images/astoria-interior-living.webp',
+  '/assets/images/astoria-villa-pool-day.webp',
+  '/assets/images/astoria-interior-salon.webp',
+  '/assets/images/astoria-villa-terrace.webp',
+  '/assets/images/astoria-editorial-architecture.webp',
+  '/assets/images/astoria-hero-villa-dusk.webp',
+  '/assets/images/astoria-cta-night-pool.webp',
 ];
+
+const HERO_CAMPAIGN = '/assets/images/astoria-hero-villa-dusk.webp';
 
 function img(index, extra = []) {
   const primary = UPLOAD_IMAGES[index % UPLOAD_IMAGES.length];
@@ -211,7 +216,7 @@ const DEMO_PROPERTIES = [
     listingType: 'آگهی ویژه',
     isExclusive: false,
     views: 132,
-    ...img(0, ['/uploads/1785418626782-243569580.jpg']),
+    ...img(0, ['/assets/images/astoria-interior-salon.webp']),
     features: features('دفتر کار', {
       common: { parking: 2, elevator: true, security: true, cctv: true, cooling: 'چیلر' },
       specific: { office_usage: true, reception: true, conference_room: true, network_infra: true, access_control: true },
@@ -231,7 +236,7 @@ const DEMO_PROPERTIES = [
     listingType: 'آگهی ویژه',
     isExclusive: true,
     views: 389,
-    ...img(1, ['/uploads/1785426291484-895192775.jpg']),
+    ...img(1, ['/assets/images/astoria-villa-terrace.webp']),
     features: features('ویلا', {
       common: { parking: 3, security: true, smart_home: true, flooring: 'سنگ' },
       specific: { yard_area: 700, pool_private: true, garden: true, irrigation: true },
@@ -251,7 +256,7 @@ const DEMO_PROPERTIES = [
     listingType: 'آگهی ویژه',
     isExclusive: false,
     views: 278,
-    ...img(2, ['/uploads/1785426345823-409447736.jpg']),
+    ...img(2, ['/assets/images/astoria-interior-living.webp']),
     features: features('آپارتمان', {
       common: { parking: 2, elevator: true, security: true, smart_home: true, cabinet: 'چوب طبیعی' },
       specific: { floor: 4, total_floors: 7, balcony: true, open_kitchen: true, master_bedroom: true, false_ceiling: true },
@@ -333,7 +338,7 @@ const DEMO_AGENTS = [
     bio: 'بیش از ۱۲ سال تجربه در معاملات املاک لوکس شمال تهران و لواسان. تخصص در ویلا و پنت‌هاوس.',
     phone: '09121234567',
     email: 'amir.mohammadi@astoriaelite.com',
-    photo: '/uploads/1785418626782-243569580.jpg',
+    photo: '',
     isActive: true,
   },
   {
@@ -342,7 +347,7 @@ const DEMO_AGENTS = [
     bio: 'متخصص آپارتمان‌های لوکس و دفاتر اداری در مناطق الهیه، فرمانیه و آجودانیه.',
     phone: '09129876543',
     email: 'sara.karimi@astoriaelite.com',
-    photo: '/uploads/1785426345823-409447736.jpg',
+    photo: '',
     isActive: true,
   },
   {
@@ -351,7 +356,7 @@ const DEMO_AGENTS = [
     bio: 'مشاوره تخصصی برای خریداران سرمایه‌گذار در زمین، باغ‌ویلا و پروژه‌های لوکس ساحلی.',
     phone: '02144556677',
     email: 'kaveh.nouri@astoriaelite.com',
-    photo: '/uploads/1785417608318-745866872.jpg',
+    photo: '',
     isActive: true,
   },
 ];
@@ -406,7 +411,7 @@ async function seedDemo() {
     const agents = await Agent.insertMany(DEMO_AGENTS);
 
     await Settings.insertMany([
-      { key: 'heroBackground', value: UPLOAD_IMAGES[4] },
+      { key: 'heroBackground', value: HERO_CAMPAIGN },
       { key: 'featuredPropertyId', value: String(properties[0]._id) },
       { key: 'contactPhone', value: '۰۲۱-۱۲۳۴۵۶۷۸' },
       { key: 'contactEmail', value: 'info@astoriaelite.com' },
@@ -420,7 +425,7 @@ async function seedDemo() {
     console.log(`   Agents:     ${agents.length}`);
     console.log(`   Admin:      ${DEMO_ADMIN.username}`);
     console.log(`   Password:   ${DEMO_ADMIN.password}`);
-    console.log(`   Hero image: ${UPLOAD_IMAGES[4]}\n`);
+    console.log(`   Hero image: ${HERO_CAMPAIGN}\n`);
 
     await mongoose.disconnect();
     process.exit(0);

@@ -17,7 +17,7 @@ const getSiteMeta = async (req, res) => {
   try {
     const origin = getSiteOrigin(req);
     const settings = await loadPublicSettings();
-    const defaultOgImage = absoluteAssetUrl(origin, settings.heroBackground || '/uploads/1785353493680-196846943.jpg');
+    const defaultOgImage = absoluteAssetUrl(origin, settings.heroBackground || '/assets/images/astoria-hero-villa-dusk.webp');
 
     res.json({
       origin,

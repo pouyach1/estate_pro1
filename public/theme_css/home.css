@@ -153,9 +153,10 @@
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: 52% 42%;
   transform: scale(1.04);
   transition: opacity 2s var(--home-ease);
+  will-change: opacity;
 }
 
 .home-hero-bg-b {
@@ -425,7 +426,7 @@
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: 50% 42%;
   transition: transform 700ms var(--home-ease);
 }
 
@@ -736,7 +737,7 @@
 .home-page .home-editorial-visual {
   min-height: min(70vh, 620px);
   background-size: cover;
-  background-position: center;
+  background-position: 45% 40%;
   border: none;
   position: relative;
 }
@@ -890,7 +891,7 @@
 .philosophy-frame-inner {
   aspect-ratio: 4 / 5;
   background-size: cover;
-  background-position: center;
+  background-position: 50% 45%;
   background-color: #0c1018;
   transition: transform 700ms var(--home-ease);
 }
@@ -1073,15 +1074,41 @@
 /* ── Final CTA ── */
 .home-final-cta {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: clamp(96px, 14vw, 140px) 0;
   text-align: center;
   border-top: 1px solid var(--home-line);
+  background: #040406;
+}
+
+.home-final-cta[data-has-cta-image="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--cta-image);
+  background-size: cover;
+  background-position: 50% 55%;
+  transform: scale(1.02);
+}
+
+.home-final-cta[data-has-cta-image="true"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(107, 115, 85, 0.12) 0%, transparent 55%),
-    #040406;
+    linear-gradient(180deg, rgba(4, 4, 6, 0.72) 0%, rgba(4, 4, 6, 0.82) 45%, rgba(4, 4, 6, 0.92) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(107, 115, 85, 0.14) 0%, transparent 55%);
 }
 
 .home-final-cta-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.home-final-cta .home-final-cta-inner {
   max-width: 42rem;
   margin: 0 auto;
 }
@@ -1281,6 +1308,14 @@
   .home-hero {
     min-height: 92dvh;
     align-items: flex-end;
+  }
+
+  .home-hero-bg {
+    background-position: 62% 38%;
+  }
+
+  .home-final-cta[data-has-cta-image="true"]::before {
+    background-position: 48% 50%;
   }
 
   .home-hero-inner {

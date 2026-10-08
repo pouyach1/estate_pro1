@@ -11,6 +11,20 @@ const API_BASE = '/api';
 const PROPERTY_FILTER_ALL = 'همه';
 const AGENT_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121822'/%3E%3Ccircle cx='50' cy='36' r='18' fill='%23c8c8c2'/%3E%3Cpath d='M20 88c4-18 18-28 30-28s26 10 30 28' fill='%23c8c8c2'/%3E%3C/svg%3E";
 
+/** Curated local campaign photography — homepage hero / editorial / CTA (no remote URLs). */
+const CAMPAIGN_IMAGES = {
+  hero: [
+    '/assets/images/astoria-hero-villa-dusk.webp',
+    '/assets/images/astoria-hero-villa-twilight.webp',
+    '/assets/images/astoria-featured-residence.webp',
+    '/assets/images/astoria-villa-pool-day.webp',
+    '/assets/images/astoria-villa-terrace.webp',
+  ],
+  editorial: '/assets/images/astoria-editorial-architecture.webp',
+  philosophy: '/assets/images/astoria-interior-living.webp',
+  cta: '/assets/images/astoria-cta-night-pool.webp',
+};
+
 // ===== FEATURES =====
 const FEATURE_CATEGORIES = { common: 'ویژگی‌های عمومی', specific: 'ویژگی‌های اختصاصی', luxury: 'ویژگی‌های لوکس' };
 const COMMON_FEATURES = [
@@ -77,6 +91,7 @@ const Astoria = {
     this.heroSlideIndex=0;
     this.heroActiveLayer='a';
     this.cacheDOM();this.initIcons();this.bindEvents();this.setActiveLink();
+    this.initCampaignVisuals();
     this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
     console.log('%cASTORIA %cPro فارسی','color:#C8C8C2;font-weight:bold;','color:#70706C;');
@@ -144,8 +159,6 @@ const Astoria = {
         this.updateResultsMeta(0);
         return;
       }
-      this.initHeroSlideshow();
-      this.setPhilosophyImage();
       this.updateHomeStats();
       this.applyFiltersAndSearch({scroll:false});
     }catch(e){
@@ -294,10 +307,14 @@ const Astoria = {
     const emailLink=agent.email?`<a href="mailto:${email}" class="advisor-contact-link agent-contact-link"><i data-lucide="mail"></i> ${email}</a>`:'';
     return`<article class="agent-card advisor-card reveal"><div class="agent-card-photo advisor-card-photo" style="background-image:url('${photo}')" role="img" aria-label="${name}"></div><div class="agent-card-body advisor-card-body"><h3 class="agent-card-name advisor-card-name">${name}</h3>${title?`<p class="agent-card-title advisor-card-title">${title}</p>`:''}${bio?`<p class="agent-card-bio advisor-card-bio">${bio}</p>`:''}<div class="agent-card-contacts advisor-card-contacts">${phoneLink}${emailLink}</div></div></article>`;
   },
+  initCampaignVisuals(){
+    this.initHeroSlideshow();
+    this.setPhilosophyImage();
+    this.setFinalCtaImage();
+  },
   initHeroSlideshow(){
     const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const sorted=[...this.allProperties].sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));
-    this.heroImages=sorted.map(p=>p.image||(p.images&&p.images[0])).filter(Boolean).slice(0,5);
+    this.heroImages=CAMPAIGN_IMAGES.hero.filter(Boolean);
     if(!this.heroImages.length)return;
     const layerA=document.getElementById('homeHeroA');
     const layerB=document.getElementById('homeHeroB');
@@ -305,8 +322,12 @@ const Astoria = {
     const setBg=(el,src)=>{if(el&&src)el.style.backgroundImage=`url("${src}")`};
     setBg(layerA,this.heroImages[0]);
     setBg(layerB,this.heroImages[1]||this.heroImages[0]);
-    if(this.heroImages.length<2||prefersReduced)return;
+    layerA.style.opacity='1';
+    layerB.style.opacity='0';
+    this.heroActiveLayer='a';
+    this.heroSlideIndex=0;
     if(this._heroTimer)clearInterval(this._heroTimer);
+    if(this.heroImages.length<2||prefersReduced)return;
     this._heroTimer=setInterval(()=>{
       this.heroSlideIndex=(this.heroSlideIndex+1)%this.heroImages.length;
       const next=this.heroImages[this.heroSlideIndex];
@@ -320,12 +341,24 @@ const Astoria = {
     },8000);
   },
   setPhilosophyImage(){
-    const sorted=[...this.allProperties].sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));
-    const img=sorted[1]?.image||(sorted[1]?.images&&sorted[1].images[0])||sorted[0]?.image;
-    const img2=sorted[2]?.image||(sorted[2]?.images&&sorted[2].images[0])||img;
-    if(img&&this.philosophyImage)this.philosophyImage.style.backgroundImage=`url("${img}")`;
+    if(this.philosophyImage){
+      this.philosophyImage.style.backgroundImage=`url("${CAMPAIGN_IMAGES.editorial}")`;
+      this.philosophyImage.setAttribute('role','img');
+      this.philosophyImage.setAttribute('aria-label','Modern luxury residence interior with sculptural staircase');
+      this.philosophyImage.removeAttribute('aria-hidden');
+    }
     const secondary=document.getElementById('philosophyImageSecondary');
-    if(img2&&secondary)secondary.style.backgroundImage=`url("${img2}")`;
+    if(secondary){
+      secondary.style.backgroundImage=`url("${CAMPAIGN_IMAGES.philosophy}")`;
+      secondary.setAttribute('role','img');
+      secondary.setAttribute('aria-label','Elegant minimalist living room with natural light');
+    }
+  },
+  setFinalCtaImage(){
+    const cta=document.getElementById('consultation');
+    if(!cta)return;
+    cta.style.setProperty('--cta-image',`url("${CAMPAIGN_IMAGES.cta}")`);
+    cta.setAttribute('data-has-cta-image','true');
   },
   updateHomeStats(){
     const props=this.allProperties||[];
@@ -349,11 +382,12 @@ const Astoria = {
     try{
       const r=await fetch(`${API_BASE}/settings`);
       const s=await r.json();
-      if(s.heroBackground){
+      /* Homepage hero uses curated local campaign photography; skip remote/admin override when campaign is active. */
+      if(s.heroBackground&&!this.heroImages?.length){
         const a=document.getElementById('homeHeroA');
         const b=document.getElementById('homeHeroB');
         if(a){a.style.backgroundImage=`url(${s.heroBackground})`;a.style.backgroundSize='cover'}
-        if(b&&!this.heroImages?.length)b.style.backgroundImage=`url(${s.heroBackground})`;
+        if(b)b.style.backgroundImage=`url(${s.heroBackground})`;
       }
       if(s.contactPhone){
         document.querySelectorAll('.home-contact-link[href^="tel:"], .footer-contact-phone').forEach(el=>{
