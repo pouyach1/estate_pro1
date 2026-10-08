@@ -677,7 +677,7 @@
 }
 
 .home-page .home-hero-emphasis {
-  color: var(--color-ivory);
+  color: rgba(243, 241, 236, 0.78);
   font-style: italic;
 }
 

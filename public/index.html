@@ -78,10 +78,12 @@
             <div class="home-hero-bg home-hero-bg-a" id="homeHeroA" aria-hidden="true"></div>
             <div class="home-hero-bg home-hero-bg-b" id="homeHeroB" aria-hidden="true"></div>
             <div class="home-hero-overlay" aria-hidden="true"></div>
+            <div class="home-hero-vignette" aria-hidden="true"></div>
 
             <div class="home-hero-inner container">
                 <div class="home-hero-content reveal">
-                    <p class="home-hero-eyebrow">ASTORIA · Luxury Real Estate</p>
+                    <p class="home-hero-brand" aria-hidden="true">ASTORIA</p>
+                    <p class="home-hero-eyebrow">Luxury Real Estate</p>
                     <h1 class="home-hero-headline">
                         <span class="home-hero-line">جایی که</span>
                         <span class="home-hero-line home-hero-emphasis">معماری،</span>
@@ -97,9 +99,15 @@
 
             <div class="home-hero-scroll" aria-hidden="true">
                 <span>کشف</span>
-                <i data-lucide="chevron-down"></i>
+                <span class="home-hero-scroll-line"></span>
             </div>
         </section>
+
+        <div class="home-hero-bridge" aria-hidden="true">
+            <span class="home-hero-bridge-rule"></span>
+            <span class="home-hero-bridge-mark">EST. CURATED</span>
+            <span class="home-hero-bridge-rule"></span>
+        </div>
 
         <!-- ========== FEATURED RESIDENCE ========== -->
         <section id="featured" class="featured-section" aria-labelledby="featured-heading" hidden>
@@ -107,7 +115,7 @@
                 <div class="featured-header reveal">
                     <span class="home-section-eyebrow">منتخب آستوریا</span>
                     <h2 id="featured-heading" class="home-section-title">اقامتگاه شاخص</h2>
-                    <p class="featured-intro">ملکی که تیم آستوریا برای شروع کاوش شما انتخاب کرده — نه صرفاً گران‌ترین، بلکه استثنایی‌ترین.</p>
+                    <p class="featured-intro">نه گران‌ترین — استثنایی‌ترین. نقطهٔ شروع کاوش شما.</p>
                 </div>
                 <div id="featuredProperty" class="featured-property reveal"></div>
             </div>
@@ -137,7 +145,7 @@
                         <span class="home-section-eyebrow">منتخب آستوریا</span>
                         <h2 id="collection-heading" class="home-section-title">مجموعه اقامتگاه‌های استثنایی</h2>
                         <p class="collection-intro">هر ملک، با دقت انتخاب شده — نه برای پر کردن لیست، بلکه برای ارزش واقعی.</p>
-                        <a href="/properties/" class="btn-ghost" style="margin-top:16px;display:inline-flex">مشاهده همه املاک</a>
+                            <a href="/properties/" class="home-text-link">مشاهده همه املاک <i data-lucide="chevron-left"></i></a>
                     </div>
                     <div class="collection-meta" id="propertiesResultsMeta" aria-live="polite"></div>
                 </header>
@@ -156,16 +164,14 @@
             <div class="home-editorial-visual reveal" id="philosophyImage" aria-hidden="true"></div>
             <div class="home-editorial-copy reveal">
                 <span class="home-section-eyebrow">فلسفه آستوریا</span>
-                <h2 id="editorial-heading" class="philosophy-headline" style="text-align:right;margin-bottom:16px">ما فقط ملک معرفی نمی‌کنیم.<br>امکان انتخاب درست را فراهم می‌کنیم.</h2>
-                <p class="philosophy-text" style="max-width:40ch">گزینش محدود، مشاوره خصوصی و شفافیت در جزئیات — برای تصمیم‌هایی که باید آرام و دقیق گرفته شوند.</p>
+                <h2 id="editorial-heading" class="home-editorial-statement">ما فقط ملک معرفی نمی‌کنیم.<br>امکان انتخاب درست را فراهم می‌کنیم.</h2>
+                <p class="home-editorial-text">گزینش محدود، مشاوره خصوصی و شفافیت در جزئیات — برای تصمیم‌هایی که باید آرام و دقیق گرفته شوند.</p>
                 <div class="home-editorial-stats" id="homeEditorialStats" aria-label="شاخص‌های مجموعه">
-                    <div><strong id="homeStatProperties">—</strong><span>املاک فعال</span></div>
-                    <div><strong id="homeStatAgents">—</strong><span>مشاوران</span></div>
-                    <div><strong id="homeStatTypes">—</strong><span>انواع ملک</span></div>
+                    <div class="home-stat"><strong id="homeStatProperties">—</strong><span>املاک فعال</span></div>
+                    <div class="home-stat"><strong id="homeStatAgents">—</strong><span>مشاوران</span></div>
+                    <div class="home-stat"><strong id="homeStatTypes">—</strong><span>انواع ملک</span></div>
                 </div>
-                <div class="home-hero-actions" style="margin-top:28px">
-                    <a href="/about/" class="btn-ghost">بیشتر درباره آستوریا</a>
-                </div>
+                <a href="/about/" class="home-text-link">بیشتر درباره آستوریا <i data-lucide="chevron-left"></i></a>
             </div>
         </section>
 
@@ -198,7 +204,7 @@
                     <span class="home-section-eyebrow">تیم مشاوره</span>
                     <h2 id="agents-heading" class="home-section-title">مشاوران آستوریا</h2>
                     <p class="advisors-lead">افرادی که پیش از شما، ارزش هر ملک را می‌بینند.</p>
-                    <a href="/agents/" class="btn-ghost" style="margin-top:18px;display:inline-flex">مشاهده همه مشاوران</a>
+                    <a href="/agents/" class="home-text-link">مشاهده همه مشاوران <i data-lucide="chevron-left"></i></a>
                 </header>
                 <div class="advisors-grid" id="agentsContainer">
                     <p class="section-loading-note">در حال بارگذاری مشاوران...</p>
@@ -243,13 +249,16 @@
             </div>
         </section>
 
-        <!-- ========== CONCIERGE CTA ========== -->
-        <section id="consultation" class="concierge-cta final-cta" aria-labelledby="concierge-heading">
-            <h2 id="concierge-heading">آدرس بعدی شما شایسته توجهی متفاوت است.</h2>
-            <p>برای گفت‌وگوی خصوصی با مشاوران آستوریا — بدون شتاب، با دقت.</p>
-            <div class="final-cta-actions">
-                <a href="/properties/" class="btn-primary">کاوش املاک</a>
-                <a href="/contact/" class="btn-secondary concierge-btn">تماس با مشاور</a>
+        <!-- ========== FINAL CTA ========== -->
+        <section id="consultation" class="home-final-cta" aria-labelledby="concierge-heading">
+            <div class="container home-final-cta-inner reveal">
+                <span class="home-section-eyebrow">دعوت خصوصی</span>
+                <h2 id="concierge-heading">ملکی که ارزش به‌خاطر سپردن دارد.</h2>
+                <p>برای گفت‌وگوی خصوصی با مشاوران آستوریا — بدون شتاب، با دقت.</p>
+                <div class="final-cta-actions">
+                    <a href="/properties/" class="btn-primary">کاوش املاک</a>
+                    <a href="/contact/" class="btn-ghost">تماس با مشاور</a>
+                </div>
             </div>
         </section>
     </main>
