@@ -215,13 +215,15 @@ const Astoria = {
     const price=pf?`${escapeHTML(pf)} تومان`:'تماس برای اطلاع از قیمت';
     this.featuredContainer.innerHTML=`
       <a href="/property/?id=${id}" class="featured-property-link">
-        <div class="featured-property-image" style="background-image:url('${img}')"></div>
+        <div class="featured-property-media">
+          <div class="featured-property-image" style="background-image:url('${img}')" role="img" aria-label="${title}${location?` — ${location}`:''}"></div>
+        </div>
         <div class="featured-property-body">
           <span class="featured-property-type">${type}</span>
           <h3 class="featured-property-title">${title}</h3>
           ${location?`<p class="featured-property-location"><i data-lucide="map-pin"></i> ${location}</p>`:''}
           <p class="featured-property-price">${price}</p>
-          <span class="featured-property-cta">مشاهده ملک <i data-lucide="chevron-left"></i></span>
+          <span class="featured-property-cta">مشاهده جزئیات <i data-lucide="chevron-left"></i></span>
         </div>
       </a>`;
     this.featuredSection.removeAttribute('hidden');
