@@ -308,16 +308,7 @@
         <div id="quickFormMessage"></div>
     </div>
 
-    <script type="module">
-        import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, ArrowRight, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin, Share2, Eye } from 'lucide';
-
-        const iconSet = { Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, ArrowRight, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin, Share2, Eye };
-
-        window.refreshLucideIcons = () => {
-            createIcons({ icons: iconSet, attrs: { 'stroke-width': 1.5, width: 20, height: 20 } });
-        };
-        window.refreshLucideIcons();
-    </script>
+    <!-- features/index.js is a classic browser-global script (not an ES module). -->
     <script src="/features/index.js"></script>
     <script type="module" src="/property/property.js"></script>
 </body>

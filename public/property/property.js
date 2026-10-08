@@ -2,12 +2,21 @@
    PROPERTY DETAIL — Flagship Experience
    ============================================== */
 
+import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, ArrowRight, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin, Share2, Eye } from 'lucide';
 import { formatPrice, formatPriceDisplay, escapeHTML } from '../js/shared/format.js';
 import { getSiteConfig, applyPropertySeo, applyNoIndex } from '../js/shared/seo.js';
 
 const API = '/api';
 const FAVORITES_KEY = 'astoria_favorites';
-const refreshIcons = () => window.refreshLucideIcons?.();
+const iconSet = {
+  Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft,
+  ArrowUp, ArrowRight, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer,
+  Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin, Share2, Eye,
+};
+window.refreshLucideIcons = () => {
+  createIcons({ icons: iconSet, attrs: { 'stroke-width': 1.5, width: 20, height: 20 } });
+};
+const refreshIcons = () => window.refreshLucideIcons();
 const urlParams = new URLSearchParams(window.location.search);
 const propertyId = urlParams.get('id');
 
@@ -996,5 +1005,6 @@ window.addEventListener('scroll', () => {
 });
 backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
+refreshIcons();
 loadProperty();
 initMobileNav();
