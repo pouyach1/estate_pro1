@@ -10,6 +10,10 @@ const grid = document.getElementById('propertiesGrid');
 const meta = document.getElementById('resultsMeta');
 const form = document.getElementById('propertiesFilterForm');
 
+/** Price bounds from homepage discovery URL (minPrice / maxPrice). */
+let filterMinPrice = '';
+let filterMaxPrice = '';
+
 function icons() {
   createIcons({ icons: { Menu, X, MapPin, Maximize2 }, attrs: { 'stroke-width': 1.5, width: 18, height: 18 } });
 }
@@ -23,6 +27,8 @@ function buildQuery() {
   if (type) params.set('type', type);
   if (search) params.set('search', search);
   if (beds) params.set('beds', beds);
+  if (filterMinPrice) params.set('minPrice', filterMinPrice);
+  if (filterMaxPrice) params.set('maxPrice', filterMaxPrice);
   if (sort) params.set('sort', sort);
   return params;
 }
@@ -121,6 +127,8 @@ if (urlParams.get('beds') && document.getElementById('filterBeds')) {
 if (urlParams.get('sort') && document.getElementById('filterSort')) {
   document.getElementById('filterSort').value = urlParams.get('sort');
 }
+filterMinPrice = urlParams.get('minPrice') || '';
+filterMaxPrice = urlParams.get('maxPrice') || '';
 
 form?.addEventListener('submit', (e) => {
   e.preventDefault();

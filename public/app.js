@@ -9,8 +9,6 @@ import { getSiteConfig, applyHomepageSeo } from './js/shared/seo.js';
 
 const API_BASE = '/api';
 const PROPERTY_FILTER_ALL = 'همه';
-const PROPERTY_TYPES = ['ویلا', 'آپارتمان', 'پنت‌هاوس', 'باغ', 'زمین', 'دفتر کار'];
-const SUGGESTED_SEARCHES = ['ویلا', 'آپارتمان', 'تهران', 'زعفرانیه', 'پنت‌هاوس'];
 const BUDGET_RANGES = {
   all: { label: 'همه بودجه‌ها', min: 0, max: Infinity },
   under20: { label: 'تا ۲۰ میلیارد', min: 0, max: 20_000_000_000 },
@@ -78,6 +76,8 @@ const Astoria = {
     this.featuredProperty=null;
     this.currentFilter=PROPERTY_FILTER_ALL;
     this.currentBudget='all';
+    this.currentLocation='';
+    this.currentBeds='';
     this.searchQuery='';
     try {
       const site = await getSiteConfig();
@@ -87,10 +87,7 @@ const Astoria = {
     this.heroSlideIndex=0;
     this.heroActiveLayer='a';
     this.cacheDOM();this.initIcons();this.bindEvents();this.setActiveLink();
-    this.initSearchDropdown();
-    this.initBudgetDropdown();
-    this.initDesktopLocationSearch();
-    this.initMobileSearch();
+    this.initDiscovery();
     this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
     console.log('%cASTORIA %cPro فارسی','color:#C8C8C2;font-weight:bold;','color:#70706C;');
@@ -102,26 +99,36 @@ const Astoria = {
     this.navLinksContainer=document.querySelector('.nav-links');this.navLinks=document.querySelectorAll('.nav-links a');
     this.backToTop=document.getElementById('back-to-top');this.notification=document.getElementById('notification');
     this.sections=document.querySelectorAll('section[id]');this.filterBtns=document.querySelectorAll('.filter-btn');
-    this.propertiesContainer=document.getElementById('propertiesContainer');this.searchBtn=document.querySelector('.btn-search-primary');
-    this.searchTypeField=document.getElementById('searchTypeField');this.searchTypeValue=document.getElementById('searchTypeValue');
+    this.propertiesContainer=document.getElementById('propertiesContainer');
+    this.searchBtn=document.getElementById('discoverySubmit')||document.querySelector('.btn-search-primary');
+    this.discoveryRoot=document.getElementById('astoriaDiscovery');
+    this.discoveryReset=document.getElementById('discoveryReset');
+    this.searchLocationField=document.getElementById('searchLocationField');
+    this.searchLocationValue=document.getElementById('searchLocationValue');
+    this.searchLocationDropdown=document.getElementById('searchLocationDropdown');
+    this.searchLocationOptions=document.getElementById('searchLocationOptions');
+    this.searchTypeField=document.getElementById('searchTypeField');
+    this.searchTypeValue=document.getElementById('searchTypeValue');
     this.searchTypeDropdown=document.getElementById('searchTypeDropdown');
     this.searchBudgetField=document.getElementById('searchBudgetField');
     this.searchBudgetValue=document.getElementById('searchBudgetValue');
     this.searchBudgetDropdown=document.getElementById('searchBudgetDropdown');
-    this.desktopLocationSearch=document.getElementById('desktopLocationSearch');
+    this.searchBedsField=document.getElementById('searchBedsField');
+    this.searchBedsValue=document.getElementById('searchBedsValue');
+    this.searchBedsDropdown=document.getElementById('searchBedsDropdown');
     this.propertiesResultsMeta=document.getElementById('propertiesResultsMeta');
     this.featuredContainer=document.getElementById('featuredProperty');
     this.featuredSection=document.getElementById('featured');
     this.philosophyImage=document.getElementById('philosophyImage');
     this.agentsContainer=document.getElementById('agentsContainer');
-    this.mobileSearchInput=document.getElementById('mobilePropertySearch');
-    this.mobileSearchClear=document.getElementById('mobileSearchClear');
-    this.mobileSearchSuggestions=document.getElementById('mobileSearchSuggestions');
-    this.mobileSearchWrap=document.getElementById('mobileSearchWrap');
-    this.mobileTypeSuggestions=document.getElementById('mobileTypeSuggestions');
-    this.mobileQuerySuggestions=document.getElementById('mobileQuerySuggestions');
     this.contactForm=document.querySelector('.contact-form');
     this.revealElements=document.querySelectorAll('.reveal');this.favorites=JSON.parse(localStorage.getItem(CONFIG.storageKey)||'[]');
+    this.discoveryPanels=[
+      {field:this.searchLocationField,panel:this.searchLocationDropdown},
+      {field:this.searchTypeField,panel:this.searchTypeDropdown},
+      {field:this.searchBudgetField,panel:this.searchBudgetDropdown},
+      {field:this.searchBedsField,panel:this.searchBedsDropdown},
+    ];
   },
   initIcons(){createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults})},
   bindEvents(){
@@ -129,11 +136,12 @@ const Astoria = {
     this.mobileToggle?.addEventListener('click',()=>this.toggleMobileMenu());
     this.mobileMenuClose?.addEventListener('click',()=>this.toggleMobileMenu(true));
     this.navLinks.forEach(l=>l.addEventListener('click',e=>{const href=e.target.getAttribute('href');if(href?.startsWith('#')){e.preventDefault();this.scrollToSection(href)}this.toggleMobileMenu(true)}));
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){this.toggleMobileMenu(true);this.closeSearchDropdown();this.closeBudgetDropdown();this.closeMobileSearchSuggestions()}});
-    document.addEventListener('click',e=>{if(!e.target.closest('#searchTypeField'))this.closeSearchDropdown();if(!e.target.closest('#searchBudgetField'))this.closeBudgetDropdown();if(!e.target.closest('#mobileSearchWrap'))this.closeMobileSearchSuggestions()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){this.toggleMobileMenu(true);this.closeAllDiscoveryPanels()}});
+    document.addEventListener('click',e=>{if(!e.target.closest('#astoriaDiscovery'))this.closeAllDiscoveryPanels()});
     this.backToTop?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
     this.filterBtns.forEach(b=>b.addEventListener('click',()=>this.applyFilter(b.dataset.type||b.textContent.trim(),{scroll:false})));
     this.searchBtn?.addEventListener('click',()=>this.search());
+    this.discoveryReset?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();this.resetDiscovery()});
     this.contactForm?.addEventListener('submit',e=>this.submitForm(e));
     document.querySelectorAll('.home-nav-cta[href^="#"]').forEach(b=>b.addEventListener('click',(e)=>{e.preventDefault();this.scrollToSection(b.getAttribute('href'));this.toggleMobileMenu(true)}));
     document.querySelectorAll('a.concierge-btn[href^="#"]').forEach(b=>b.addEventListener('click',(e)=>{e.preventDefault();this.scrollToSection(b.getAttribute('href'))}));
@@ -146,147 +154,162 @@ const Astoria = {
     const top=el.getBoundingClientRect().top+window.scrollY-CONFIG.navScrollOffset;
     window.scrollTo({top,behavior:'smooth'});
   },
-  initSearchDropdown(){
-    this.searchTypeField?.addEventListener('click',e=>{e.stopPropagation();this.toggleSearchDropdown()});
-    this.searchTypeField?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.toggleSearchDropdown()}});
-    this.searchTypeDropdown?.querySelectorAll('.search-dropdown-item').forEach(item=>{
-      item.addEventListener('click',e=>{
+  initDiscovery(){
+    this.discoveryPanels.forEach(({field,panel})=>{
+      if(!field||!panel)return;
+      field.addEventListener('click',e=>{
+        if(e.target.closest('.discovery-option'))return;
         e.stopPropagation();
-        const type=item.dataset.type||PROPERTY_FILTER_ALL;
-        this.setSearchType(type);
-        this.closeSearchDropdown();
+        this.toggleDiscoveryPanel(field,panel);
+      });
+      field.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          this.toggleDiscoveryPanel(field,panel);
+        }
+      });
+      panel.addEventListener('click',e=>{
+        const opt=e.target.closest('.discovery-option');
+        if(!opt)return;
+        e.stopPropagation();
+        this.handleDiscoveryOption(opt);
+        this.closeAllDiscoveryPanels();
       });
     });
+    this.syncDiscoveryUI();
   },
-  toggleSearchDropdown(){
-    const open=this.searchTypeDropdown?.hasAttribute('hidden');
-    if(open){this.searchTypeDropdown.removeAttribute('hidden');this.searchTypeField?.setAttribute('aria-expanded','true')}
-    else this.closeSearchDropdown();
+  toggleDiscoveryPanel(field,panel){
+    const willOpen=panel.hasAttribute('hidden');
+    this.closeAllDiscoveryPanels();
+    if(!willOpen)return;
+    panel.removeAttribute('hidden');
+    field.setAttribute('aria-expanded','true');
+    field.classList.add('is-open');
   },
-  closeSearchDropdown(){
-    this.searchTypeDropdown?.setAttribute('hidden','');
-    this.searchTypeField?.setAttribute('aria-expanded','false');
-  },
-  initBudgetDropdown(){
-    this.searchBudgetField?.addEventListener('click',e=>{e.stopPropagation();this.toggleBudgetDropdown()});
-    this.searchBudgetField?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.toggleBudgetDropdown()}});
-    this.searchBudgetDropdown?.querySelectorAll('.search-dropdown-item').forEach(item=>{
-      item.addEventListener('click',e=>{
-        e.stopPropagation();
-        const budget=item.dataset.budget||'all';
-        this.setBudget(budget);
-        this.closeBudgetDropdown();
-      });
+  closeAllDiscoveryPanels(){
+    this.discoveryPanels.forEach(({field,panel})=>{
+      panel?.setAttribute('hidden','');
+      field?.setAttribute('aria-expanded','false');
+      field?.classList.remove('is-open');
     });
   },
-  toggleBudgetDropdown(){
-    const open=this.searchBudgetDropdown?.hasAttribute('hidden');
-    if(open){this.searchBudgetDropdown.removeAttribute('hidden');this.searchBudgetField?.setAttribute('aria-expanded','true')}
-    else this.closeBudgetDropdown();
+  handleDiscoveryOption(opt){
+    if(opt.dataset.location!==undefined){
+      this.setLocation(opt.dataset.location||'');
+      return;
+    }
+    if(opt.dataset.type!==undefined){
+      const type=opt.dataset.type||PROPERTY_FILTER_ALL;
+      this.currentFilter=type;
+      this.filterBtns.forEach(b=>b.classList.toggle('active',(b.dataset.type||b.textContent.trim())===type));
+      this.setSearchType(type);
+      this.applyFiltersAndSearch({scroll:false});
+      return;
+    }
+    if(opt.dataset.budget!==undefined){
+      this.setBudget(opt.dataset.budget||'all');
+      this.applyFiltersAndSearch({scroll:false});
+      return;
+    }
+    if(opt.dataset.beds!==undefined){
+      this.setBeds(opt.dataset.beds||'');
+      this.applyFiltersAndSearch({scroll:false});
+    }
   },
-  closeBudgetDropdown(){
-    this.searchBudgetDropdown?.setAttribute('hidden','');
-    this.searchBudgetField?.setAttribute('aria-expanded','false');
+  setLocation(location){
+    this.currentLocation=location||'';
+    this.searchQuery=this.currentLocation;
+    this.searchLocationDropdown?.querySelectorAll('.discovery-option').forEach(item=>{
+      item.classList.toggle('active',(item.dataset.location||'')===this.currentLocation);
+    });
+    const label=this.currentLocation||'همه مناطق';
+    if(this.searchLocationValue)this.searchLocationValue.innerHTML=`${escapeHTML(label)} <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
+    this.searchLocationField?.classList.toggle('has-value',!!this.currentLocation);
+    this.initIcons();
+    this.syncDiscoveryUI();
+    this.applyFiltersAndSearch({scroll:false});
+  },
+  setBeds(beds){
+    this.currentBeds=beds||'';
+    this.searchBedsDropdown?.querySelectorAll('.discovery-option').forEach(item=>{
+      item.classList.toggle('active',(item.dataset.beds||'')===this.currentBeds);
+    });
+    const labels={'':'هر تعداد','1':'۱+','2':'۲+','3':'۳+','4':'۴+','5':'۵+'};
+    const label=labels[this.currentBeds]||'هر تعداد';
+    if(this.searchBedsValue)this.searchBedsValue.innerHTML=`${escapeHTML(label)} <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
+    this.searchBedsField?.classList.toggle('has-value',!!this.currentBeds);
+    this.initIcons();
+    this.syncDiscoveryUI();
   },
   setBudget(budget){
     this.currentBudget=budget||'all';
-    this.searchBudgetDropdown?.querySelectorAll('.search-dropdown-item').forEach(item=>{
+    this.searchBudgetDropdown?.querySelectorAll('.discovery-option').forEach(item=>{
       item.classList.toggle('active',item.dataset.budget===this.currentBudget);
     });
     const label=BUDGET_RANGES[this.currentBudget]?.label||'همه بودجه‌ها';
     if(this.searchBudgetValue)this.searchBudgetValue.innerHTML=`${escapeHTML(label)} <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
-    createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
-  },
-  initDesktopLocationSearch(){
-    if(!this.desktopLocationSearch)return;
-    let debounce;
-    this.desktopLocationSearch.addEventListener('input',()=>{
-      clearTimeout(debounce);
-      debounce=setTimeout(()=>{
-        this.searchQuery=this.desktopLocationSearch.value.trim();
-        if(this.mobileSearchInput)this.mobileSearchInput.value=this.searchQuery;
-        this.mobileSearchClear?.toggleAttribute('hidden',!this.searchQuery);
-        this.applyFiltersAndSearch({scroll:false});
-      },280);
-    });
-    this.desktopLocationSearch.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){e.preventDefault();this.search()}
-    });
+    this.searchBudgetField?.classList.toggle('has-value',this.currentBudget!=='all');
+    this.initIcons();
+    this.syncDiscoveryUI();
   },
   setSearchType(type){
-    this.searchTypeDropdown?.querySelectorAll('.search-dropdown-item').forEach(item=>{
-      item.classList.toggle('active',item.dataset.type===type);
+    const next=type||PROPERTY_FILTER_ALL;
+    this.searchTypeDropdown?.querySelectorAll('.discovery-option').forEach(item=>{
+      item.classList.toggle('active',item.dataset.type===next);
     });
-    const label=type===PROPERTY_FILTER_ALL?'همه انواع':type;
+    const label=next===PROPERTY_FILTER_ALL?'همه انواع':next;
     if(this.searchTypeValue)this.searchTypeValue.innerHTML=`${escapeHTML(label)} <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
-    createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
+    this.searchTypeField?.classList.toggle('has-value',next!==PROPERTY_FILTER_ALL);
+    this.initIcons();
+    this.syncDiscoveryUI();
   },
-  initMobileSearch(){
-    if(!this.mobileSearchInput)return;
-    this.renderMobileSuggestions();
-    this.mobileSearchInput.addEventListener('input',()=>{
-      this.searchQuery=this.mobileSearchInput.value.trim();
-      this.mobileSearchClear?.toggleAttribute('hidden',!this.searchQuery);
-      this.applyFiltersAndSearch({scroll:false});
-    });
-    this.mobileSearchInput.addEventListener('focus',()=>{
-      this.mobileSearchWrap?.classList.add('is-focused');
-      this.openMobileSearchSuggestions();
-    });
-    this.mobileSearchInput.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){
-        e.preventDefault();
-        this.closeMobileSearchSuggestions();
-        this.mobileSearchInput.blur();
-        this.scrollToSection('#residences');
-      }
-    });
-    this.mobileSearchClear?.addEventListener('click',e=>{
-      e.preventDefault();
-      this.clearSearch();
-    });
-    this.mobileTypeSuggestions?.addEventListener('click',e=>{
-      const chip=e.target.closest('[data-suggest-type]');
-      if(!chip)return;
-      this.applyFilter(chip.dataset.suggestType,{scroll:true});
-      this.closeMobileSearchSuggestions();
-      this.mobileSearchInput.blur();
-    });
-    this.mobileQuerySuggestions?.addEventListener('click',e=>{
-      const chip=e.target.closest('[data-suggest-query]');
-      if(!chip)return;
-      this.searchQuery=chip.dataset.suggestQuery||'';
-      this.mobileSearchInput.value=this.searchQuery;
-      this.mobileSearchClear?.toggleAttribute('hidden',!this.searchQuery);
-      this.applyFiltersAndSearch({scroll:true});
-      this.closeMobileSearchSuggestions();
-      this.mobileSearchInput.blur();
-    });
+  populateDiscoveryLocations(){
+    if(!this.searchLocationOptions)return;
+    const locs=[...new Set(this.allProperties.map(p=>p.location).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,'fa'));
+    this.searchLocationOptions.innerHTML=locs.map(loc=>
+      `<button type="button" class="discovery-option${loc===this.currentLocation?' active':''}" data-location="${escapeHTML(loc)}" role="option">${escapeHTML(loc)}</button>`
+    ).join('');
   },
-  renderMobileSuggestions(){
-    if(this.mobileTypeSuggestions){
-      this.mobileTypeSuggestions.innerHTML=PROPERTY_TYPES.map(type=>`<button type="button" class="m-suggest-chip" data-suggest-type="${escapeHTML(type)}">${escapeHTML(type)}</button>`).join('');
-    }
-    if(this.mobileQuerySuggestions){
-      this.mobileQuerySuggestions.innerHTML=SUGGESTED_SEARCHES.map(q=>`<button type="button" class="m-suggest-chip" data-suggest-query="${escapeHTML(q)}">${escapeHTML(q)}</button>`).join('');
-    }
+  syncDiscoveryUI(){
+    const hasSelection=!!(
+      this.currentLocation||
+      (this.currentFilter&&this.currentFilter!==PROPERTY_FILTER_ALL)||
+      (this.currentBudget&&this.currentBudget!=='all')||
+      this.currentBeds
+    );
+    this.discoveryReset?.toggleAttribute('hidden',!hasSelection);
   },
-  openMobileSearchSuggestions(){
-    if(!this.mobileSearchSuggestions)return;
-    this.mobileSearchSuggestions.removeAttribute('hidden');
-    this.mobileSearchInput?.setAttribute('aria-expanded','true');
-    this.mobileSearchWrap?.classList.add('has-suggestions');
-  },
-  closeMobileSearchSuggestions(){
-    this.mobileSearchSuggestions?.setAttribute('hidden','');
-    this.mobileSearchInput?.setAttribute('aria-expanded','false');
-    this.mobileSearchWrap?.classList.remove('has-suggestions','is-focused');
+  resetDiscovery(){
+    this.currentLocation='';
+    this.searchQuery='';
+    this.currentBeds='';
+    this.currentBudget='all';
+    this.currentFilter=PROPERTY_FILTER_ALL;
+    this.filterBtns.forEach(b=>b.classList.toggle('active',(b.dataset.type||b.textContent.trim())===PROPERTY_FILTER_ALL));
+    this.searchLocationDropdown?.querySelectorAll('.discovery-option').forEach(item=>{
+      item.classList.toggle('active',!(item.dataset.location||''));
+    });
+    if(this.searchLocationValue)this.searchLocationValue.innerHTML=`همه مناطق <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
+    this.searchLocationField?.classList.remove('has-value');
+    this.setSearchType(PROPERTY_FILTER_ALL);
+    this.setBudget('all');
+    this.setBeds('');
+    this.closeAllDiscoveryPanels();
+    this.syncDiscoveryUI();
+    this.initIcons();
+    this.applyFiltersAndSearch({scroll:false});
   },
   clearSearch(){
+    this.currentLocation='';
     this.searchQuery='';
-    if(this.mobileSearchInput)this.mobileSearchInput.value='';
-    if(this.desktopLocationSearch)this.desktopLocationSearch.value='';
-    this.mobileSearchClear?.setAttribute('hidden','');
+    this.searchLocationDropdown?.querySelectorAll('.discovery-option').forEach(item=>{
+      item.classList.toggle('active',!(item.dataset.location||''));
+    });
+    if(this.searchLocationValue)this.searchLocationValue.innerHTML=`همه مناطق <i data-lucide="chevron-down" class="dropdown-arrow"></i>`;
+    this.searchLocationField?.classList.remove('has-value');
+    this.syncDiscoveryUI();
+    this.initIcons();
     this.applyFiltersAndSearch({scroll:false});
   },
   propertyMatchesQuery(property,query){
@@ -309,6 +332,10 @@ const Astoria = {
         const price=Number(p.price)||0;
         return price>=range.min&&price<range.max;
       });
+    }
+    if(this.currentBeds){
+      const minBeds=Number(this.currentBeds)||0;
+      results=results.filter(p=>(Number(p.beds)||0)>=minBeds);
     }
     return results;
   },
@@ -337,6 +364,7 @@ const Astoria = {
       this.initHeroSlideshow();
       this.setPhilosophyImage();
       this.updateHomeStats();
+      this.populateDiscoveryLocations();
       this.applyFiltersAndSearch({scroll:false});
     }catch(e){
       this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>دریافت اطلاعات با مشکل مواجه شد</h3><p>لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-secondary" id="retryPropertiesLoad">تلاش مجدد</button></div>`;
@@ -371,11 +399,8 @@ const Astoria = {
       if(this.featuredContainer)this.featuredContainer.innerHTML='';
       document.getElementById('emptyConsultationCta')?.addEventListener('click',()=>this.scrollToSection('#consultation'));
       document.getElementById('resetPropertiesFilter')?.addEventListener('click',()=>{
-        this.currentFilter=PROPERTY_FILTER_ALL;
-        this.currentBudget='all';
-        this.setBudget('all');
-        this.clearSearch();
-        this.applyFilter(PROPERTY_FILTER_ALL,{scroll:true});
+        this.resetDiscovery();
+        this.scrollToSection('#residences');
       });
       this.updateResultsMeta(0);
       return;
@@ -594,12 +619,17 @@ const Astoria = {
   setActiveLink(){const pos=scrollY+120;this.sections.forEach(s=>{if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight)this.navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===`#${s.id}`))})},
   initRevealObserver(){if(this._obs)this._obs.disconnect();this._obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('revealed');this._obs.unobserve(en.target)}}),CONFIG.revealOptions);this.revealElements.forEach(el=>this._obs.observe(el))},
   search(){
-    if(this.desktopLocationSearch)this.searchQuery=this.desktopLocationSearch.value.trim();
-    const active=this.searchTypeDropdown?.querySelector('.search-dropdown-item.active');
-    const type=active?.dataset.type||PROPERTY_FILTER_ALL;
+    const type=this.currentFilter||PROPERTY_FILTER_ALL;
     const params=new URLSearchParams();
     if(type&&type!==PROPERTY_FILTER_ALL)params.set('type',type);
-    if(this.searchQuery)params.set('search',this.searchQuery);
+    if(this.currentLocation)params.set('search',this.currentLocation);
+    else if(this.searchQuery)params.set('search',this.searchQuery);
+    if(this.currentBeds)params.set('beds',this.currentBeds);
+    const range=BUDGET_RANGES[this.currentBudget];
+    if(this.currentBudget&&this.currentBudget!=='all'&&range){
+      if(range.min>0)params.set('minPrice',String(range.min));
+      if(Number.isFinite(range.max))params.set('maxPrice',String(range.max));
+    }
     const qs=params.toString();
     window.location.href=qs?`/properties/?${qs}`:'/properties/';
   },
