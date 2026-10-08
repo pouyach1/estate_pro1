@@ -43,33 +43,44 @@
             <li><a href="/contact/" data-nav="contact">تماس</a></li>
         </ul>
         <a href="/properties/" class="btn-secondary nav-cta-desktop property-back-link site-nav-cta">
-            <i data-lucide="arrow-right"></i> بازگشت به املاک
+            <i data-lucide="arrow-right"></i> بازگشت به مجموعه
         </a>
         <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
             <i data-lucide="menu"></i>
         </button>
     </nav>
 
-    <div class="property-breadcrumb" aria-label="مسیر ناوبری">
-        <div class="container property-breadcrumb-inner">
-            <a href="/" class="property-breadcrumb-link">خانه</a>
-            <span class="property-breadcrumb-sep" aria-hidden="true">/</span>
-            <a href="/#residences" class="property-breadcrumb-link">املاک</a>
-            <span class="property-breadcrumb-sep" aria-hidden="true">/</span>
-            <span class="property-breadcrumb-current" id="breadcrumbTitle">جزئیات ملک</span>
-        </div>
-    </div>
-
-    <!-- ========== GALLERY HERO ========== -->
+    <!-- ========== CINEMATIC HERO ========== -->
     <div class="property-hero-wrap" id="propertyHeroWrap">
         <section class="property-hero" id="propertyHero" aria-label="گالری تصاویر ملک">
             <div class="property-hero-bg property-hero-bg-a" id="heroBgA" aria-hidden="true"></div>
             <div class="property-hero-bg property-hero-bg-b" id="heroBgB" aria-hidden="true"></div>
             <div class="property-hero-overlay"></div>
-            <div class="property-hero-counter" id="imageCounter" aria-live="polite"></div>
-            <button type="button" class="property-hero-fullscreen" id="btnFullscreen" aria-label="نمایش تمام‌صفحه" hidden>
-                <i data-lucide="maximize-2"></i>
-            </button>
+            <div class="property-hero-vignette" aria-hidden="true"></div>
+
+            <div class="property-hero-content container">
+                <a href="/properties/" class="property-hero-back">
+                    <i data-lucide="arrow-right"></i>
+                    <span>مجموعه</span>
+                </a>
+                <p class="property-hero-eyebrow" id="propertyTypeBadge">—</p>
+                <p class="property-hero-location" id="propertyLocation">
+                    <span id="propertyLocationText"></span>
+                </p>
+                <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
+                <p class="property-hero-price" id="propertyPrice"></p>
+                <p class="property-hero-meta" id="propertyHeroMeta"></p>
+                <div class="property-hero-actions">
+                    <button type="button" class="btn-primary" id="btnRequestTourPrimary">
+                        درخواست بازدید خصوصی
+                    </button>
+                    <button type="button" class="btn-ghost property-gallery-open" id="btnFullscreen">
+                        گالری
+                        <span id="imageCounter" class="property-hero-count" aria-live="polite"></span>
+                    </button>
+                </div>
+            </div>
+
             <div class="property-hero-nav">
                 <button type="button" class="hero-nav-btn" id="prevImage" aria-label="تصویر قبلی">
                     <i data-lucide="chevron-right"></i>
@@ -87,192 +98,141 @@
         </div>
     </div>
 
-    <!-- ========== IDENTITY ========== -->
-    <header class="property-identity" id="propertySummary">
-        <div class="container property-identity-inner">
-            <div class="property-identity-main">
-                <span class="property-type-badge" id="propertyTypeBadge"></span>
-                <h1 class="property-hero-title" id="propertyTitle">در حال بارگذاری...</h1>
-                <p class="property-hero-location" id="propertyLocation">
-                    <i data-lucide="map-pin" class="property-location-icon"></i>
-                    <span id="propertyLocationText"></span>
-                </p>
-                <div class="property-specs-bar property-quick-stats property-quick-stats-desktop" id="desktopSpecs">
-                    <div class="property-spec" data-stat-wrap="area">
-                        <span class="property-spec-value" data-stat="area">—</span>
-                        <span class="property-spec-label">متر مربع</span>
-                    </div>
-                    <div class="property-spec" data-stat-wrap="beds">
-                        <span class="property-spec-value" data-stat="beds">—</span>
-                        <span class="property-spec-label">خواب</span>
-                    </div>
-                    <div class="property-spec" data-stat-wrap="baths">
-                        <span class="property-spec-value" data-stat="baths">—</span>
-                        <span class="property-spec-label">سرویس</span>
-                    </div>
-                    <div class="property-spec" data-stat-wrap="type">
-                        <span class="property-spec-value" data-stat="type">—</span>
-                        <span class="property-spec-label">نوع ملک</span>
-                    </div>
-                    <div class="property-spec" data-stat-wrap="parking">
-                        <span class="property-spec-value" data-stat="parking">—</span>
-                        <span class="property-spec-label">پارکینگ</span>
-                    </div>
-                </div>
-            </div>
-            <div class="property-identity-aside">
-                <div class="property-price-block">
-                    <span class="property-price-label">قیمت</span>
-                    <div class="property-hero-price" id="propertyPrice"></div>
-                </div>
-                <div class="property-identity-actions">
-                    <button type="button" class="btn-primary property-cta-primary" id="btnRequestTourPrimary">
-                        <i data-lucide="calendar"></i> درخواست بازدید اختصاصی
-                    </button>
-                    <div class="property-secondary-actions">
-                        <button type="button" class="property-action-btn" id="btnShare" aria-label="اشتراک‌گذاری">
-                            <i data-lucide="share-2"></i>
-                        </button>
-                        <button type="button" class="property-action-btn" id="btnFavoriteTop" aria-label="علاقه‌مندی">
-                            <i data-lucide="heart"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Mobile quick panel -->
-    <div class="property-mobile-panel" id="propertyMobilePanel">
-        <div class="container property-mobile-panel-inner">
-            <div class="property-specs-bar property-quick-stats" id="quickStats">
-                <div class="property-spec" data-stat-wrap="area">
-                    <span class="property-spec-value" data-stat="area">—</span>
-                    <span class="property-spec-label">متر</span>
-                </div>
-                <div class="property-spec" data-stat-wrap="beds">
-                    <span class="property-spec-value" data-stat="beds">—</span>
-                    <span class="property-spec-label">خواب</span>
-                </div>
-                <div class="property-spec" data-stat-wrap="baths">
-                    <span class="property-spec-value" data-stat="baths">—</span>
-                    <span class="property-spec-label">حمام</span>
-                </div>
-                <div class="property-spec" data-stat-wrap="parking">
-                    <span class="property-spec-value" data-stat="parking">—</span>
-                    <span class="property-spec-label">پارکینگ</span>
-                </div>
-            </div>
-            <button type="button" class="btn-primary m-summary-cta" id="btnRequestTourInline">
-                <i data-lucide="calendar"></i> درخواست بازدید اختصاصی
-            </button>
-        </div>
+    <!-- Hidden identity hooks for legacy JS selectors -->
+    <div id="propertySummary" class="sr-only" aria-hidden="true">
+        <div id="desktopSpecs"></div>
+        <div id="sidebarPrice"></div>
     </div>
+    <div id="propertyMobilePanel" hidden></div>
 
     <!-- ========== ERROR ========== -->
     <section class="property-error-state" id="propertyErrorState" hidden>
         <div class="property-error-card">
             <h1 class="property-error-title" id="propertyErrorTitle">ملک موردنظر یافت نشد</h1>
             <p class="property-error-message" id="propertyErrorMessage">ممکن است این ملک حذف شده یا آدرس آن اشتباه باشد.</p>
-            <a href="/#residences" class="btn-primary">بازگشت به املاک</a>
+            <a href="/properties/" class="btn-primary">بازگشت به مجموعه</a>
         </div>
     </section>
 
-    <!-- ========== MAIN ========== -->
+    <!-- ========== MAIN DOSSIER ========== -->
     <main class="property-main" id="propertyMain" hidden>
-        <div class="container">
-            <div class="property-layout">
-
-                <div class="property-content">
-
-                    <div class="property-trust-strip" aria-label="مزایای مشاوره">
-                        <div class="property-trust-item">
-                            <i data-lucide="shield-check"></i>
-                            <span>مشاوره اختصاصی</span>
-                        </div>
-                        <div class="property-trust-item">
-                            <i data-lucide="eye"></i>
-                            <span>بازدید خصوصی</span>
-                        </div>
-                        <div class="property-trust-item">
-                            <i data-lucide="phone"></i>
-                            <span>پاسخگویی مستقیم</span>
-                        </div>
-                    </div>
-
-                    <section class="property-section property-description-section">
-                        <h2 class="property-section-title">درباره این ملک</h2>
-                        <div class="property-description-wrap">
-                            <p class="property-description" id="propertyDescription">در حال بارگذاری...</p>
-                            <button type="button" class="property-description-toggle" id="propertyDescriptionToggle" hidden>
-                                ادامه توضیحات
-                            </button>
-                        </div>
-                    </section>
-
-                    <section class="property-section">
-                        <h2 class="property-section-title">امکانات و ویژگی‌ها</h2>
-                        <div class="property-features-wrap" id="propertyFeatures">
-                            <p class="property-features-loading">در حال بارگذاری امکانات...</p>
-                        </div>
-                    </section>
-
-                    <section class="property-section property-agent-mobile" id="agentMobileSection" hidden>
-                        <h2 class="property-section-title">مشاور اختصاصی</h2>
-                        <div id="agentMobileCard"></div>
-                    </section>
-
-                    <section class="property-section">
-                        <div class="property-section-header">
-                            <h2 class="property-section-title">املاک مشابه</h2>
-                            <a href="/#residences" class="property-section-link">مشاهده همه</a>
-                        </div>
-                        <div class="similar-properties-grid" id="similarProperties">
-                            <p class="property-empty-note">در حال بارگذاری...</p>
-                        </div>
-                    </section>
+        <!-- Overview -->
+        <section class="pd-section pd-overview" aria-labelledby="overview-heading">
+            <div class="container">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">پرونده ملک</span>
+                    <h2 id="overview-heading" class="pd-title">نمای کلی</h2>
                 </div>
-
-                <aside class="property-sidebar">
-                    <div class="sidebar-card conversion-card">
-                        <div class="price-card-main">
-                            <span class="price-card-label">قیمت</span>
-                            <span class="price-card-value" id="sidebarPrice">—</span>
-                        </div>
-                        <button type="button" class="btn-primary btn-full" id="btnRequestTour">
-                            <i data-lucide="calendar"></i> درخواست بازدید اختصاصی
-                        </button>
-                        <button type="button" class="btn-favorite-outline btn-full" id="btnFavorite">
-                            <i data-lucide="heart"></i> افزودن به علاقه‌مندی‌ها
-                        </button>
-                    </div>
-
-                    <div class="sidebar-card agent-card" id="agentSidebarCard">
-                        <p class="property-features-loading">در حال بارگذاری مشاور...</p>
-                    </div>
-
-                    <div class="sidebar-card">
-                        <h3 class="sidebar-card-title">تماس با مشاور</h3>
-                        <p class="sidebar-card-sub">برای اطلاعات بیشتر درباره این ملک، پیام خود را ارسال کنید.</p>
-                        <form id="quickContactForm" class="quick-contact-form">
-                            <label class="sr-only" for="quickName">نام</label>
-                            <input type="text" id="quickName" placeholder="نام شما" required>
-                            <label class="sr-only" for="quickPhone">شماره تماس</label>
-                            <input type="tel" id="quickPhone" placeholder="شماره تماس" required>
-                            <label class="sr-only" for="quickMessage">پیام</label>
-                            <textarea id="quickMessage" rows="3" placeholder="پیام شما...">در مورد این ملک اطلاعات بیشتری می‌خواهم.</textarea>
-                            <button type="submit" class="btn-primary btn-full">ارسال درخواست</button>
-                        </form>
-                        <div id="quickFormMessage" class="form-message"></div>
-                    </div>
-                </aside>
-
+                <div class="pd-overview-grid" id="propertyOverview"></div>
             </div>
-        </div>
+        </section>
+
+        <!-- Numbers -->
+        <section class="pd-section pd-numbers" aria-labelledby="numbers-heading">
+            <div class="container">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">شاخص‌ها</span>
+                    <h2 id="numbers-heading" class="pd-title">اعداد اقامتگاه</h2>
+                </div>
+                <div class="pd-numbers-grid" id="propertyNumbers"></div>
+            </div>
+        </section>
+
+        <!-- Narrative -->
+        <section class="pd-section pd-narrative" aria-labelledby="narrative-heading">
+            <div class="container pd-narrative-inner">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">روایت</span>
+                    <h2 id="narrative-heading" class="pd-title">اقامتگاه</h2>
+                </div>
+                <div class="property-description-wrap">
+                    <p class="property-description" id="propertyDescription">در حال بارگذاری...</p>
+                    <button type="button" class="property-description-toggle" id="propertyDescriptionToggle" hidden>
+                        ادامه توضیحات
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dossier details -->
+        <section class="pd-section pd-dossier" aria-labelledby="dossier-heading">
+            <div class="container">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">جزئیات</span>
+                    <h2 id="dossier-heading" class="pd-title">مشخصات اقامتگاه</h2>
+                </div>
+                <div class="pd-dossier-list" id="propertyDossier"></div>
+                <div class="property-features-wrap" id="propertyFeatures" hidden></div>
+            </div>
+        </section>
+
+        <!-- Photo story -->
+        <section class="pd-section pd-story" aria-labelledby="story-heading">
+            <div class="container">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">روایت تصویری</span>
+                    <h2 id="story-heading" class="pd-title">داستان عکس‌ها</h2>
+                </div>
+                <div class="pd-story-grid" id="propertyPhotoStory"></div>
+            </div>
+        </section>
+
+        <!-- Location -->
+        <section class="pd-section pd-location" aria-labelledby="location-heading">
+            <div class="container">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">موقعیت</span>
+                    <h2 id="location-heading" class="pd-title">موقعیت ملک</h2>
+                </div>
+                <div class="pd-location-block" id="propertyLocationBlock"></div>
+            </div>
+        </section>
+
+        <!-- Advisor -->
+        <section class="pd-section pd-advisor" aria-labelledby="advisor-heading">
+            <div class="container">
+                <div class="pd-section-head">
+                    <span class="pd-eyebrow">مشاوره</span>
+                    <h2 id="advisor-heading" class="pd-title">مشاور شما</h2>
+                </div>
+                <div class="pd-advisor-panel" id="agentSidebarCard">
+                    <p class="property-features-loading">در حال بارگذاری مشاور...</p>
+                </div>
+                <div id="agentMobileSection" hidden>
+                    <div id="agentMobileCard"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Private viewing CTA -->
+        <section class="pd-section pd-private-cta" aria-labelledby="private-heading">
+            <div class="container pd-private-inner">
+                <span class="pd-eyebrow">دعوت خصوصی</span>
+                <h2 id="private-heading" class="pd-private-title">برخی اقامتگاه‌ها را باید تجربه کرد، نه فقط توصیف.</h2>
+                <p class="pd-private-lead">برای ارائه خصوصی این ملک با مشاوران آستوریا هماهنگ کنید — بدون شتاب، با دقت.</p>
+                <button type="button" class="btn-primary" id="btnRequestTour">درخواست بازدید خصوصی</button>
+            </div>
+        </section>
+
+        <!-- Related -->
+        <section class="pd-section pd-related" aria-labelledby="related-heading">
+            <div class="container">
+                <div class="pd-section-head pd-section-head--row">
+                    <div>
+                        <span class="pd-eyebrow">انتخاب‌های نزدیک</span>
+                        <h2 id="related-heading" class="pd-title">شاید این‌ها را هم ببینید</h2>
+                    </div>
+                    <a href="/properties/" class="pd-text-link">مشاهده مجموعه</a>
+                </div>
+                <div class="pd-related-grid" id="similarProperties">
+                    <p class="property-empty-note">در حال بارگذاری...</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Fullscreen gallery -->
-    <div class="property-lightbox" id="propertyLightbox" hidden aria-hidden="true" role="dialog" aria-label="گالری تمام‌صفحه">
+    <div class="property-lightbox" id="propertyLightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="گالری تمام‌صفحه">
         <button type="button" class="lightbox-close" id="closeLightbox" aria-label="بستن">
             <i data-lucide="x"></i>
         </button>
@@ -284,6 +244,7 @@
             <i data-lucide="chevron-left"></i>
         </button>
         <div class="lightbox-counter" id="lightboxCounter"></div>
+        <p class="lightbox-caption" id="lightboxCaption"></p>
     </div>
 
     <!-- Tour modal -->
@@ -293,7 +254,7 @@
                 <i data-lucide="x"></i>
             </button>
             <div class="modal-body" id="tourModalBody">
-                <h2 class="modal-title" id="tourModalTitle">درخواست بازدید اختصاصی</h2>
+                <h2 class="modal-title" id="tourModalTitle">درخواست بازدید خصوصی</h2>
                 <p class="modal-intro">برای هماهنگی بازدید خصوصی، اطلاعات تماس و زمان پیشنهادی خود را وارد کنید.</p>
                 <div class="modal-property-context" id="tourModalPropertyWrap">
                     <i data-lucide="home"></i>
@@ -320,7 +281,7 @@
                 <p class="astoria-success-thanks">از اعتماد شما سپاسگزاریم.</p>
                 <div class="astoria-success-actions">
                     <button type="button" class="btn-secondary" id="tourSuccessClose">بازگشت به ملک</button>
-                    <a href="/#residences" class="btn-primary">مشاهده سایر املاک</a>
+                    <a href="/properties/" class="btn-primary">مشاهده سایر املاک</a>
                 </div>
             </div>
         </div>
@@ -328,7 +289,7 @@
 
     <div class="property-mobile-cta" id="propertyMobileCta" aria-hidden="true">
         <div class="property-mobile-cta-price" id="mobileCtaPrice"></div>
-        <button type="button" class="btn-primary" id="mobileCtaTour">درخواست بازدید اختصاصی</button>
+        <button type="button" class="btn-primary" id="mobileCtaTour">بازدید خصوصی</button>
     </div>
 
     <div id="notification" class="notification" aria-live="polite" aria-hidden="true"></div>
@@ -336,6 +297,16 @@
     <button id="back-to-top" class="back-to-top" aria-label="بازگشت به بالا">
         <i data-lucide="arrow-up"></i>
     </button>
+
+    <!-- Legacy hooks used by property.js favorites / quick form (kept off-layout) -->
+    <div hidden aria-hidden="true">
+        <button type="button" id="btnFavorite"></button>
+        <button type="button" id="btnFavoriteTop"></button>
+        <button type="button" id="btnShare"></button>
+        <button type="button" id="btnRequestTourInline"></button>
+        <form id="quickContactForm"><input id="quickName"><input id="quickPhone"><textarea id="quickMessage"></textarea></form>
+        <div id="quickFormMessage"></div>
+    </div>
 
     <script type="module">
         import { createIcons, Bed, Bath, Maximize2, Home, Check, Heart, Phone, Mail, Calendar, User, ChevronRight, ChevronLeft, ArrowUp, ArrowRight, X, Menu, Car, Warehouse, ShieldCheck, Camera, Video, Waves, Thermometer, Dumbbell, Palette, Users, Film, Building, ArrowUpDown, MapPin, Share2, Eye } from 'lucide';
