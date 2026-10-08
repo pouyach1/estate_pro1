@@ -76,7 +76,18 @@ function renderLoadingSkeleton() {
 }
 
 // ===== CONFIG =====
-const CONFIG = { icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,ChevronLeft,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown,Home}, iconDefaults:{'stroke-width':1.5,width:20,height:20}, storageKey:'astoria_favorites', scrollThreshold:60, backToTopThreshold:500, revealOptions:{threshold:0.15,rootMargin:'0px 0px -40px 0px'}, navScrollOffset:110 };
+const CONFIG = {
+  icons:{Menu,Search,Bed,Bath,Maximize2,Crown,UserCheck,TrendingUp,ShieldCheck,MapPin,Phone,Mail,ArrowUp,Heart,X,ChevronDown,ChevronLeft,Eye,Calendar,Share2,Car,Warehouse,Thermometer,Wind,Waves,Camera,Dumbbell,Building,Palette,Users,Gamepad,Film,Video,ArrowUpDown,Home},
+  iconDefaults:{'stroke-width':1.5,width:20,height:20},
+  storageKey:'astoria_favorites',
+  scrollThreshold:60,
+  backToTopThreshold:500,
+  revealOptions:{threshold:0.06,rootMargin:'64px 0px 64px 0px'},
+  sectionFocusOptions:{threshold:[0.22,0.4],rootMargin:'-10% 0px -10% 0px'},
+  navScrollOffset:110,
+  staggerMs:72,
+  staggerMax:8,
+};
 
 // ===== ASTORIA APP =====
 const Astoria = {
@@ -91,7 +102,13 @@ const Astoria = {
     this.heroImages=[];
     this.heroSlideIndex=0;
     this.heroActiveLayer='a';
-    this.cacheDOM();this.initIcons();this.bindEvents();this.setActiveLink();
+    this.motionEnabled=false;
+    this.parallaxEnabled=false;
+    this.cacheDOM();
+    this.initIcons();
+    this.initHomeMotion();
+    this.bindEvents();
+    this.setActiveLink();
     this.initCampaignVisuals();
     this.loadProperties();this.loadFeaturedProperty();this.loadAgents();this.loadSettings();
     this.createRequestModal();
@@ -126,7 +143,6 @@ const Astoria = {
     document.querySelectorAll('.home-nav-cta[href^="#"]').forEach(b=>b.addEventListener('click',(e)=>{e.preventDefault();this.scrollToSection(b.getAttribute('href'));this.toggleMobileMenu(true)}));
     document.querySelectorAll('a.concierge-btn[href^="#"]').forEach(b=>b.addEventListener('click',(e)=>{e.preventDefault();this.scrollToSection(b.getAttribute('href'))}));
     this.propertiesContainer?.addEventListener('click',e=>this.handlePropertyCardClick(e));
-    this.initRevealObserver();
   },
   scrollToSection(selector){
     const el=document.querySelector(selector);
@@ -212,7 +228,7 @@ const Astoria = {
     this.propertyCards=document.querySelectorAll('.property-card');
     createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
     this.initShareButtons();this.initFavoriteButtons();
-    this.revealElements=document.querySelectorAll('.reveal');this.initRevealObserver();
+    this.refreshReveals();
     this.updateResultsMeta(properties.length);
   },
   renderFeatured(p){
@@ -294,6 +310,7 @@ const Astoria = {
       }
       this.agentsContainer.innerHTML=d.agents.map(a=>this.renderAgentCard(a)).join('');
       createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults});
+      this.refreshReveals();
     }catch(e){
       this.agentsContainer.innerHTML='<div class="section-empty-note"><p>دریافت اطلاعات مشاوران با مشکل مواجه شد.</p><button type="button" class="btn-secondary" onclick="Astoria.loadAgents()">تلاش مجدد</button></div>';
     }
@@ -440,7 +457,108 @@ const Astoria = {
     if(icon){icon.setAttribute('data-lucide',o?'x':'menu');createIcons({icons:CONFIG.icons,attrs:CONFIG.iconDefaults})}
   },
   setActiveLink(){const pos=scrollY+120;this.sections.forEach(s=>{if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight)this.navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===`#${s.id}`))})},
-  initRevealObserver(){if(this._obs)this._obs.disconnect();this._obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('revealed');this._obs.unobserve(en.target)}}),CONFIG.revealOptions);this.revealElements.forEach(el=>this._obs.observe(el))},
+  initHomeMotion(){
+    if(!document.body?.classList?.contains('home-page'))return;
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const narrow=window.matchMedia('(max-width: 768px)').matches;
+    this.motionEnabled=!reduced;
+    this.parallaxEnabled=!reduced&&!narrow;
+    document.documentElement.classList.toggle('home-motion',this.motionEnabled);
+    this.stageHeroEntrance();
+    this.initRevealObserver();
+    this.initSectionFocus();
+    this.initHeroParallax();
+  },
+  stageHeroEntrance(){
+    const stage=document.querySelector('.home-hero-stage');
+    if(!stage)return;
+    if(!this.motionEnabled){
+      stage.classList.add('is-ready');
+      return;
+    }
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>stage.classList.add('is-ready'));
+    });
+  },
+  applyRevealStagger(){
+    document.querySelectorAll('[data-reveal-stagger]').forEach((parent)=>{
+      const items=[...parent.children].filter((el)=>el.classList.contains('reveal')&&!el.classList.contains('revealed'));
+      items.forEach((el,i)=>{
+        const delay=Math.min(i,CONFIG.staggerMax)*CONFIG.staggerMs;
+        el.style.setProperty('--reveal-delay',`${delay}ms`);
+      });
+    });
+  },
+  refreshReveals(){
+    this.revealElements=document.querySelectorAll('.reveal');
+    this.initRevealObserver();
+  },
+  initRevealObserver(){
+    if(this._obs)this._obs.disconnect();
+    this.revealElements=document.querySelectorAll('.reveal');
+    if(!this.motionEnabled){
+      this.revealElements.forEach((el)=>el.classList.add('revealed'));
+      return;
+    }
+    this.applyRevealStagger();
+    this._obs=new IntersectionObserver((entries)=>{
+      entries.forEach((entry)=>{
+        if(!entry.isIntersecting)return;
+        // Skip long stagger for content already near/above the fold
+        if(entry.boundingClientRect.top<window.innerHeight*0.2){
+          entry.target.style.setProperty('--reveal-delay','0ms');
+        }
+        entry.target.classList.add('revealed');
+        this._obs.unobserve(entry.target);
+      });
+    },CONFIG.revealOptions);
+    this.revealElements.forEach((el)=>{
+      if(el.classList.contains('revealed'))return;
+      this._obs.observe(el);
+    });
+  },
+  initSectionFocus(){
+    if(this._sectionObs)this._sectionObs.disconnect();
+    const sections=document.querySelectorAll('.home-scroll-section');
+    if(!sections.length)return;
+    if(!this.motionEnabled){
+      sections.forEach((s)=>s.classList.add('is-focused'));
+      return;
+    }
+    this._sectionObs=new IntersectionObserver((entries)=>{
+      entries.forEach((entry)=>{
+        const focused=entry.isIntersecting&&entry.intersectionRatio>=0.22;
+        entry.target.classList.toggle('is-focused',focused);
+      });
+    },CONFIG.sectionFocusOptions);
+    sections.forEach((s)=>this._sectionObs.observe(s));
+  },
+  initHeroParallax(){
+    if(this._parallaxBound)return;
+    if(!this.parallaxEnabled)return;
+    const hero=document.querySelector('.home-hero');
+    const layers=document.querySelectorAll('.home-hero-bg');
+    if(!hero||!layers.length)return;
+    let ticking=false;
+    const update=()=>{
+      ticking=false;
+      const rect=hero.getBoundingClientRect();
+      if(rect.bottom<=0||rect.top>=window.innerHeight)return;
+      const progress=Math.min(1,Math.max(0,-rect.top/Math.max(rect.height,1)));
+      const y=(progress*28).toFixed(1);
+      layers.forEach((layer)=>{
+        layer.style.transform=`scale(1.06) translate3d(0, ${y}px, 0)`;
+      });
+    };
+    const onScroll=()=>{
+      if(ticking)return;
+      ticking=true;
+      requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll',onScroll,{passive:true});
+    this._parallaxBound=true;
+    update();
+  },
   async submitForm(e){
     e.preventDefault();
     const n=document.getElementById('name').value.trim();

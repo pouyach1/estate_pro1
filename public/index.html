@@ -82,16 +82,16 @@
             <div class="home-hero-vignette" aria-hidden="true"></div>
 
             <div class="home-hero-inner container">
-                <div class="home-hero-content reveal">
-                    <p class="home-hero-brand" aria-hidden="true">ASTORIA</p>
-                    <p class="home-hero-eyebrow">Luxury Real Estate</p>
-                    <h1 class="home-hero-headline">
+                <div class="home-hero-content home-hero-stage">
+                    <p class="home-hero-brand home-hero-stage-item" style="--i:0" aria-hidden="true">ASTORIA</p>
+                    <p class="home-hero-eyebrow home-hero-stage-item" style="--i:1">Luxury Real Estate</p>
+                    <h1 class="home-hero-headline home-hero-stage-item" style="--i:2">
                         <span class="home-hero-line">جایی که</span>
                         <span class="home-hero-line home-hero-emphasis">معماری،</span>
                         <span class="home-hero-line">ارزش پیدا می‌کند.</span>
                     </h1>
-                    <p class="home-hero-lead">اقامتگاه‌های استثنایی با مشاوره اختصاصی — گزینش دقیق برای کسانی که جزئیات را می‌بینند.</p>
-                    <div class="home-hero-actions">
+                    <p class="home-hero-lead home-hero-stage-item" style="--i:3">اقامتگاه‌های استثنایی با مشاوره اختصاصی — گزینش دقیق برای کسانی که جزئیات را می‌بینند.</p>
+                    <div class="home-hero-actions home-hero-stage-item" style="--i:4">
                         <a href="/properties/" class="btn-primary">کاوش املاک</a>
                         <a href="/contact/" class="btn-ghost">تماس با ما</a>
                     </div>
@@ -104,14 +104,14 @@
             </div>
         </section>
 
-        <div class="home-hero-bridge" aria-hidden="true">
+        <div class="home-hero-bridge reveal" aria-hidden="true">
             <span class="home-hero-bridge-rule"></span>
             <span class="home-hero-bridge-mark">EST. CURATED</span>
             <span class="home-hero-bridge-rule"></span>
         </div>
 
         <!-- ========== FEATURED RESIDENCE ========== -->
-        <section id="featured" class="featured-section" aria-labelledby="featured-heading" hidden>
+        <section id="featured" class="featured-section home-scroll-section" aria-labelledby="featured-heading" hidden>
             <div class="container">
                 <div class="featured-header reveal">
                     <span class="home-section-eyebrow">منتخب آستوریا</span>
@@ -139,7 +139,7 @@
             </section>
         </div>
 
-        <section id="residences" class="collection-section" aria-labelledby="collection-heading">
+        <section id="residences" class="collection-section home-scroll-section" aria-labelledby="collection-heading">
             <div class="container">
                 <header class="collection-header reveal">
                     <div class="collection-header-text">
@@ -150,7 +150,7 @@
                     </div>
                     <div class="collection-meta" id="propertiesResultsMeta" aria-live="polite"></div>
                 </header>
-                <div class="collection-grid" id="propertiesContainer">
+                <div class="collection-grid" id="propertiesContainer" data-reveal-stagger>
                     <div class="properties-skeleton" aria-busy="true" aria-label="در حال بارگذاری املاک">
                         <div class="skeleton-card" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--long"></div></div></div>
                         <div class="skeleton-card" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--long"></div></div></div>
@@ -161,8 +161,8 @@
         </section>
 
         <!-- ========== EDITORIAL BREAK ========== -->
-        <section class="home-editorial-break" aria-labelledby="editorial-heading">
-            <div class="home-editorial-visual reveal" id="philosophyImage" aria-hidden="true"></div>
+        <section class="home-editorial-break home-scroll-section" aria-labelledby="editorial-heading">
+            <div class="home-editorial-visual reveal home-media-zoom" id="philosophyImage" aria-hidden="true"></div>
             <div class="home-editorial-copy reveal">
                 <span class="home-section-eyebrow">فلسفه آستوریا</span>
                 <h2 id="editorial-heading" class="home-editorial-statement">ما فقط ملک معرفی نمی‌کنیم.<br>امکان انتخاب درست را فراهم می‌کنیم.</h2>
@@ -177,10 +177,10 @@
         </section>
 
         <!-- ========== BRAND PHILOSOPHY (compact) ========== -->
-        <section id="philosophy" class="philosophy-section" aria-labelledby="philosophy-heading">
+        <section id="philosophy" class="philosophy-section home-scroll-section" aria-labelledby="philosophy-heading">
             <div class="container">
-                <div class="philosophy-grid reveal">
-                    <div class="philosophy-content">
+                <div class="philosophy-grid">
+                    <div class="philosophy-content reveal">
                         <span class="home-section-eyebrow">استاندارد آستوریا</span>
                         <h2 id="philosophy-heading" class="philosophy-headline">سه اصل برای هر معرفی.</h2>
                         <ul class="philosophy-points">
@@ -189,7 +189,7 @@
                             <li><span class="philosophy-point-num">۰۳</span><span>شفافیت در قیمت‌گذاری و اطلاعات</span></li>
                         </ul>
                     </div>
-                    <div class="philosophy-visual" aria-hidden="true">
+                    <div class="philosophy-visual reveal home-media-zoom" aria-hidden="true">
                         <div class="philosophy-frame">
                             <div class="philosophy-frame-inner" id="philosophyImageSecondary"></div>
                         </div>
@@ -199,7 +199,7 @@
         </section>
 
         <!-- ========== ADVISORS ========== -->
-        <section id="agents" class="advisors-section" aria-labelledby="agents-heading">
+        <section id="agents" class="advisors-section home-scroll-section" aria-labelledby="agents-heading">
             <div class="container">
                 <header class="advisors-header reveal">
                     <span class="home-section-eyebrow">تیم مشاوره</span>
@@ -207,14 +207,14 @@
                     <p class="advisors-lead">افرادی که پیش از شما، ارزش هر ملک را می‌بینند.</p>
                     <a href="/agents/" class="home-text-link">مشاهده همه مشاوران <i data-lucide="chevron-left"></i></a>
                 </header>
-                <div class="advisors-grid" id="agentsContainer">
+                <div class="advisors-grid" id="agentsContainer" data-reveal-stagger>
                     <p class="section-loading-note">در حال بارگذاری مشاوران...</p>
                 </div>
             </div>
         </section>
 
         <!-- ========== CONTACT ========== -->
-        <section id="contact" class="home-contact-section" aria-labelledby="contact-heading">
+        <section id="contact" class="home-contact-section home-scroll-section" aria-labelledby="contact-heading">
             <div class="container">
                 <div class="home-contact-grid reveal">
                     <div class="home-contact-intro">
@@ -251,7 +251,7 @@
         </section>
 
         <!-- ========== FINAL CTA ========== -->
-        <section id="consultation" class="home-final-cta" aria-labelledby="concierge-heading">
+        <section id="consultation" class="home-final-cta home-scroll-section" aria-labelledby="concierge-heading">
             <div class="container home-final-cta-inner reveal">
                 <span class="home-section-eyebrow">دعوت خصوصی</span>
                 <h2 id="concierge-heading">ملکی که ارزش به‌خاطر سپردن دارد.</h2>
