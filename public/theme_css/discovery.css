@@ -9,10 +9,16 @@
   --disc-muted: #8a8a84;
   --disc-text: #f3f1ec;
   --disc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  display: block;
   width: min(920px, 100%);
   margin-top: 28px;
   position: relative;
   z-index: 30;
+}
+
+/* Beat legacy .luxury-search-desktop { display:flex } from mobile.css */
+.home-page .luxury-search-desktop.astoria-discovery {
+  display: block !important;
 }
 
 .discovery-head {
@@ -46,8 +52,10 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
-.discovery-bar {
-  display: flex;
+.home-page .astoria-discovery .discovery-bar {
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: stretch;
   background: var(--disc-bg);
   backdrop-filter: blur(22px);
@@ -59,7 +67,7 @@
   transition: border-color 240ms var(--disc-ease), box-shadow 240ms var(--disc-ease);
 }
 
-.discovery-bar:hover {
+.astoria-discovery .discovery-bar:hover {
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
 }
@@ -264,7 +272,7 @@
     width: 100%;
   }
 
-  .discovery-bar {
+  .astoria-discovery .discovery-bar {
     flex-wrap: wrap;
   }
 
@@ -304,8 +312,8 @@
     letter-spacing: 0.12em;
   }
 
-  .discovery-bar {
-    flex-direction: column;
+  .home-page .astoria-discovery .discovery-bar {
+    flex-direction: column !important;
     border-radius: 6px;
   }
 
