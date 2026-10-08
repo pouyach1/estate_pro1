@@ -135,8 +135,8 @@ const Astoria = {
     this.filterBtns.forEach(b=>b.addEventListener('click',()=>this.applyFilter(b.dataset.type||b.textContent.trim(),{scroll:false})));
     this.searchBtn?.addEventListener('click',()=>this.search());
     this.contactForm?.addEventListener('submit',e=>this.submitForm(e));
-    document.querySelectorAll('.home-nav-cta').forEach(b=>b.addEventListener('click',()=>{this.scrollToSection('#consultation');this.toggleMobileMenu(true)}));
-    document.querySelectorAll('.concierge-btn').forEach(b=>b.addEventListener('click',()=>this.scrollToSection('#contact')));
+    document.querySelectorAll('.home-nav-cta[href^="#"]').forEach(b=>b.addEventListener('click',(e)=>{e.preventDefault();this.scrollToSection(b.getAttribute('href'));this.toggleMobileMenu(true)}));
+    document.querySelectorAll('a.concierge-btn[href^="#"]').forEach(b=>b.addEventListener('click',(e)=>{e.preventDefault();this.scrollToSection(b.getAttribute('href'))}));
     this.propertiesContainer?.addEventListener('click',e=>this.handlePropertyCardClick(e));
     this.initRevealObserver();
   },
@@ -336,6 +336,7 @@ const Astoria = {
       }
       this.initHeroSlideshow();
       this.setPhilosophyImage();
+      this.updateHomeStats();
       this.applyFiltersAndSearch({scroll:false});
     }catch(e){
       this.propertiesContainer.innerHTML=`<div class="properties-empty-state"><h3>دریافت اطلاعات با مشکل مواجه شد</h3><p>لطفاً دوباره تلاش کنید.</p><button type="button" class="btn-secondary" id="retryPropertiesLoad">تلاش مجدد</button></div>`;
@@ -515,10 +516,23 @@ const Astoria = {
     },8000);
   },
   setPhilosophyImage(){
-    if(!this.philosophyImage)return;
     const sorted=[...this.allProperties].sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));
     const img=sorted[1]?.image||(sorted[1]?.images&&sorted[1].images[0])||sorted[0]?.image;
-    if(img)this.philosophyImage.style.backgroundImage=`url("${img}")`;
+    const img2=sorted[2]?.image||(sorted[2]?.images&&sorted[2].images[0])||img;
+    if(img&&this.philosophyImage)this.philosophyImage.style.backgroundImage=`url("${img}")`;
+    const secondary=document.getElementById('philosophyImageSecondary');
+    if(img2&&secondary)secondary.style.backgroundImage=`url("${img2}")`;
+  },
+  updateHomeStats(){
+    const props=this.allProperties||[];
+    const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=Number(val).toLocaleString('fa-IR')};
+    set('homeStatProperties',props.length);
+    const types=new Set(props.map(p=>p.type).filter(Boolean));
+    set('homeStatTypes',types.size);
+    fetch(`${API_BASE}/agents`).then(r=>r.ok?r.json():null).then(d=>{
+      const n=(d?.agents||[]).filter(a=>a.isActive!==false).length;
+      set('homeStatAgents',n);
+    }).catch(()=>{});
   },
   handlePropertyCardClick(e){
     const card=e.target.closest('.property-card');
@@ -583,7 +597,11 @@ const Astoria = {
     if(this.desktopLocationSearch)this.searchQuery=this.desktopLocationSearch.value.trim();
     const active=this.searchTypeDropdown?.querySelector('.search-dropdown-item.active');
     const type=active?.dataset.type||PROPERTY_FILTER_ALL;
-    this.applyFilter(type,{scroll:true});
+    const params=new URLSearchParams();
+    if(type&&type!==PROPERTY_FILTER_ALL)params.set('type',type);
+    if(this.searchQuery)params.set('search',this.searchQuery);
+    const qs=params.toString();
+    window.location.href=qs?`/properties/?${qs}`:'/properties/';
   },
   async submitForm(e){
     e.preventDefault();

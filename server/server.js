@@ -80,6 +80,10 @@ if (serveStatic) {
   };
 
   app.get(['/property', '/property/'], (req, res) => sendSpa(res, 'property/index.html'));
+  app.get(['/properties', '/properties/'], (req, res) => sendSpa(res, 'properties/index.html'));
+  app.get(['/agents', '/agents/'], (req, res) => sendSpa(res, 'agents/index.html'));
+  app.get(['/about', '/about/'], (req, res) => sendSpa(res, 'about/index.html'));
+  app.get(['/contact', '/contact/'], (req, res) => sendSpa(res, 'contact/index.html'));
   app.get(['/admin', '/admin/'], (req, res) => sendSpa(res, 'admin/index.html'));
 
   app.get('*', (req, res, next) => {

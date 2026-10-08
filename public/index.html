@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="/theme_css/pro.css">
     <link rel="stylesheet" href="/theme_css/mobile.css">
     <link rel="stylesheet" href="/theme_css/home.css">
+    <link rel="stylesheet" href="/theme_css/pages.css">
     <link rel="stylesheet" href="/theme_css/conversion.css">
     <link rel="stylesheet" href="/theme_css/obsidian.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070707'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23C8C8C2'/></svg>">
@@ -49,16 +50,16 @@
                     <span class="brand-sub">ELITE ESTATES</span>
                 </li>
                 <li role="none"><a href="#home" role="menuitem" aria-current="page" class="active">خانه</a></li>
-                <li role="none"><a href="#residences" role="menuitem">املاک</a></li>
-                <li role="none"><a href="#philosophy" role="menuitem">درباره آستوریا</a></li>
-                <li role="none"><a href="#agents" role="menuitem">مشاوران</a></li>
-                <li role="none"><a href="#contact" role="menuitem">تماس</a></li>
+                <li role="none"><a href="/properties/" role="menuitem">املاک</a></li>
+                <li role="none"><a href="/about/" role="menuitem">درباره</a></li>
+                <li role="none"><a href="/agents/" role="menuitem">مشاوران</a></li>
+                <li role="none"><a href="/contact/" role="menuitem">تماس</a></li>
                 <li class="mobile-nav-cta" role="none">
-                    <button type="button" class="btn-secondary home-nav-cta" aria-label="درخواست مشاوره خصوصی">مشاوره خصوصی</button>
+                    <a href="/contact/" class="btn-secondary home-nav-cta" aria-label="درخواست مشاوره خصوصی">مشاوره خصوصی</a>
                 </li>
             </ul>
 
-            <button type="button" class="btn-secondary nav-cta-desktop home-nav-cta" aria-label="درخواست مشاوره خصوصی">مشاوره خصوصی</button>
+            <a href="/contact/" class="btn-secondary nav-cta-desktop home-nav-cta" aria-label="درخواست مشاوره خصوصی">مشاوره خصوصی</a>
 
             <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
                 <i data-lucide="menu"></i>
@@ -82,7 +83,11 @@
                         <span class="home-hero-line home-hero-emphasis">معماری،</span>
                         <span class="home-hero-line">ارزش پیدا می‌کند.</span>
                     </h1>
-                    <p class="home-hero-lead">اقامتگاه‌های استثنایی با مشاوره اختصاصی — برای کسانی که جزئیات را می‌بینند.</p>
+                    <p class="home-hero-lead">اقامتگاه‌های استثنایی با مشاوره اختصاصی — گزینش دقیق برای کسانی که جزئیات را می‌بینند.</p>
+                    <div class="home-hero-actions">
+                        <a href="/properties/" class="btn-primary">کاوش املاک</a>
+                        <a href="/contact/" class="btn-ghost">گفت‌وگو با مشاور</a>
+                    </div>
 
                     <!-- Desktop concierge search -->
                     <div class="home-concierge luxury-search-desktop" role="search" aria-label="جستجوی ملک">
@@ -187,6 +192,7 @@
                         <span class="home-section-eyebrow">منتخب آستوریا</span>
                         <h2 id="collection-heading" class="home-section-title">مجموعه اقامتگاه‌های استثنایی</h2>
                         <p class="collection-intro">هر ملک، با دقت انتخاب شده — نه برای پر کردن لیست، بلکه برای ارزش واقعی.</p>
+                        <a href="/properties/" class="btn-ghost" style="margin-top:16px;display:inline-flex">مشاهده همه املاک</a>
                     </div>
                     <div class="collection-meta" id="propertiesResultsMeta" aria-live="polite"></div>
                 </header>
@@ -200,14 +206,31 @@
             </div>
         </section>
 
-        <!-- ========== BRAND PHILOSOPHY ========== -->
+        <!-- ========== EDITORIAL BREAK ========== -->
+        <section class="home-editorial-break" aria-labelledby="editorial-heading">
+            <div class="home-editorial-visual reveal" id="philosophyImage" aria-hidden="true"></div>
+            <div class="home-editorial-copy reveal">
+                <span class="home-section-eyebrow">فلسفه آستوریا</span>
+                <h2 id="editorial-heading" class="philosophy-headline" style="text-align:right;margin-bottom:16px">ما فقط ملک معرفی نمی‌کنیم.<br>امکان انتخاب درست را فراهم می‌کنیم.</h2>
+                <p class="philosophy-text" style="max-width:40ch">گزینش محدود، مشاوره خصوصی و شفافیت در جزئیات — برای تصمیم‌هایی که باید آرام و دقیق گرفته شوند.</p>
+                <div class="home-editorial-stats" id="homeEditorialStats" aria-label="شاخص‌های مجموعه">
+                    <div><strong id="homeStatProperties">—</strong><span>املاک فعال</span></div>
+                    <div><strong id="homeStatAgents">—</strong><span>مشاوران</span></div>
+                    <div><strong id="homeStatTypes">—</strong><span>انواع ملک</span></div>
+                </div>
+                <div class="home-hero-actions" style="margin-top:28px">
+                    <a href="/about/" class="btn-ghost">بیشتر درباره آستوریا</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== BRAND PHILOSOPHY (compact) ========== -->
         <section id="philosophy" class="philosophy-section" aria-labelledby="philosophy-heading">
             <div class="container">
                 <div class="philosophy-grid reveal">
                     <div class="philosophy-content">
-                        <span class="home-section-eyebrow">فلسفه آستوریا</span>
-                        <h2 id="philosophy-heading" class="philosophy-headline">ما فقط ملک معرفی نمی‌کنیم.<br>امکان انتخاب درست را فراهم می‌کنیم.</h2>
-                        <p class="philosophy-text">آستوریا مجموعه‌ای منتخب از اقامتگاه‌های استثنایی است — با مشاوره خصوصی، شناخت بازار و توجه به جزئیاتی که در نگاه اول دیده نمی‌شوند.</p>
+                        <span class="home-section-eyebrow">استاندارد آستوریا</span>
+                        <h2 id="philosophy-heading" class="philosophy-headline">سه اصل برای هر معرفی.</h2>
                         <ul class="philosophy-points">
                             <li><span class="philosophy-point-num">۰۱</span><span>گزینش دقیق املاک با استانداردهای بالا</span></li>
                             <li><span class="philosophy-point-num">۰۲</span><span>مشاوره اختصاصی پیش از هر تصمیم</span></li>
@@ -216,7 +239,7 @@
                     </div>
                     <div class="philosophy-visual" aria-hidden="true">
                         <div class="philosophy-frame">
-                            <div class="philosophy-frame-inner" id="philosophyImage"></div>
+                            <div class="philosophy-frame-inner" id="philosophyImageSecondary"></div>
                         </div>
                     </div>
                 </div>
@@ -230,6 +253,7 @@
                     <span class="home-section-eyebrow">تیم مشاوره</span>
                     <h2 id="agents-heading" class="home-section-title">مشاوران آستوریا</h2>
                     <p class="advisors-lead">افرادی که پیش از شما، ارزش هر ملک را می‌بینند.</p>
+                    <a href="/agents/" class="btn-ghost" style="margin-top:18px;display:inline-flex">مشاهده همه مشاوران</a>
                 </header>
                 <div class="advisors-grid" id="agentsContainer">
                     <p class="section-loading-note">در حال بارگذاری مشاوران...</p>
@@ -275,13 +299,12 @@
         </section>
 
         <!-- ========== CONCIERGE CTA ========== -->
-        <section id="consultation" class="concierge-cta" aria-labelledby="concierge-heading">
-            <div class="container">
-                <div class="concierge-cta-inner reveal">
-                    <h2 id="concierge-heading" class="concierge-headline">ملک مناسب شما،<br>ممکن است همین‌جا باشد.</h2>
-                    <p class="concierge-text">برای یک گفت‌وگوی خصوصی با مشاوران آستوریا، با ما در تماس باشید.</p>
-                    <button type="button" class="btn-primary concierge-btn" aria-label="درخواست مشاوره خصوصی">درخواست مشاوره خصوصی</button>
-                </div>
+        <section id="consultation" class="concierge-cta final-cta" aria-labelledby="concierge-heading">
+            <h2 id="concierge-heading">آدرس بعدی شما شایسته توجهی متفاوت است.</h2>
+            <p>برای گفت‌وگوی خصوصی با مشاوران آستوریا — بدون شتاب، با دقت.</p>
+            <div class="final-cta-actions">
+                <a href="/properties/" class="btn-primary">کاوش املاک</a>
+                <a href="/contact/" class="btn-secondary concierge-btn">تماس با مشاور</a>
             </div>
         </section>
     </main>
@@ -300,17 +323,17 @@
                     <div class="footer-column">
                         <h4>کاوش</h4>
                         <ul>
-                            <li><a href="#home">خانه</a></li>
-                            <li><a href="#residences">املاک</a></li>
-                            <li><a href="#philosophy">درباره آستوریا</a></li>
-                            <li><a href="#agents">مشاوران</a></li>
+                            <li><a href="/">خانه</a></li>
+                            <li><a href="/properties/">املاک</a></li>
+                            <li><a href="/about/">درباره آستوریا</a></li>
+                            <li><a href="/agents/">مشاوران</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
                         <h4>خدمات</h4>
                         <ul>
-                            <li><a href="#contact">تماس</a></li>
-                            <li><a href="#consultation">مشاوره خصوصی</a></li>
+                            <li><a href="/contact/">تماس</a></li>
+                            <li><a href="/contact/">مشاوره خصوصی</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">

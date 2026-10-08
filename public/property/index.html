@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="/theme_css/pro.css">
     <link rel="stylesheet" href="/theme_css/mobile.css">
+    <link rel="stylesheet" href="/theme_css/pages.css">
     <link rel="stylesheet" href="/property/property.css">
     <link rel="stylesheet" href="/theme_css/conversion.css">
     <link rel="stylesheet" href="/theme_css/obsidian.css">
@@ -24,7 +25,7 @@
 </head>
 <body class="property-page">
 
-    <nav class="astoria-nav property-nav" role="navigation" aria-label="ناوبری اصلی">
+    <nav class="astoria-nav property-nav site-nav" role="navigation" aria-label="ناوبری اصلی">
         <div class="nav-brand">
             <a href="/" aria-label="بازگشت به صفحه اصلی">
                 <span class="brand-main">ASTORIA</span>
@@ -35,12 +36,13 @@
             <button type="button" class="mobile-menu-close" aria-label="بستن منو" hidden>
                 <i data-lucide="x"></i>
             </button>
-            <li><a href="/">خانه</a></li>
-            <li><a href="/#residences">املاک</a></li>
-            <li><a href="/#agents">مشاوران</a></li>
-            <li><a href="/#contact">تماس</a></li>
+            <li><a href="/" data-nav="home">خانه</a></li>
+            <li><a href="/properties/" data-nav="properties">املاک</a></li>
+            <li><a href="/agents/" data-nav="agents">مشاوران</a></li>
+            <li><a href="/about/" data-nav="about">درباره</a></li>
+            <li><a href="/contact/" data-nav="contact">تماس</a></li>
         </ul>
-        <a href="/#residences" class="btn-secondary nav-cta-desktop property-back-link">
+        <a href="/properties/" class="btn-secondary nav-cta-desktop property-back-link site-nav-cta">
             <i data-lucide="arrow-right"></i> بازگشت به املاک
         </a>
         <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">

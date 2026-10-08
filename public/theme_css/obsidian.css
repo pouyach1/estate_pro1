@@ -4,10 +4,11 @@
    ============================================== */
 
 :root {
-  --gold: var(--color-platinum);
-  --gold-light: var(--color-platinum-light);
-  --gold-border: rgba(200, 200, 194, 0.22);
-  --gold-glow: rgba(200, 200, 194, 0.06);
+  /* Keep restrained metal gold accents from brand tokens */
+  --gold: var(--color-metal-gold);
+  --gold-light: #d4c48a;
+  --gold-border: rgba(184, 164, 106, 0.28);
+  --gold-glow: rgba(184, 164, 106, 0.1);
 }
 
 /* ── Neutralize warm hardcoded rgba ── */
