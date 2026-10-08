@@ -10,6 +10,10 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'public/index.html'),
         property: resolve(__dirname, 'public/property/index.html'),
+        properties: resolve(__dirname, 'public/properties/index.html'),
+        agents: resolve(__dirname, 'public/agents/index.html'),
+        about: resolve(__dirname, 'public/about/index.html'),
+        contact: resolve(__dirname, 'public/contact/index.html'),
         admin: resolve(__dirname, 'public/admin/index.html'),
         adminDashboard: resolve(__dirname, 'public/admin/dashboard.html'),
         notFound: resolve(__dirname, 'public/404.html'),
@@ -33,6 +37,14 @@ export default defineConfig({
         const publicRoutes = new Set([
           '/property',
           '/property/',
+          '/properties',
+          '/properties/',
+          '/agents',
+          '/agents/',
+          '/about',
+          '/about/',
+          '/contact',
+          '/contact/',
           '/admin',
           '/admin/',
           '/404.html',
@@ -50,6 +62,10 @@ export default defineConfig({
             url === '/' ||
             publicRoutes.has(url) ||
             url.startsWith('/property/') ||
+            url.startsWith('/properties/') ||
+            url.startsWith('/agents/') ||
+            url.startsWith('/about/') ||
+            url.startsWith('/contact/') ||
             url.startsWith('/admin/')
           ) {
             return next();

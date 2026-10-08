@@ -91,8 +91,15 @@ const updateCustomer = async (req, res) => {
       if (req.body[key] !== undefined) update[key] = req.body[key];
     });
 
-    if (propertyId && !isValidObjectId(update.propertyId)) {
-      return res.status(400).json({ message: 'شناسه ملک نامعتبر است' });
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'شناسه نامعتبر است' });
+    }
+    if (update.propertyId !== undefined && update.propertyId !== null && update.propertyId !== '') {
+      if (!isValidObjectId(update.propertyId)) {
+        return res.status(400).json({ message: 'شناسه ملک نامعتبر است' });
+      }
+    } else if (update.propertyId === '') {
+      update.propertyId = null;
     }
     if (update.status && !LEAD_STATUSES.includes(update.status)) {
       return res.status(400).json({ message: 'وضعیت نامعتبر است' });
@@ -103,7 +110,7 @@ const updateCustomer = async (req, res) => {
     if (!customer) return res.status(404).json({ message: 'مشتری یافت نشد' });
     res.json({ message: 'بروزرسانی شد', customer });
   } catch (error) {
-    res.status(400).json({ message: 'خطا', error: error.message });
+    res.status(400).json({ message: 'خطا در بروزرسانی درخواست' });
   }
 };
 

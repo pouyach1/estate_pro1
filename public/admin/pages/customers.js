@@ -112,16 +112,22 @@ async function editCustomer(id) {
     if (!res.ok) throw new Error('failed');
     const c = await res.json();
 
-    if (c.status === 'new' || !c.isRead) {
-      await fetch(`${API}/customers/${id}`, {
+    let isRead = !!c.isRead;
+    let status = c.status || 'new';
+    if (status === 'new' || !isRead) {
+      const markRes = await fetch(`${API}/customers/${id}`, {
         method: 'PUT',
         headers: headers({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ isRead: true, status: c.status === 'new' ? 'contacted' : c.status }),
+        body: JSON.stringify({ isRead: true, status: status === 'new' ? 'contacted' : status }),
       });
+      if (markRes.ok) {
+        isRead = true;
+        if (status === 'new') status = 'contacted';
+      }
     }
 
     currentCustomerId = c._id;
-    document.getElementById('customerFormTitle').textContent = c.status === 'new' ? 'درخواست جدید' : 'جزئیات درخواست';
+    document.getElementById('customerFormTitle').textContent = status === 'new' ? 'درخواست جدید' : 'جزئیات درخواست';
     document.getElementById('customerFormId').value = c._id;
     document.getElementById('custName').value = c.name || '';
     document.getElementById('custEmail').value = c.email || '';
@@ -129,8 +135,8 @@ async function editCustomer(id) {
     document.getElementById('custSource').value = c.source || '';
     document.getElementById('custMessage').value = c.message || '';
     document.getElementById('custNotes').value = c.notes || '';
-    document.getElementById('custStatus').value = c.status || 'new';
-    document.getElementById('custIsRead').checked = true;
+    document.getElementById('custStatus').value = status;
+    document.getElementById('custIsRead').checked = isRead;
 
     const propertyTitle = c.propertyTitle || c.propertyId?.title || '';
     const propertyWrap = document.getElementById('custPropertyWrap');

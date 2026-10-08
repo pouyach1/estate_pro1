@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="کشف مجموعه املاک منتخب آستوریا — ویلا، پنت‌هاوس، آپارتمان و اقامتگاه‌های استثنایی.">
+    <meta name="theme-color" content="#070707">
+    <meta name="robots" content="index, follow">
+    <title>املاک | آستوریا الیت استیتس</title>
+    <link rel="stylesheet" href="/theme_css/pro.css">
+    <link rel="stylesheet" href="/theme_css/mobile.css">
+    <link rel="stylesheet" href="/theme_css/pages.css">
+    <link rel="stylesheet" href="/theme_css/obsidian.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070707'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23C8C8C2'/></svg>">
+</head>
+<body class="site-page properties-page">
+    <a href="#main-content" class="sr-only skip-link">رفتن به محتوای اصلی</a>
+    <header role="banner">
+        <nav class="astoria-nav site-nav" aria-label="ناوبری اصلی">
+            <div class="nav-brand">
+                <a href="/" aria-label="آستوریا الیت استیتس — صفحه اصلی">
+                    <span class="brand-main">ASTORIA</span>
+                    <span class="brand-sub">ELITE ESTATES</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <button type="button" class="mobile-menu-close" aria-label="بستن منو" hidden><i data-lucide="x"></i></button>
+                <li><a href="/" data-nav="home">خانه</a></li>
+                <li><a href="/properties/" data-nav="properties" class="active" aria-current="page">املاک</a></li>
+                <li><a href="/agents/" data-nav="agents">مشاوران</a></li>
+                <li><a href="/about/" data-nav="about">درباره</a></li>
+                <li><a href="/contact/" data-nav="contact">تماس</a></li>
+            </ul>
+            <a href="/contact/" class="btn-secondary nav-cta-desktop site-nav-cta">مشاوره خصوصی</a>
+            <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
+                <i data-lucide="menu"></i>
+            </button>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="page-hero">
+            <div class="page-hero-inner reveal">
+                <p class="page-hero-eyebrow">مجموعه منتخب</p>
+                <h1 class="page-hero-title">املاک آستوریا</h1>
+                <p class="page-hero-lead">هر ملک برای حضور در این مجموعه انتخاب شده است — نه برای پر کردن فهرست، بلکه برای ارزش واقعی.</p>
+            </div>
+        </section>
+
+        <div class="discovery-bar" role="search" aria-label="فیلتر املاک">
+            <form class="discovery-bar-inner" id="propertiesFilterForm">
+                <div class="discovery-field">
+                    <label for="filterType">نوع ملک</label>
+                    <select id="filterType">
+                        <option value="">همه انواع</option>
+                        <option value="ویلا">ویلا</option>
+                        <option value="آپارتمان">آپارتمان</option>
+                        <option value="پنت‌هاوس">پنت‌هاوس</option>
+                        <option value="باغ">باغ</option>
+                        <option value="زمین">زمین</option>
+                        <option value="دفتر کار">دفتر کار</option>
+                    </select>
+                </div>
+                <div class="discovery-field">
+                    <label for="filterSearch">محدوده یا نام</label>
+                    <input type="search" id="filterSearch" placeholder="مثلاً نیاوران، لواسان" autocomplete="off">
+                </div>
+                <div class="discovery-field">
+                    <label for="filterBeds">حداقل خواب</label>
+                    <select id="filterBeds">
+                        <option value="">همه</option>
+                        <option value="1">۱+</option>
+                        <option value="2">۲+</option>
+                        <option value="3">۳+</option>
+                        <option value="4">۴+</option>
+                        <option value="5">۵+</option>
+                    </select>
+                </div>
+                <div class="discovery-field">
+                    <label for="filterSort">مرتب‌سازی</label>
+                    <select id="filterSort">
+                        <option value="">پیش‌فرض</option>
+                        <option value="price-desc">گران‌ترین</option>
+                        <option value="price-asc">ارزان‌ترین</option>
+                        <option value="views">پربازدید</option>
+                        <option value="oldest">قدیمی‌ترین</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary discovery-submit">اعمال فیلتر</button>
+            </form>
+        </div>
+
+        <div class="discovery-meta" id="resultsMeta" aria-live="polite"></div>
+        <div class="editorial-grid" id="propertiesGrid" aria-busy="true">
+            <div class="skeleton-grid" aria-hidden="true">
+                <div class="skeleton-tile"></div>
+                <div class="skeleton-tile"></div>
+                <div class="skeleton-tile"></div>
+            </div>
+        </div>
+    </main>
+
+    <section class="final-cta">
+        <h2>ملک مناسب شما ممکن است هنوز فهرست نشده باشد.</h2>
+        <p>برای جستجوی اختصاصی با مشاوران آستوریا گفت‌وگو کنید.</p>
+        <div class="final-cta-actions">
+            <a href="/contact/" class="btn-primary">درخواست مشاوره</a>
+            <a href="/agents/" class="btn-secondary">مشاهده مشاوران</a>
+        </div>
+    </section>
+
+    <footer class="astoria-footer site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="brand-main">ASTORIA</span>
+                    <span class="brand-sub">ELITE ESTATES</span>
+                    <p class="footer-tagline">جایی که معماری، ارزش پیدا می‌کند.</p>
+                </div>
+                <nav class="footer-links" aria-label="ناوبری فوتر">
+                    <div class="footer-column">
+                        <h4>کاوش</h4>
+                        <ul>
+                            <li><a href="/properties/">املاک</a></li>
+                            <li><a href="/agents/">مشاوران</a></li>
+                            <li><a href="/about/">درباره</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>تماس</h4>
+                        <ul>
+                            <li><a href="/contact/">فرم تماس</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="footer-bottom"><p>© ۲۰۲۶ آستوریا الیت استیتس.</p></div>
+        </div>
+    </footer>
+
+    <script type="module" src="/properties/properties.js"></script>
+</body>
+</html>
