@@ -1,8 +1,12 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { cpSync, mkdirSync, existsSync } from 'fs';
 
 export default defineConfig({
   root: 'public',
+  // Disable default publicDir (would be public/public). Campaign images are
+  // under public/assets/images and copied into dist via the plugin below.
+  publicDir: false,
   build: {
     outDir: '../dist',
     emptyOutDir: true,
@@ -31,6 +35,16 @@ export default defineConfig({
     },
   },
   plugins: [
+    {
+      name: 'copy-campaign-images',
+      closeBundle() {
+        const src = resolve(__dirname, 'public/assets/images');
+        const dest = resolve(__dirname, 'dist/assets/images');
+        if (!existsSync(src)) return;
+        mkdirSync(dest, { recursive: true });
+        cpSync(src, dest, { recursive: true });
+      },
+    },
     {
       name: 'astoria-404-fallback',
       configureServer(server) {
