@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="/theme_css/mobile.css">
     <link rel="stylesheet" href="/theme_css/home.css">
     <link rel="stylesheet" href="/theme_css/pages.css">
+    <link rel="stylesheet" href="/theme_css/conversion.css">
+    <link rel="stylesheet" href="/theme_css/obsidian.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23070707'/><path d='M18 42h64L50 20 18 42Zm8 8h8v30h-8V50Zm20 0h8v30h-8V50Zm20 0h8v30h-8V50ZM20 84h60v-8H20v8Z' fill='%23C8C8C2'/></svg>">
 </head>
 <body class="home-page">
@@ -49,14 +51,18 @@
                 </li>
                 <li role="none"><a href="#home" role="menuitem" aria-current="page" class="active">خانه</a></li>
                 <li role="none"><a href="/properties/" role="menuitem">املاک</a></li>
-                <li role="none"><a href="/about/" role="menuitem">درباره</a></li>
                 <li role="none"><a href="/agents/" role="menuitem">مشاوران</a></li>
+                <li role="none"><a href="/about/" role="menuitem">درباره ما</a></li>
                 <li role="none"><a href="/contact/" role="menuitem">تماس</a></li>
+                <li class="mobile-nav-admin" role="none">
+                    <a href="/admin/" class="nav-admin-link" role="menuitem">ورود به داشبورد</a>
+                </li>
                 <li class="mobile-nav-cta" role="none">
                     <a href="/contact/" class="btn-secondary home-nav-cta" aria-label="درخواست مشاوره خصوصی">مشاوره خصوصی</a>
                 </li>
             </ul>
 
+            <a href="/admin/" class="nav-admin-link nav-admin-desktop" aria-label="ورود به داشبورد مدیریت">ورود به داشبورد</a>
             <a href="/contact/" class="btn-secondary nav-cta-desktop home-nav-cta" aria-label="درخواست مشاوره خصوصی">مشاوره خصوصی</a>
 
             <button class="mobile-menu-toggle" aria-label="باز و بسته کردن منو" aria-expanded="false">
@@ -75,7 +81,7 @@
 
             <div class="home-hero-inner container">
                 <div class="home-hero-content reveal">
-                    <p class="home-hero-eyebrow">مجموعه املاک منتخب آستوریا</p>
+                    <p class="home-hero-eyebrow">ASTORIA · Luxury Real Estate</p>
                     <h1 class="home-hero-headline">
                         <span class="home-hero-line">جایی که</span>
                         <span class="home-hero-line home-hero-emphasis">معماری،</span>
@@ -84,77 +90,7 @@
                     <p class="home-hero-lead">اقامتگاه‌های استثنایی با مشاوره اختصاصی — گزینش دقیق برای کسانی که جزئیات را می‌بینند.</p>
                     <div class="home-hero-actions">
                         <a href="/properties/" class="btn-primary">کاوش املاک</a>
-                        <a href="/contact/" class="btn-ghost">گفت‌وگو با مشاور</a>
-                    </div>
-
-                    <!-- Signature Property Discovery -->
-                            <p class="discovery-kicker">Astoria Property Discovery</p>
-                            <button type="button" class="discovery-reset" id="discoveryReset" hidden>پاک کردن</button>
-                        </div>
-                        <div class="discovery-bar">
-                            <div class="discovery-segment" id="searchLocationField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب محدوده">
-                                <span class="discovery-label">محدوده</span>
-                                <span class="discovery-value" id="searchLocationValue">همه مناطق <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                                <div class="discovery-panel" id="searchLocationDropdown" role="listbox" hidden>
-                                    <button type="button" class="discovery-option active" data-location="" role="option">همه مناطق</button>
-                                    <div id="searchLocationOptions"></div>
-                                </div>
-                            </div>
-
-                            <div class="discovery-segment" id="searchTypeField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب نوع ملک">
-                                <span class="discovery-label">نوع ملک</span>
-                                <span class="discovery-value" id="searchTypeValue">همه انواع <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                                <div class="discovery-panel" id="searchTypeDropdown" role="listbox" hidden>
-                                    <button type="button" class="discovery-option active" data-type="همه" role="option">همه انواع</button>
-                                    <button type="button" class="discovery-option" data-type="ویلا" role="option">ویلا</button>
-                                    <button type="button" class="discovery-option" data-type="آپارتمان" role="option">آپارتمان</button>
-                                    <button type="button" class="discovery-option" data-type="پنت‌هاوس" role="option">پنت‌هاوس</button>
-                                    <button type="button" class="discovery-option" data-type="باغ" role="option">باغ</button>
-                                    <button type="button" class="discovery-option" data-type="زمین" role="option">زمین</button>
-                                    <button type="button" class="discovery-option" data-type="دفتر کار" role="option">دفتر کار</button>
-                                </div>
-                            </div>
-
-                            <div class="discovery-segment" id="searchBudgetField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب بودجه">
-                                <span class="discovery-label">بودجه</span>
-                                <span class="discovery-value" id="searchBudgetValue">همه بودجه‌ها <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                                <div class="discovery-panel" id="searchBudgetDropdown" role="listbox" hidden>
-                                    <button type="button" class="discovery-option active" data-budget="all" role="option">همه بودجه‌ها</button>
-                                    <button type="button" class="discovery-option" data-budget="under20" role="option">تا ۲۰ میلیارد</button>
-                                    <button type="button" class="discovery-option" data-budget="over50" role="option">بالای ۵۰ میلیارد</button>
-                                </div>
-                            </div>
-
-                            <div class="discovery-segment" id="searchBedsField" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="انتخاب تعداد خواب">
-                                <span class="discovery-label">اتاق خواب</span>
-                                <span class="discovery-value" id="searchBedsValue">هر تعداد <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
-                                <div class="discovery-panel discovery-panel--beds" id="searchBedsDropdown" role="listbox" hidden>
-                                    <button type="button" class="discovery-option active" data-beds="" role="option">هر تعداد</button>
-                                    <button type="button" class="discovery-option" data-beds="1" role="option">۱+</button>
-                                    <button type="button" class="discovery-option" data-beds="2" role="option">۲+</button>
-                                    <button type="button" class="discovery-option" data-beds="3" role="option">۳+</button>
-                                    <button type="button" class="discovery-option" data-beds="4" role="option">۴+</button>
-                                    <button type="button" class="discovery-option" data-beds="5" role="option">۵+</button>
-                                </div>
-                            </div>
-
-                            <button type="button" class="discovery-submit btn-search-primary" id="discoverySubmit" aria-label="کاوش املاک">
-                                <i data-lucide="search"></i>
-                                <span>کاوش</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Legacy mobile wrap kept for JS no-ops; discovery is responsive -->
-                    <div class="m-hero-search" hidden aria-hidden="true">
-                        <div class="m-search-wrap" id="mobileSearchWrap">
-                            <input type="search" id="mobilePropertySearch" class="m-search-input" tabindex="-1" hidden>
-                            <button type="button" class="m-search-clear" id="mobileSearchClear" hidden></button>
-                            <div class="m-search-suggestions" id="mobileSearchSuggestions" hidden>
-                                <div id="mobileTypeSuggestions"></div>
-                                <div id="mobileQuerySuggestions"></div>
-                            </div>
-                        </div>
+                        <a href="/contact/" class="btn-ghost">تماس با ما</a>
                     </div>
                 </div>
             </div>

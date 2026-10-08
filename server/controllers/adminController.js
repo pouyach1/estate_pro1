@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const Property = require('../models/Property');
 const Customer = require('../models/Customer');
+const { isDemoEnvironment, getDemoCredentials } = require('../utils/demoCredentials');
 
 const normalizeRole = (role) => ['owner', 'admin', 'agent'].includes(role) ? role : 'admin';
 
@@ -9,6 +10,20 @@ const getEffectiveRole = (admin) => admin.role || 'owner';
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
+};
+
+const getDemoInfo = async (req, res) => {
+  if (!isDemoEnvironment()) {
+    return res.status(404).json({ enabled: false });
+  }
+  const { username, password } = getDemoCredentials();
+  return res.json({
+    enabled: true,
+    label: 'Demo Environment',
+    username,
+    password,
+    note: 'فقط برای محیط توسعه / ارائه — ورود واقعی از طریق همان API احراز هویت انجام می‌شود.',
+  });
 };
 
 const login = async (req, res) => {
@@ -174,6 +189,7 @@ const getDashboardStats = async (req, res) => {
 
 module.exports = {
   login,
+  getDemoInfo,
   register,
   getProfile,
   updateProfile,
