@@ -159,8 +159,14 @@
   will-change: opacity;
 }
 
+/* Campaign fallbacks — painted before JS; API heroBackground must not win via CSS. */
+.home-hero-bg-a {
+  background-image: url('/assets/images/astoria-hero-villa-dusk.webp');
+}
+
 .home-hero-bg-b {
   opacity: 0;
+  background-image: url('/assets/images/astoria-hero-villa-twilight.webp');
 }
 
 .home-hero-overlay {
@@ -736,6 +742,7 @@
 
 .home-page .home-editorial-visual {
   min-height: min(70vh, 620px);
+  background-image: url('/assets/images/astoria-editorial-architecture.webp');
   background-size: cover;
   background-position: 45% 40%;
   border: none;
@@ -890,6 +897,7 @@
 
 .philosophy-frame-inner {
   aspect-ratio: 4 / 5;
+  background-image: url('/assets/images/astoria-interior-living.webp');
   background-size: cover;
   background-position: 50% 45%;
   background-color: #0c1018;
@@ -1073,6 +1081,7 @@
 
 /* ── Final CTA ── */
 .home-final-cta {
+  --cta-image: url('/assets/images/astoria-cta-night-pool.webp');
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -1082,7 +1091,7 @@
   background: #040406;
 }
 
-.home-final-cta[data-has-cta-image="true"]::before {
+.home-final-cta::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1093,7 +1102,7 @@
   transform: scale(1.02);
 }
 
-.home-final-cta[data-has-cta-image="true"]::after {
+.home-final-cta::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -1314,7 +1323,7 @@
     background-position: 62% 38%;
   }
 
-  .home-final-cta[data-has-cta-image="true"]::before {
+  .home-final-cta::before {
     background-position: 48% 50%;
   }
 

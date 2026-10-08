@@ -20,6 +20,7 @@ const CAMPAIGN_IMAGES = {
     '/assets/images/astoria-villa-pool-day.webp',
     '/assets/images/astoria-villa-terrace.webp',
   ],
+  featured: '/assets/images/astoria-featured-residence.webp',
   editorial: '/assets/images/astoria-editorial-architecture.webp',
   philosophy: '/assets/images/astoria-interior-living.webp',
   cta: '/assets/images/astoria-cta-night-pool.webp',
@@ -223,7 +224,8 @@ const Astoria = {
     const type=escapeHTML(p.type||'');
     const title=escapeHTML(p.title||'');
     const location=escapeHTML(p.location||'');
-    const img=escapeHTML(p.image||(p.images&&p.images[0])||'');
+    /* Homepage featured visual uses curated campaign photo; property data/link stay API-backed. */
+    const img=escapeHTML(CAMPAIGN_IMAGES.featured||p.image||(p.images&&p.images[0])||'');
     const pf=formatPrice(p.price);
     const price=pf?`${escapeHTML(pf)} تومان`:'تماس برای اطلاع از قیمت';
     this.featuredContainer.innerHTML=`
@@ -382,12 +384,20 @@ const Astoria = {
     try{
       const r=await fetch(`${API_BASE}/settings`);
       const s=await r.json();
-      /* Homepage hero uses curated local campaign photography; skip remote/admin override when campaign is active. */
-      if(s.heroBackground&&!this.heroImages?.length){
+      /*
+       * Homepage campaign photography is authoritative.
+       * Never let API/admin heroBackground (often /uploads/...) replace CAMPAIGN_IMAGES.hero.
+       * Non-homepage contexts do not use this module for hero rendering.
+       */
+      const isHomePage=document.body?.classList?.contains('home-page');
+      if(s.heroBackground&&!isHomePage&&!this.heroImages?.length){
         const a=document.getElementById('homeHeroA');
         const b=document.getElementById('homeHeroB');
         if(a){a.style.backgroundImage=`url(${s.heroBackground})`;a.style.backgroundSize='cover'}
         if(b)b.style.backgroundImage=`url(${s.heroBackground})`;
+      }
+      if(isHomePage){
+        this.initCampaignVisuals();
       }
       if(s.contactPhone){
         document.querySelectorAll('.home-contact-link[href^="tel:"], .footer-contact-phone').forEach(el=>{
