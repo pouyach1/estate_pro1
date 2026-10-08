@@ -178,17 +178,29 @@ async function updatePropertySeo(p, site) {
   applyPropertySeo(p, site, propertyId);
 }
 
+function yearBuiltFromAge(age) {
+  if (age == null || age === '' || Number(age) < 0) return null;
+  return new Date().getFullYear() - Number(age);
+}
+
+function statusLabel(status) {
+  const map = {
+    available: 'مجموعه خصوصی',
+    reserved: 'رزرو شده',
+    sold: 'فروخته شده',
+    rented: 'اجاره داده شده',
+  };
+  return map[status] || 'مجموعه خصوصی';
+}
+
 function renderProperty(site) {
   const p = propertyData;
   if (!p) return;
 
   updatePropertySeo(p, site);
 
-  const breadcrumb = document.getElementById('breadcrumbTitle');
-  if (breadcrumb) breadcrumb.textContent = p.title || 'جزئیات ملک';
-
   const typeBadge = document.getElementById('propertyTypeBadge');
-  if (typeBadge) typeBadge.textContent = p.type || '';
+  if (typeBadge) typeBadge.textContent = p.type || 'اقامتگاه';
 
   document.getElementById('propertyTitle').textContent = p.title || 'ملک';
 
@@ -197,37 +209,290 @@ function renderProperty(site) {
   if (locText) locText.textContent = location;
 
   const priceDisplay = formatPriceDisplay(p.price);
-  document.getElementById('propertyPrice').textContent = priceDisplay;
-  document.getElementById('sidebarPrice').textContent = priceDisplay;
+  const priceEl = document.getElementById('propertyPrice');
+  if (priceEl) priceEl.textContent = priceDisplay;
+  const sidebarPrice = document.getElementById('sidebarPrice');
+  if (sidebarPrice) sidebarPrice.textContent = priceDisplay;
   document.getElementById('propertyDescription').textContent = p.description || 'توضیحات بیشتری برای این ملک ثبت نشده است.';
 
   const tourSubtitle = document.getElementById('tourModalProperty');
   if (tourSubtitle) tourSubtitle.textContent = p.title || '';
 
+  const parking = p.features?.common?.parking;
+  const metaParts = [];
+  if (p.beds > 0) metaParts.push(`${Number(p.beds).toLocaleString('fa-IR')} خواب`);
+  if (p.baths > 0) metaParts.push(`${Number(p.baths).toLocaleString('fa-IR')} سرویس`);
+  if (p.area > 0) metaParts.push(`${Number(p.area).toLocaleString('fa-IR')} متر مربع`);
+  if (parking > 0) metaParts.push(`${Number(parking).toLocaleString('fa-IR')} پارکینگ`);
+  const heroMeta = document.getElementById('propertyHeroMeta');
+  if (heroMeta) heroMeta.textContent = metaParts.join(' · ');
+
   setStatValue('area', (p.area || 0).toLocaleString('fa-IR'), (p.area || 0) > 0);
   setStatValue('beds', (p.beds || 0).toLocaleString('fa-IR'), p.beds > 0);
   setStatValue('baths', (p.baths || 0).toLocaleString('fa-IR'), p.baths > 0);
   setStatValue('type', p.type || '—', !!p.type);
-  const parking = p.features?.common?.parking;
   setStatValue('parking', parking > 0 ? parking.toLocaleString('fa-IR') : '—', parking > 0);
 
   const hasMultiple = propertyImages.length > 1;
   document.querySelector('.property-hero-nav')?.classList.toggle('is-hidden', !hasMultiple);
   document.getElementById('imageDots')?.classList.toggle('is-hidden', !hasMultiple);
-  document.getElementById('btnFullscreen')?.toggleAttribute('hidden', !hasMultiple);
   document.getElementById('filmstripWrap')?.toggleAttribute('hidden', !hasMultiple);
+
+  const firstImg = propertyImages[0];
+  if (firstImg && !String(firstImg).startsWith('data:')) {
+    let preload = document.querySelector('link[data-property-hero-preload]');
+    if (!preload) {
+      preload = document.createElement('link');
+      preload.rel = 'preload';
+      preload.as = 'image';
+      preload.setAttribute('data-property-hero-preload', 'true');
+      document.head.appendChild(preload);
+    }
+    preload.href = firstImg;
+  }
 
   updateHeroImage(0, false);
   renderFilmstrip();
   renderDots();
+  renderOverview(p);
+  renderNumbers(p);
+  renderDossier(p);
   renderFeatures(p);
+  renderPhotoStory(p);
+  renderLocationBlock(p);
   updateMobileCta();
   initDescriptionToggle();
+  initDossierInteractions();
 
   const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
   setFavoriteUI(propertyId && favorites.includes(propertyId));
 
   refreshIcons();
+}
+
+function renderOverview(p) {
+  const el = document.getElementById('propertyOverview');
+  if (!el) return;
+  const parking = p.features?.common?.parking;
+  const land = p.features?.specific?.yard_area || p.features?.specific?.building_area;
+  const year = yearBuiltFromAge(p.age);
+  const rows = [
+    { label: 'نوع ملک', value: p.type || '—' },
+    { label: 'خواب', value: p.beds > 0 ? Number(p.beds).toLocaleString('fa-IR') : '—' },
+    { label: 'سرویس', value: p.baths > 0 ? Number(p.baths).toLocaleString('fa-IR') : '—' },
+    { label: 'زیربنا', value: p.area > 0 ? `${Number(p.area).toLocaleString('fa-IR')} متر` : '—' },
+    { label: 'زمین / حیاط', value: land > 0 ? `${Number(land).toLocaleString('fa-IR')} متر` : '—' },
+    { label: 'سال ساخت', value: year ? year.toLocaleString('fa-IR') : '—' },
+    { label: 'پارکینگ', value: parking > 0 ? `${Number(parking).toLocaleString('fa-IR')} خودرو` : '—' },
+    { label: 'وضعیت', value: statusLabel(p.status) },
+  ].filter((row) => row.value !== '—');
+
+  el.innerHTML = rows.map((row) => `
+    <div class="pd-overview-row">
+      <span class="pd-overview-label">${escapeHTML(row.label)}</span>
+      <span class="pd-overview-value">${escapeHTML(String(row.value))}</span>
+    </div>`).join('');
+}
+
+function renderNumbers(p) {
+  const el = document.getElementById('propertyNumbers');
+  if (!el) return;
+  const parking = p.features?.common?.parking;
+  const land = p.features?.specific?.yard_area || p.features?.specific?.building_area;
+  const year = yearBuiltFromAge(p.age);
+  const items = [
+    p.area > 0 && { num: Number(p.area).toLocaleString('fa-IR'), label: 'متر مربع زیربنا' },
+    land > 0 && { num: Number(land).toLocaleString('fa-IR'), label: 'متر مربع زمین' },
+    p.beds > 0 && { num: Number(p.beds).toLocaleString('fa-IR'), label: 'خواب' },
+    p.baths > 0 && { num: Number(p.baths).toLocaleString('fa-IR'), label: 'سرویس' },
+    year && { num: year.toLocaleString('fa-IR'), label: 'سال ساخت' },
+    parking > 0 && { num: Number(parking).toLocaleString('fa-IR'), label: 'پارکینگ خصوصی' },
+  ].filter(Boolean);
+
+  el.innerHTML = items.map((item) => `
+    <div class="pd-number-item reveal">
+      <strong class="pd-number-value">${escapeHTML(item.num)}</strong>
+      <span class="pd-number-label">${escapeHTML(item.label)}</span>
+    </div>`).join('') || '<p class="property-empty-note">شاخص عددی ثبت نشده است.</p>';
+}
+
+function dossierGroups(property) {
+  const f = property.features || {};
+  const c = f.common || {};
+  const s = f.specific || {};
+  const l = f.luxury || {};
+  const year = yearBuiltFromAge(property.age);
+
+  const push = (arr, label, value) => {
+    if (value === true) arr.push({ label, value: 'دارد' });
+    else if (typeof value === 'number' && value > 0) arr.push({ label, value: value.toLocaleString('fa-IR') });
+    else if (typeof value === 'string' && value.trim()) arr.push({ label, value: value.trim() });
+  };
+
+  const architecture = [];
+  push(architecture, 'سبک / نوع', property.type);
+  if (year) push(architecture, 'سال ساخت', year);
+  push(architecture, 'طبقه', s.floor);
+  push(architecture, 'کل طبقات', s.total_floors);
+  push(architecture, 'سقف بلند', s.high_ceiling);
+  push(architecture, 'مصالح لوکس', s.luxury_materials);
+
+  const interior = [];
+  push(interior, 'زیربنا (متر)', property.area);
+  push(interior, 'خواب', property.beds);
+  push(interior, 'سرویس', property.baths);
+  push(interior, 'کف‌پوش', c.flooring);
+  push(interior, 'کابینت', c.cabinet);
+  push(interior, 'آشپزخانه اپن', s.open_kitchen);
+  push(interior, 'خواب مستر', s.master_bedroom);
+  push(interior, 'سقف کاذب', s.false_ceiling);
+
+  const exterior = [];
+  push(exterior, 'متراژ حیاط', s.yard_area);
+  push(exterior, 'باغچه / باغ', s.garden || s.landscaping || s.fruit_trees);
+  push(exterior, 'استخر', l.pool || s.pool_private || s.swimming_pool);
+  push(exterior, 'تراس / بالکن', s.balcony || s.roof_garden || l.roof_garden);
+  push(exterior, 'باربیکیو', s.bbq);
+  push(exterior, 'پارکینگ', c.parking);
+
+  const views = [];
+  push(views, 'ویو پانوراما', s.panoramic_view);
+  if (String(property.location || '').includes('ساحل') || String(property.location || '').includes('کیش') || String(property.location || '').includes('رامسر')) {
+    views.push({ label: 'نزدیکی به دریا', value: 'موقعیت ساحلی' });
+  }
+  if (String(property.location || '').includes('نیاوران') || String(property.location || '').includes('الهیه') || String(property.location || '').includes('فرمانیه')) {
+    views.push({ label: 'چشم‌انداز شهری', value: 'شمال تهران' });
+  }
+
+  const technology = [];
+  push(technology, 'خانه هوشمند', c.smart_home);
+  push(technology, 'نگهبانی', c.security);
+  push(technology, 'دوربین', c.cctv);
+  push(technology, 'گرمایش', c.heating);
+  push(technology, 'سرمایش', c.cooling);
+  push(technology, 'آیفون تصویری', c.video_intercom);
+  push(technology, 'آسانسور', c.elevator || s.private_elevator);
+
+  const lifestyle = [];
+  push(lifestyle, 'سالن ورزشی', l.gym);
+  push(lifestyle, 'سینمای خانگی', l.home_cinema);
+  push(lifestyle, 'سونا / جکوزی', l.sauna);
+  push(lifestyle, 'لابی لوکس', l.luxury_lobby);
+  push(lifestyle, 'اتاق جلسه', l.meeting_room);
+  push(lifestyle, 'روف‌گاردن', l.roof_garden || s.roof_garden);
+
+  return [
+    { id: 'architecture', title: 'معماری', items: architecture },
+    { id: 'interior', title: 'فضای داخلی', items: interior },
+    { id: 'exterior', title: 'فضای بیرونی', items: exterior },
+    { id: 'views', title: 'چشم‌انداز', items: views },
+    { id: 'technology', title: 'فناوری', items: technology },
+    { id: 'lifestyle', title: 'سبک زندگی', items: lifestyle },
+  ].filter((g) => g.items.length);
+}
+
+function renderDossier(property) {
+  const el = document.getElementById('propertyDossier');
+  if (!el) return;
+  const groups = dossierGroups(property);
+  if (!groups.length) {
+    el.innerHTML = '<p class="property-empty-note">جزئیات بیشتری برای این ملک ثبت نشده است.</p>';
+    return;
+  }
+  el.innerHTML = groups.map((group, index) => `
+    <details class="pd-dossier-group" ${index === 0 ? 'open' : ''}>
+      <summary class="pd-dossier-summary">
+        <span>${escapeHTML(group.title)}</span>
+        <span class="pd-dossier-count">${group.items.length.toLocaleString('fa-IR')}</span>
+      </summary>
+      <div class="pd-dossier-body">
+        ${group.items.map((item) => `
+          <div class="pd-spec-row">
+            <span class="pd-spec-label">${escapeHTML(item.label)}</span>
+            <span class="pd-spec-value">${escapeHTML(String(item.value))}</span>
+          </div>`).join('')}
+      </div>
+    </details>`).join('');
+}
+
+function initDossierInteractions() {
+  document.querySelectorAll('.pd-dossier-group').forEach((group) => {
+    group.addEventListener('toggle', () => {
+      if (!group.open) return;
+      document.querySelectorAll('.pd-dossier-group').forEach((other) => {
+        if (other !== group) other.open = false;
+      });
+    });
+  });
+}
+
+const STORY_LABELS = [
+  { num: '۰۱', title: 'ورود' },
+  { num: '۰۲', title: 'زندگی' },
+  { num: '۰۳', title: 'جزئیات' },
+  { num: '۰۴', title: 'بیرون' },
+  { num: '۰۵', title: 'شب' },
+];
+
+function renderPhotoStory(p) {
+  const el = document.getElementById('propertyPhotoStory');
+  if (!el) return;
+  const images = propertyImages.filter((src) => src && !String(src).startsWith('data:'));
+  if (!images.length) {
+    el.innerHTML = '<p class="property-empty-note">گالری تصویری برای این ملک موجود نیست.</p>';
+    return;
+  }
+  el.innerHTML = images.map((src, i) => {
+    const label = STORY_LABELS[i] || { num: String(i + 1).padStart(2, '0'), title: 'نما' };
+    const size = i === 0 || i === 3 ? 'pd-story-item--wide' : i === 2 ? 'pd-story-item--tall' : '';
+    return `
+      <button type="button" class="pd-story-item ${size}" data-image-index="${i}" aria-label="${escapeHTML(label.title)}">
+        <span class="pd-story-media" style="background-image:url('${escapeHTML(src)}')"></span>
+        <span class="pd-story-caption"><em>${escapeHTML(label.num)}</em> ${escapeHTML(label.title)}</span>
+      </button>`;
+  }).join('');
+}
+
+function renderLocationBlock(p) {
+  const el = document.getElementById('propertyLocationBlock');
+  if (!el) return;
+  const location = p.location || 'موقعیت نامشخص';
+  const parts = String(location).split('،').map((s) => s.trim()).filter(Boolean);
+  const primary = parts[0] || location;
+  const secondary = parts.slice(1).join('، ') || 'ایران';
+
+  const hints = [];
+  if (/تهران|نیاوران|الهیه|فرمانیه|ولنجک|زعفرانیه|آجودانیه/.test(location)) {
+    hints.push({ label: 'مرکز شهر', note: 'دسترسی شهری' });
+    hints.push({ label: 'فرودگاه', note: 'دسترسی بین‌المللی' });
+    hints.push({ label: 'مدارس بین‌المللی', note: 'نزدیکی نسبی' });
+  } else if (/لواسان|کردان|چالوس/.test(location)) {
+    hints.push({ label: 'طبیعت', note: 'فضای سبز پیرامونی' });
+    hints.push({ label: 'تهران', note: 'فاصله مناسب آخر هفته' });
+    hints.push({ label: 'آرامش', note: 'حریم خصوصی' });
+  } else if (/رامسر|کیش|ساحل/.test(location)) {
+    hints.push({ label: 'ساحل', note: 'نزدیکی به دریا' });
+    hints.push({ label: 'تفریح', note: 'مراکز اقامتی' });
+    hints.push({ label: 'آب‌وهوا', note: 'اقامت فصلی' });
+  } else {
+    hints.push({ label: 'موقعیت', note: 'منطقه منتخب' });
+    hints.push({ label: 'دسترسی', note: 'بر اساس موقعیت ملک' });
+  }
+
+  el.innerHTML = `
+    <div class="pd-location-main">
+      <p class="pd-location-primary">${escapeHTML(primary)}</p>
+      <p class="pd-location-secondary">${escapeHTML(secondary)}</p>
+      <p class="pd-location-full">${escapeHTML(location)}</p>
+    </div>
+    <div class="pd-location-hints">
+      ${hints.map((h) => `
+        <div class="pd-location-hint">
+          <strong>${escapeHTML(h.label)}</strong>
+          <span>${escapeHTML(h.note)}</span>
+        </div>`).join('')}
+    </div>
+    <p class="pd-location-note">فاصله‌ها تقریبی و بر اساس موقعیت کلی ملک هستند — نه زمان سفر دقیق.</p>`;
 }
 
 function updateMobileCta() {
@@ -315,23 +580,30 @@ function renderAgentCard(agent, container) {
   const photo = escapeHTML(agent.photo || '');
   const name = escapeHTML(agent.name || 'مشاور آستوریا');
   const title = escapeHTML(agent.title || 'مشاور املاک');
-  const bio = escapeHTML(agent.bio || '');
+  const bio = escapeHTML(agent.bio || 'مشاور اختصاصی آستوریا برای معرفی دقیق و بازدید خصوصی.');
   const phone = escapeHTML(agent.phone || '');
   const email = escapeHTML(agent.email || '');
+  const wa = phone ? phone.replace(/\D/g, '') : '';
 
   container.innerHTML = `
-    <div class="agent-showcase">
-      ${photo ? `<img src="${photo}" alt="${name}" class="agent-showcase-photo" loading="lazy">` : `<div class="agent-showcase-photo" style="background:rgba(200,200,194,0.08);display:flex;align-items:center;justify-content:center;"><i data-lucide="user"></i></div>`}
-      <div class="agent-showcase-body">
-        <h3 class="agent-showcase-name">${name}</h3>
-        <p class="agent-showcase-role">${title}</p>
-        ${bio ? `<p class="agent-showcase-bio">${bio}</p>` : ''}
-        <div class="agent-showcase-contacts">
-          ${phone ? `<a href="tel:${phone}" class="agent-contact-btn"><i data-lucide="phone"></i> ${phone}</a>` : ''}
-          ${email ? `<a href="mailto:${email}" class="agent-contact-btn"><i data-lucide="mail"></i> تماس</a>` : ''}
+    <article class="pd-advisor">
+      <div class="pd-advisor-portrait" ${photo ? `style="background-image:url('${photo}')"` : ''} role="img" aria-label="${name}">
+        ${photo ? '' : '<i data-lucide="user"></i>'}
+      </div>
+      <div class="pd-advisor-body">
+        <p class="pd-advisor-kicker">مشاور اختصاصی</p>
+        <h3 class="pd-advisor-name">${name}</h3>
+        <p class="pd-advisor-role">${title}</p>
+        <p class="pd-advisor-bio">${bio}</p>
+        <div class="pd-advisor-actions">
+          ${phone ? `<a href="tel:${phone}" class="pd-advisor-link"><i data-lucide="phone"></i> تماس</a>` : ''}
+          ${wa ? `<a href="https://wa.me/${wa}" class="pd-advisor-link" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+          ${email ? `<a href="mailto:${email}" class="pd-advisor-link"><i data-lucide="mail"></i> ایمیل</a>` : ''}
+          <button type="button" class="btn-primary" id="btnAdvisorTour">درخواست بازدید خصوصی</button>
         </div>
       </div>
-    </div>`;
+    </article>`;
+  document.getElementById('btnAdvisorTour')?.addEventListener('click', openTourModal);
   refreshIcons();
 }
 
@@ -419,30 +691,27 @@ async function loadSimilarProperties() {
       return;
     }
 
-    container.innerHTML = shown.map((p) => {
+    container.innerHTML = shown.slice(0, 4).map((p) => {
       const id = escapeHTML(p._id || '');
       const image = escapeHTML(p.image || (p.images && p.images[0]) || PLACEHOLDER_IMAGE);
       const title = escapeHTML(p.title || '');
       const type = escapeHTML(p.type || '');
       const location = escapeHTML(p.location || '');
       const price = escapeHTML(formatPriceDisplay(p.price));
-      const metricParts = [];
-      if (p.area) metricParts.push(`${Number(p.area).toLocaleString('fa-IR')} متر`);
-      if (p.beds) metricParts.push(`${Number(p.beds).toLocaleString('fa-IR')} خواب`);
-      const metric = metricParts.length ? `<p class="similar-card-metric">${metricParts.join(' · ')}</p>` : '';
+      const meta = [];
+      if (p.beds) meta.push(`${Number(p.beds).toLocaleString('fa-IR')} خواب`);
+      if (p.area) meta.push(`${Number(p.area).toLocaleString('fa-IR')} متر`);
 
       return `
-      <a href="/property/?id=${id}" class="similar-card" data-similar-property-id="${id}">
-        <div class="similar-card-image">
-          <img src="${image}" alt="${title}" loading="lazy" width="400" height="250">
-        </div>
-        <div class="similar-card-body">
-          ${type ? `<div class="similar-card-type">${type}</div>` : ''}
-          <h3 class="similar-card-title">${title}</h3>
-          ${location ? `<p class="similar-card-location"><i data-lucide="map-pin"></i> ${location}</p>` : ''}
-          ${metric}
-          <p class="similar-card-price">${price}</p>
-        </div>
+      <a href="/property/?id=${id}" class="pd-related-card" data-similar-property-id="${id}">
+        <span class="pd-related-media" style="background-image:url('${image}')" role="img" aria-label="${title}"></span>
+        <span class="pd-related-body">
+          ${type ? `<span class="pd-related-type">${type}</span>` : ''}
+          <span class="pd-related-title">${title}</span>
+          ${location ? `<span class="pd-related-location">${location}</span>` : ''}
+          ${meta.length ? `<span class="pd-related-meta">${meta.join(' · ')}</span>` : ''}
+          <span class="pd-related-price">${price}</span>
+        </span>
       </a>`;
     }).join('');
 
@@ -618,7 +887,17 @@ document.getElementById('tourModal')?.addEventListener('click', (e) => {
 document.getElementById('btnFullscreen')?.addEventListener('click', () => setLightboxOpen(true));
 document.getElementById('closeLightbox')?.addEventListener('click', () => setLightboxOpen(false));
 document.getElementById('propertyLightbox')?.addEventListener('click', (e) => {
-  if (e.target.id === 'propertyLightbox') setLightboxOpen(false);
+  if (e.target.id === 'propertyLightbox' || e.target.id === 'lightboxImage') setLightboxOpen(false);
+});
+document.getElementById('propertyHero')?.addEventListener('click', (e) => {
+  if (e.target.closest('button, a, .property-hero-nav, .property-hero-actions, .property-hero-dots')) return;
+  if (propertyImages.length) setLightboxOpen(true);
+});
+document.addEventListener('click', (e) => {
+  const story = e.target.closest('.pd-story-item[data-image-index]');
+  if (!story) return;
+  updateHeroImage(Number(story.getAttribute('data-image-index')) || 0, false);
+  setLightboxOpen(true);
 });
 
 document.getElementById('tourForm')?.addEventListener('submit', async (e) => {

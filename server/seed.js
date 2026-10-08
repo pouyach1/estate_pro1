@@ -31,26 +31,70 @@ const DEMO_ADMIN = {
   role: 'owner',
 };
 
-/** Local campaign photography under public/assets/images (no remote URLs). */
-const UPLOAD_IMAGES = [
-  '/assets/images/astoria-featured-residence.webp',
-  '/assets/images/astoria-hero-villa-twilight.webp',
-  '/assets/images/astoria-interior-living.webp',
-  '/assets/images/astoria-villa-pool-day.webp',
-  '/assets/images/astoria-interior-salon.webp',
-  '/assets/images/astoria-villa-terrace.webp',
-  '/assets/images/astoria-editorial-architecture.webp',
-  '/assets/images/astoria-hero-villa-dusk.webp',
-  '/assets/images/astoria-cta-night-pool.webp',
-];
-
+/** Local campaign + property photography under public/assets/images (no remote URLs). */
 const HERO_CAMPAIGN = '/assets/images/astoria-hero-villa-dusk.webp';
 
+const PROPERTY_GALLERIES = [
+  [
+    '/assets/images/astoria-property-01-hero.webp',
+    '/assets/images/astoria-property-01-interior.webp',
+    '/assets/images/astoria-property-01-pool.webp',
+  ],
+  [
+    '/assets/images/astoria-property-02-hero.webp',
+    '/assets/images/astoria-property-02-living.webp',
+    '/assets/images/astoria-property-02-terrace.webp',
+  ],
+  [
+    '/assets/images/astoria-property-03-hero.webp',
+    '/assets/images/astoria-property-03-interior.webp',
+    '/assets/images/astoria-property-03-night.webp',
+  ],
+  [
+    '/assets/images/astoria-property-04-hero.webp',
+    '/assets/images/astoria-property-04-interior.webp',
+    '/assets/images/astoria-property-04-exterior.webp',
+  ],
+  [
+    '/assets/images/astoria-property-05-hero.webp',
+    '/assets/images/astoria-property-05-view.webp',
+    '/assets/images/astoria-interior-living.webp',
+  ],
+  [
+    '/assets/images/astoria-property-06-hero.webp',
+    '/assets/images/astoria-property-06-interior.webp',
+    '/assets/images/astoria-villa-terrace.webp',
+  ],
+  [
+    '/assets/images/astoria-editorial-architecture.webp',
+    '/assets/images/astoria-hero-villa-twilight.webp',
+    '/assets/images/astoria-featured-residence.webp',
+  ],
+  [
+    '/assets/images/astoria-interior-salon.webp',
+    '/assets/images/astoria-property-02-living.webp',
+    '/assets/images/astoria-property-05-view.webp',
+  ],
+  [
+    '/assets/images/astoria-villa-pool-day.webp',
+    '/assets/images/astoria-property-01-pool.webp',
+    '/assets/images/astoria-cta-night-pool.webp',
+  ],
+  [
+    '/assets/images/astoria-property-03-night.webp',
+    '/assets/images/astoria-property-06-interior.webp',
+    '/assets/images/astoria-hero-villa-dusk.webp',
+  ],
+];
+
+function gallery(index, extra = []) {
+  const set = PROPERTY_GALLERIES[index % PROPERTY_GALLERIES.length];
+  const images = [...set, ...extra].filter((v, i, a) => a.indexOf(v) === i);
+  return { image: images[0], images };
+}
+
 function img(index, extra = []) {
-  const primary = UPLOAD_IMAGES[index % UPLOAD_IMAGES.length];
-  const secondary = UPLOAD_IMAGES[(index + 1) % UPLOAD_IMAGES.length];
-  const images = [primary, secondary, ...extra].filter((v, i, a) => a.indexOf(v) === i);
-  return { image: primary, images };
+  return gallery(index, extra);
 }
 
 function features(type, patch = {}) {

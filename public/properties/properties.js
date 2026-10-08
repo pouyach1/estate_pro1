@@ -1,5 +1,5 @@
-import { createIcons, Menu, X, MapPin, Maximize2 } from 'lucide';
-import { formatPriceDisplay, getPropertyMetric, escapeHTML } from '../js/shared/format.js';
+import { createIcons, Menu, X, MapPin, Maximize2, ArrowLeft } from 'lucide';
+import { formatPriceDisplay, escapeHTML } from '../js/shared/format.js';
 import { initSiteChrome, markActiveNav } from '../js/shared/site-chrome.js';
 import { getSiteConfig, setMetaName, setLinkRel, setMetaProperty } from '../js/shared/seo.js';
 
@@ -15,7 +15,7 @@ let filterMinPrice = '';
 let filterMaxPrice = '';
 
 function icons() {
-  createIcons({ icons: { Menu, X, MapPin, Maximize2 }, attrs: { 'stroke-width': 1.5, width: 18, height: 18 } });
+  createIcons({ icons: { Menu, X, MapPin, Maximize2, ArrowLeft }, attrs: { 'stroke-width': 1.5, width: 18, height: 18 } });
 }
 
 function buildQuery() {
@@ -33,26 +33,30 @@ function buildQuery() {
   return params;
 }
 
-function renderCard(p) {
+function renderCard(p, index = 0) {
   const id = escapeHTML(p._id || '');
   const title = escapeHTML(p.title || 'ملک');
   const type = escapeHTML(p.type || '');
   const location = escapeHTML(p.location || '');
   const img = escapeHTML(p.image || p.images?.[0] || PLACEHOLDER);
   const price = escapeHTML(formatPriceDisplay(p.price));
-  const metric = escapeHTML(getPropertyMetric(p));
+  const beds = p.beds > 0 ? `${Number(p.beds).toLocaleString('fa-IR')} خواب` : '';
+  const baths = p.baths > 0 ? `${Number(p.baths).toLocaleString('fa-IR')} سرویس` : '';
+  const area = p.area > 0 ? `${Number(p.area).toLocaleString('fa-IR')} متر` : '';
+  const meta = [beds, baths, area].filter(Boolean).join(' · ');
+  const variant = index % 5 === 0 ? 'editorial-card--feature' : index % 3 === 1 ? 'editorial-card--tall' : '';
   return `
-    <a class="editorial-card reveal" href="/property/?id=${id}">
+    <a class="editorial-card ${variant} reveal" href="/property/?id=${id}">
       <div class="editorial-card-media">
-        <img src="${img}" alt="${title}${location ? ` — ${location}` : ''}" loading="lazy" width="800" height="600">
+        <img src="${img}" alt="${title}${location ? ` — ${location}` : ''}" loading="lazy" width="1200" height="800">
         ${type ? `<span class="editorial-card-type">${type}</span>` : ''}
       </div>
       <div class="editorial-card-body">
         <h2 class="editorial-card-title">${title}</h2>
         ${location ? `<p class="editorial-card-location"><i data-lucide="map-pin"></i> ${location}</p>` : ''}
-        ${metric ? `<p class="editorial-card-metric"><i data-lucide="maximize-2"></i> ${metric}</p>` : ''}
+        ${meta ? `<p class="editorial-card-metric">${meta}</p>` : ''}
         <p class="editorial-card-price">${price}</p>
-        <span class="editorial-card-cta">مشاهده جزئیات ←</span>
+        <span class="editorial-card-cta">مشاهده پرونده <i data-lucide="arrow-left"></i></span>
       </div>
     </a>`;
 }
@@ -79,7 +83,7 @@ async function loadProperties() {
       return;
     }
 
-    grid.innerHTML = list.map(renderCard).join('');
+    grid.innerHTML = list.map((p, i) => renderCard(p, i)).join('');
     icons();
     document.querySelectorAll('.reveal').forEach((el) => {
       el.classList.remove('revealed');
