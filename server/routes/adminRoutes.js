@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { login, register, getProfile, updateProfile, getDashboardStats } = require('../controllers/adminController');
+const { login, getDemoInfo, register, getProfile, updateProfile, getDashboardStats } = require('../controllers/adminController');
 const { getAdminProperties, getAdminProperty } = require('../controllers/propertyController');
 const { protectAdmin, requireOwner } = require('../middleware/auth');
 
 // Public
 router.post('/login', login);
+router.get('/demo-info', getDemoInfo);
 
 // Protected
 router.post('/register', protectAdmin, requireOwner, register);

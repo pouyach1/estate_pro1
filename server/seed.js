@@ -23,9 +23,10 @@ if (!process.env.MONGODB_URI) {
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
+const { DEMO_ADMIN_USERNAME, DEMO_ADMIN_PASSWORD } = require('./utils/demoCredentials');
 const DEMO_ADMIN = {
-  username: 'admin@astoria.local',
-  password: 'AstoriaDemo2026!',
+  username: DEMO_ADMIN_USERNAME,
+  password: DEMO_ADMIN_PASSWORD,
   name: 'مدیر آستوریا',
   role: 'owner',
 };

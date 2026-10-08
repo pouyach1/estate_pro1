@@ -69,6 +69,53 @@
   box-shadow: none;
 }
 
+/* Secondary admin entry — never compete with primary CTA */
+.home-page .nav-admin-link {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: rgba(243, 241, 236, 0.55);
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+  white-space: nowrap;
+}
+
+.home-page .nav-admin-link:hover,
+.home-page .nav-admin-link:focus-visible {
+  color: var(--color-ivory, #f3f1ec);
+  border-color: rgba(184, 164, 106, 0.35);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.home-page .nav-admin-desktop {
+  margin-inline-end: 10px;
+}
+
+.home-page .mobile-nav-admin {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .home-page .nav-admin-desktop {
+    display: none;
+  }
+
+  .home-page .mobile-nav-admin {
+    display: block;
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .home-page .mobile-nav-admin .nav-admin-link {
+    display: inline-flex;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+  }
+}
+
 /* ── Hero ── */
 .home-hero {
   position: relative;

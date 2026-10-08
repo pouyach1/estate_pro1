@@ -4,82 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>ورود به پنل مدیریت | آستوریا</title>
+    <title>ورود به داشبورد | آستوریا</title>
     <link rel="stylesheet" href="/theme_css/pro.css">
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="/theme_css/obsidian.css">
 </head>
 <body class="admin-body">
-    
+
     <div class="admin-login-container">
         <div class="admin-login-card">
             <div class="admin-login-header">
                 <span class="brand-main">ASTORIA</span>
                 <span class="brand-sub">ELITE ESTATES</span>
-                <p class="admin-login-subtitle">پنل مدیریت</p>
+                <p class="admin-login-subtitle">Admin Dashboard</p>
             </div>
-            
+
             <form id="loginForm" class="admin-login-form">
                 <div class="form-group">
-                    <label for="username">نام کاربری</label>
-                    <input type="text" id="username" placeholder="نام کاربری" required autofocus autocomplete="username">
+                    <label for="username">ایمیل / نام کاربری</label>
+                    <input type="text" id="username" placeholder="ایمیل مدیریت" required autofocus autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="password">رمز عبور</label>
                     <input type="password" id="password" placeholder="رمز عبور" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn-primary btn-full">ورود به پنل</button>
+                <button type="submit" class="btn-primary btn-full">ورود به داشبورد</button>
             </form>
-            
+
+            <div id="demoPanel" class="admin-demo-panel" hidden>
+                <p class="admin-demo-badge">Demo Environment</p>
+                <p class="admin-demo-creds" id="demoCreds"></p>
+                <button type="button" class="admin-demo-fill" id="demoFillBtn">پر کردن اعتبار دمو</button>
+            </div>
+
             <div id="loginMessage" class="admin-message" role="alert" aria-live="polite"></div>
+            <p class="admin-login-back"><a href="/">بازگشت به وب‌سایت</a></p>
         </div>
     </div>
 
     <script>
         const API = '/api';
+        let demoCreds = null;
+
+        async function loadDemoInfo() {
+            try {
+                const res = await fetch(`${API}/admin/demo-info`);
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!data.enabled) return;
+                demoCreds = data;
+                const panel = document.getElementById('demoPanel');
+                const creds = document.getElementById('demoCreds');
+                panel.hidden = false;
+                creds.textContent = `کاربر: ${data.username}  ·  رمز: ${data.password}`;
+            } catch (_) { /* demo panel optional */ }
+        }
+
+        document.getElementById('demoFillBtn')?.addEventListener('click', () => {
+            if (!demoCreds) return;
+            document.getElementById('username').value = demoCreds.username;
+            document.getElementById('password').value = demoCreds.password;
+            document.getElementById('username').focus();
+        });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const messageEl = document.getElementById('loginMessage');
-            const btn = e.target.querySelector('button');
-            
+            const btn = e.target.querySelector('button[type="submit"]');
+
             btn.textContent = 'در حال ورود...';
             btn.disabled = true;
             messageEl.textContent = '';
-            
+
             try {
                 const res = await fetch(`${API}/admin/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
-                
+
                 const data = await res.json();
-                
+
                 if (res.ok) {
                     localStorage.setItem('astoria_token', data.token);
                     localStorage.setItem('astoria_admin', JSON.stringify(data.admin));
                     messageEl.className = 'admin-message success';
                     messageEl.textContent = 'ورود موفق؛ در حال انتقال...';
-                    
+
                     setTimeout(() => {
-                        window.location.href = data.redirectTo || 'dashboard.html';
-                    }, 1000);
+                        window.location.href = data.redirectTo || '/admin/dashboard.html';
+                    }, 600);
                 } else {
                     messageEl.className = 'admin-message error';
-                    messageEl.textContent = data.message;
+                    messageEl.textContent = data.message || 'ورود ناموفق بود';
                 }
             } catch (error) {
                 messageEl.className = 'admin-message error';
                 messageEl.textContent = 'خطا در اتصال به سرور';
             }
-            
-            btn.textContent = 'ورود به پنل';
+
+            btn.textContent = 'ورود به داشبورد';
             btn.disabled = false;
         });
+
+        loadDemoInfo();
     </script>
 </body>
 </html>

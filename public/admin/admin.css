@@ -39,6 +39,14 @@ body{font-family:var(--font-ui);font-weight:400;background:var(--admin-bg);backg
 .admin-message{text-align:center;margin-top:16px;font-size:0.85rem;padding:10px 16px;border-radius:var(--admin-radius-sm)}
 .admin-message.success{background:rgba(46,204,113,0.12);color:var(--admin-success)}
 .admin-message.error{background:rgba(231,76,60,0.12);color:var(--admin-danger)}
+.admin-demo-panel{margin-top:22px;padding:14px 16px;border:1px solid rgba(200,200,194,0.18);border-radius:var(--admin-radius-sm);background:rgba(200,200,194,0.04);text-align:center}
+.admin-demo-badge{font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--admin-gold);margin-bottom:8px}
+.admin-demo-creds{font-size:0.8rem;color:var(--admin-text-muted);line-height:1.6;word-break:break-word}
+.admin-demo-fill{margin-top:12px;padding:8px 14px;font-size:0.78rem;letter-spacing:0.04em;color:var(--admin-gold);background:transparent;border:1px solid rgba(200,200,194,0.28);border-radius:var(--admin-radius-sm);cursor:pointer;transition:background .2s ease,border-color .2s ease}
+.admin-demo-fill:hover{background:rgba(200,200,194,0.08);border-color:rgba(200,200,194,0.45)}
+.admin-login-back{margin-top:20px;text-align:center;font-size:0.8rem}
+.admin-login-back a{color:var(--admin-text-muted);text-decoration:none}
+.admin-login-back a:hover{color:var(--admin-gold)}
 
 /* ========== LAYOUT ========== */
 .admin-dashboard{display:flex;min-height:100vh}
