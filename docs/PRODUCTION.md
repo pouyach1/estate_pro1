@@ -2,7 +2,13 @@
 
 ## Overview
 
-Astoria runs as a single Express server with MongoDB. In production/staging, the built Vite output (`dist/`) is served by Express when `SERVE_STATIC=true`.
+Astoria runs as **one Node.js process**: Express serves the API, `/uploads`, and the Vite-built frontend from `dist/` when `SERVE_STATIC=true` (forced by `npm start` / `server/start-prod.js`).
+
+- Frontend: Vite multi-page app under `public/` → build output `dist/`
+- Backend: Express + Mongoose (MongoDB required)
+- Frontend API calls already use same-origin relative paths (`/api/...`)
+
+There is **no** JSON/file database adapter in this repository. The app cannot start without a reachable `MONGODB_URI`.
 
 ---
 
@@ -10,86 +16,109 @@ Astoria runs as a single Express server with MongoDB. In production/staging, the
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `MONGODB_URI` | Yes | MongoDB connection string |
-| `JWT_SECRET` | Yes | Minimum 32 characters; must not be a known weak value |
-| `PORT` | No | Default `5000` |
-| `NODE_ENV` | Recommended | Set to `production` on staging/production |
-| `SERVE_STATIC` | Staging/Prod | Set to `true` to serve `dist/` + API from one process |
-| `SITE_ORIGIN` | Recommended | Public canonical origin, e.g. `https://astoriaelite.com` (no trailing slash) |
-| `CORS_ORIGIN` | Conditional | Required in production when `SERVE_STATIC` is not `true` |
+| `MONGODB_URI` | **Yes** | MongoDB connection string. Must **not** be `localhost` / `127.0.0.1` when `NODE_ENV=production`. |
+| `JWT_SECRET` | **Yes** | ≥ 32 characters; must not be a known weak value |
+| `PORT` | Usually yes on PaaS | Listen port (Parspack typically injects this) |
+| `HOST` | No | Bind address; default `0.0.0.0` |
+| `NODE_ENV` | Recommended | `production` on the host |
+| `SERVE_STATIC` | Forced by `npm start` | `true` serves `dist/` + API from one process |
+| `SITE_ORIGIN` | Recommended | Public origin, e.g. `https://your-domain.example` (no trailing slash) |
+| `CORS_ORIGIN` | Conditional | Required in production only when `SERVE_STATIC` is **not** `true` |
+| `DEMO_SEED` | **Must stay unset** | If `true` in production, startup fails (destructive seed) |
 
-### Example `.env` (staging)
-
-```env
-NODE_ENV=production
-PORT=5000
-MONGODB_URI=mongodb://user:pass@host:27017/astoria_elite
-JWT_SECRET=<long-random-string-at-least-32-chars>
-SERVE_STATIC=true
-```
-
-When `SERVE_STATIC=true`, the frontend and API share the same origin — CORS is not required.
+Secrets belong in the hosting panel or `server/.env` (gitignored). Never commit real values.
 
 ---
 
-## Demo Seed (NOT for production startup)
+## Persistence limits (honest)
 
-Demo data reset **only** runs when explicitly enabled:
+| Concern | Reality |
+|---------|---------|
+| Application data (properties, admins, leads, settings, agents) | **MongoDB only** — no file-based fallback in code |
+| Running without an external/hosted MongoDB | **Not supported** by this codebase |
+| Uploaded media (`server/uploads/`) | Stored on local disk; **may be lost on redeploy** unless the host provides persistent disk |
+| In-memory storage | Not used (and must not be used) |
+
+If Parspack (or another provider) does not give you a MongoDB URI, the production server will exit during startup. Do not set `DEMO_SEED=true` in production.
+
+---
+
+## Install / build / start (reproducible)
+
+From the **repository root**:
 
 ```bash
-DEMO_SEED=true npm run seed
+# 1) Install root deps + server deps (postinstall runs: npm install --prefix server --omit=dev)
+npm install
+
+# 2) Build frontend into dist/
+npm run build
+
+# 3) Start single process (sets NODE_ENV default + SERVE_STATIC=true)
+npm start
 ```
 
-This **deletes and recreates** demo collections. Never set `DEMO_SEED=true` in production environment variables.
-
-Demo credentials (after seed):
-- Username: `admin@astoria.local`
-- Password: `AstoriaDemo2026!`
-
----
-
-## Build
-
-From project root:
+Equivalent:
 
 ```bash
 npm install
 npm run build
+node server/start-prod.js
 ```
 
-Output: `dist/` (multi-page: homepage, property detail, admin, 404)
-
----
-
-## Start Production / Staging
+Development (two processes) remains available:
 
 ```bash
-cd server
-npm install
-npm run start:prod
-```
+# Terminal A
+npm run server:dev
 
-Or manually:
-
-```bash
-npm run build
-cd server && NODE_ENV=production SERVE_STATIC=true node server.js
+# Terminal B
+npm run dev
 ```
 
 The server exits immediately if:
-- `MONGODB_URI` or `JWT_SECRET` is missing
-- `JWT_SECRET` is weak or shorter than 32 characters
+
+- `MONGODB_URI` or `JWT_SECRET` is missing / invalid
+- `MONGODB_URI` points to localhost in production
+- `DEMO_SEED=true` in production
 - `SERVE_STATIC=true` but `dist/` does not exist
 
 ---
 
-## Health Check
+## Parspack Node.js panel — exact commands
+
+Do **not** assume Parspack runs these automatically. Configure them explicitly:
+
+| Panel field | Value |
+|-------------|--------|
+| **Install / setup** | `npm install` |
+| **Build** | `npm run build` |
+| **Start** | `npm start` |
+| **Node version** | 18+ (LTS recommended) |
+| **Application root** | Repository root (not `server/` alone) |
+
+Notes for the install step:
+
+- Root `npm install` also runs `postinstall` → `npm install --prefix server` so Express/Mongoose deps are installed.
+- `vite` is listed under `dependencies` (not only `devDependencies`) so `npm run build` still works when the host sets `NODE_ENV=production` during install.
+- If your panel offers a separate “install command”, keep it as `npm install` at the **repository root**.
+
+Environment variables to set in the panel (names only):
+
+1. `MONGODB_URI` — **mandatory** (real host URI from whatever MongoDB you have access to; not localhost)
+2. `JWT_SECRET` — **mandatory** (long random string, ≥ 32 chars)
+3. `NODE_ENV=production` — recommended
+4. `SITE_ORIGIN=https://YOUR_DOMAIN` — recommended
+5. `PORT` — usually injected by Parspack; do not hardcode if the panel provides it
+6. Do **not** set `DEMO_SEED`
+
+After deploy, health check:
 
 ```bash
-curl http://localhost:5000/api/health
+curl https://YOUR_DOMAIN/api/health
 ```
 
-Expected (healthy):
+Expected healthy shape:
 
 ```json
 {"status":"ok","database":"connected","version":"1.0.0","static":true}
@@ -97,21 +126,36 @@ Expected (healthy):
 
 ---
 
-## MongoDB Backup (recommended)
+## Resource notes (~250 mCPU / 512 MB RAM)
 
-### Export
+- Do not run `vite` / `npm run dev` in production
+- Production start uses a small MongoDB pool (`maxPoolSize: 5`)
+- Avoid running seed scripts on the live process
+- Prefer Node 18+ LTS
+
+Optional (panel / process env), if the host allows:
 
 ```bash
-mongodump --uri="$MONGODB_URI" --out=./backup-$(date +%Y%m%d)
+NODE_OPTIONS=--max-old-space-size=384
 ```
 
-### Restore
+---
+
+## Demo Seed (local / staging only — NOT production startup)
 
 ```bash
-mongorestore --uri="$MONGODB_URI" --drop ./backup-YYYYMMDD
+DEMO_SEED=true npm run seed
 ```
 
-Use `--drop` only when intentionally replacing data.
+This **deletes and recreates** demo collections. Never set `DEMO_SEED=true` in production environment variables.
+
+---
+
+## Health Check
+
+```bash
+curl http://127.0.0.1:$PORT/api/health
+```
 
 ---
 
@@ -119,38 +163,11 @@ Use `--drop` only when intentionally replacing data.
 
 | Path | Description |
 |------|-------------|
-| `/api/site` | Public site metadata (origin, contact, default OG image) |
-| `/sitemap.xml` | Dynamic sitemap from public properties |
+| `/api/site` | Public site metadata |
+| `/sitemap.xml` | Dynamic sitemap |
 | `/robots.txt` | Crawl rules + sitemap reference |
 
-Set `SITE_ORIGIN` in production so canonical URLs, sitemap, and Open Graph use the real domain.
-
----
-
-## Smoke Tests
-
-### Development (Vite + API)
-
-```bash
-# Terminal 1
-cd server && npm start
-
-# Terminal 2
-npm run dev
-
-# Terminal 3
-node scripts/production-smoke-qa.mjs
-node scripts/intelligence-smoke-qa.mjs
-node scripts/conversion-smoke-qa.mjs
-```
-
-### Staging / Production mode
-
-```bash
-npm run build
-node scripts/staging-smoke-qa.mjs
-node scripts/seo-smoke-qa.mjs
-```
+Set `SITE_ORIGIN` in production for correct canonical URLs.
 
 ---
 
@@ -158,20 +175,21 @@ node scripts/seo-smoke-qa.mjs
 
 | Path | Serves |
 |------|--------|
-| `/` | Homepage |
+| `/` | Homepage (`dist/index.html`) |
 | `/property/` | Property detail |
+| `/properties/` | Listings |
 | `/admin/` | Admin login |
 | `/admin/dashboard.html` | Admin dashboard |
-| `/api/*` | Express API |
+| `/api/*` | Express API (JSON; never HTML fallback) |
 | `/uploads/*` | Uploaded media |
-| Unknown paths | Branded `404.html` |
+| Unknown non-API paths | Branded `404.html` |
 
 ---
 
 ## Security Notes
 
 - Admin APIs require `Authorization: Bearer <token>`
-- Public lead creation (`POST /api/customers`) returns only confirmation — no internal lead data
+- Public lead creation (`POST /api/customers`) returns only confirmation
 - Settings updates accept only allowlisted keys
 - Uploads: image/video MIME + extension validation, 25MB max
-- Production API errors do not expose stack traces or internal paths
+- Production API errors do not expose stack traces

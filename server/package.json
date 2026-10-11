@@ -5,10 +5,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "start:prod": "NODE_ENV=production SERVE_STATIC=true node server.js",
+    "start:prod": "node start-prod.js",
     "dev": "nodemon server.js",
     "seed": "DEMO_SEED=true node seed.js",
     "seed:luxury-five": "node seed-luxury-five.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [],
   "author": "",
