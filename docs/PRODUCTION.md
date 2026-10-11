@@ -48,8 +48,8 @@ If Parspack (or another provider) does not give you a MongoDB URI, the productio
 From the **repository root**:
 
 ```bash
-# 1) Install root deps + server deps (postinstall runs: npm install --prefix server --omit=dev)
-npm install
+# 1) Install root deps AND server deps (do not rely on lifecycle scripts alone)
+npm install && npm install --prefix server
 
 # 2) Build frontend into dist/
 npm run build
@@ -58,13 +58,8 @@ npm run build
 npm start
 ```
 
-Equivalent:
-
-```bash
-npm install
-npm run build
-node server/start-prod.js
-```
+`postinstall` also runs `npm run install:server`, but some hosts skip lifecycle scripts.
+Always configure the **explicit** install command below in Parspack.
 
 Development (two processes) remains available:
 
@@ -91,7 +86,7 @@ Do **not** assume Parspack runs these automatically. Configure them explicitly:
 
 | Panel field | Value |
 |-------------|--------|
-| **Install / setup** | `npm install` |
+| **Install / setup** | `npm install && npm install --prefix server` |
 | **Build** | `npm run build` |
 | **Start** | `npm start` |
 | **Node version** | 18+ (LTS recommended) |
@@ -99,9 +94,10 @@ Do **not** assume Parspack runs these automatically. Configure them explicitly:
 
 Notes for the install step:
 
-- Root `npm install` also runs `postinstall` → `npm install --prefix server` so Express/Mongoose deps are installed.
-- `vite` is listed under `dependencies` (not only `devDependencies`) so `npm run build` still works when the host sets `NODE_ENV=production` during install.
-- If your panel offers a separate “install command”, keep it as `npm install` at the **repository root**.
+- Backend dependencies (`dotenv`, `express`, `mongoose`, …) live in `server/package.json` and install into `server/node_modules`.
+- Root-only `npm install` does **not** install those packages unless `postinstall` runs — and Parspack may skip scripts. That is why the Install command must include `npm install --prefix server`.
+- `vite` is listed under root `dependencies` so `npm run build` works when the host sets `NODE_ENV=production` during install.
+- `npm start` runs `prestart` → `server/check-deps.js` which fails fast if `server/node_modules` or `dist/` is missing.
 
 Environment variables to set in the panel (names only):
 

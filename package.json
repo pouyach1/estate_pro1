@@ -1,4 +1,3 @@
-
 {
   "name": "estate-pro1",
   "version": "1.0.0",
@@ -12,14 +11,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-<<<<<<< Updated upstream
-    "start": "npm run start:prod --prefix server",
-=======
-    "postinstall": "npm install --prefix server",
->>>>>>> Stashed changes
+    "postinstall": "npm run install:server",
+    "install:server": "npm install --prefix server --no-fund --no-audit",
+    "install:all": "npm install --ignore-scripts && npm run install:server",
     "server": "npm run start --prefix server",
     "server:dev": "npm run dev --prefix server",
     "server:prod": "npm run start:prod --prefix server",
+    "prestart": "node server/check-deps.js",
     "start": "node server/start-prod.js",
     "start:prod": "node server/start-prod.js",
     "seed": "npm run seed --prefix server",
