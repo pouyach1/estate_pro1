@@ -1,10 +1,12 @@
-require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
+
+// Load server/.env even when the process cwd is the repo root (Parspack / npm start).
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const path = require('path');
-const fs = require('fs');
 const { validateEnv } = require('./config/env');
 const securityHeaders = require('./middleware/securityHeaders');
 const errorHandler = require('./middleware/errorHandler');
@@ -14,9 +16,15 @@ validateEnv();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const PORT = Number(process.env.PORT) || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 const isProduction = process.env.NODE_ENV === 'production';
 const serveStatic = process.env.SERVE_STATIC === 'true';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || (isProduction && !serveStatic ? false : true);
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 const app = express();
 
@@ -54,7 +62,9 @@ app.use('/api', require('./routes/siteRoutes'));
 
 app.get('/', (req, res) => {
   if (serveStatic) {
-    return res.redirect(302, '/index.html');
+    const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
+    if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
+    return res.status(503).send('Frontend build missing. Run npm run build from the project root.');
   }
   res.json({ message: 'ASTORIA ELITE ESTATES API', version: '1.0.0' });
 });
@@ -73,26 +83,25 @@ if (serveStatic) {
     etag: true,
   }));
 
-  const sendSpa = (res, relativePath) => {
+  const sendPage = (res, relativePath) => {
     const filePath = path.join(distPath, relativePath);
     if (fs.existsSync(filePath)) return res.sendFile(filePath);
-    return res.status(404).sendFile(path.join(distPath, '404.html'));
+    const notFound = path.join(distPath, '404.html');
+    if (fs.existsSync(notFound)) return res.status(404).sendFile(notFound);
+    return res.status(404).send('Not Found');
   };
 
-  app.get(['/property', '/property/'], (req, res) => sendSpa(res, 'property/index.html'));
-  app.get(['/properties', '/properties/'], (req, res) => sendSpa(res, 'properties/index.html'));
-  app.get(['/agents', '/agents/'], (req, res) => sendSpa(res, 'agents/index.html'));
-  app.get(['/about', '/about/'], (req, res) => sendSpa(res, 'about/index.html'));
-  app.get(['/contact', '/contact/'], (req, res) => sendSpa(res, 'contact/index.html'));
-  app.get(['/admin', '/admin/'], (req, res) => sendSpa(res, 'admin/index.html'));
+  app.get(['/property', '/property/'], (req, res) => sendPage(res, 'property/index.html'));
+  app.get(['/properties', '/properties/'], (req, res) => sendPage(res, 'properties/index.html'));
+  app.get(['/agents', '/agents/'], (req, res) => sendPage(res, 'agents/index.html'));
+  app.get(['/about', '/about/'], (req, res) => sendPage(res, 'about/index.html'));
+  app.get(['/contact', '/contact/'], (req, res) => sendPage(res, 'contact/index.html'));
+  app.get(['/admin', '/admin/'], (req, res) => sendPage(res, 'admin/index.html'));
 
+  // Frontend fallback — never serve HTML for API or upload paths
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
-    const notFound = path.join(distPath, '404.html');
-    if (fs.existsSync(notFound)) {
-      return res.status(404).sendFile(notFound);
-    }
-    return res.status(404).send('Not Found');
+    return sendPage(res, '404.html');
   });
 }
 
@@ -104,11 +113,15 @@ app.use(errorHandler);
 
 async function start() {
   try {
-    await mongoose.connect(MONGODB_URI);
+    // Lean pool for shared Node hosting (~512 MB RAM).
+    await mongoose.connect(MONGODB_URI, {
+      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 10000,
+    });
     console.log('MongoDB connected');
 
-    const server = app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}${serveStatic ? ' (static + API)' : ' (API only)'}`);
+    const server = app.listen(PORT, HOST, () => {
+      console.log(`Server listening on ${HOST}:${PORT}${serveStatic ? ' (static + API)' : ' (API only)'}`);
     });
 
     const shutdown = async (signal) => {

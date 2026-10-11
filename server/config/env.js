@@ -14,6 +14,11 @@ function validateEnv() {
 
   if (!process.env.MONGODB_URI) {
     errors.push('MONGODB_URI is required');
+  } else if (isProduction) {
+    const uri = String(process.env.MONGODB_URI).toLowerCase();
+    if (uri.includes('localhost') || /(?:^|[@/,])127\.\d+\.\d+\.\d+(?:[:/,]|$)/.test(uri)) {
+      errors.push('MONGODB_URI must not use localhost or loopback (127.x.x.x) in production');
+    }
   }
 
   const jwtSecret = process.env.JWT_SECRET;
@@ -27,6 +32,10 @@ function validateEnv() {
 
   if (isProduction && process.env.SERVE_STATIC !== 'true' && !process.env.CORS_ORIGIN) {
     errors.push('CORS_ORIGIN is required in production when SERVE_STATIC is not true');
+  }
+
+  if (isProduction && process.env.DEMO_SEED === 'true') {
+    errors.push('DEMO_SEED must not be enabled in production (destructive seed)');
   }
 
   if (errors.length) {
